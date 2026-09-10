@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive facility location integer-program demonstration">
+  <title>Facility Location Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --base3: #fdf6e3;
+      --base2: #eee8d5;
+      --base1: #93a1a1;
+      --base00: #657b83;
+      --base01: #586e75;
+      --base02: #073642;
+      --blue: #268bd2;
+      --cyan: #2aa198;
+      --yellow: #b58900;
+      --red: #dc322f;
+      --green: #859900;
+      --shadow: 0 18px 48px rgba(7, 54, 66, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--base3);
+      color: var(--base01);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    button, select { font: inherit; }
+
+    .page {
+      width: min(1480px, 100%);
+      margin: 0 auto;
+      padding: 28px clamp(18px, 3vw, 44px) 42px;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--base02);
+      font-size: clamp(1.75rem, 3vw, 2.65rem);
+      letter-spacing: -0.045em;
+      line-height: 1.06;
+    }
+
+    .lede {
+      max-width: 680px;
+      margin: 9px 0 0;
+      color: var(--base00);
+      font-size: 1.02rem;
+    }
+
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .button {
+      border: 1px solid #c7c0aa;
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.34);
+      color: var(--base01);
+      cursor: pointer;
+      font-weight: 680;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .button:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(7,54,66,.10); }
+    .button:focus-visible { outline: 3px solid rgba(38,139,210,.35); outline-offset: 2px; }
+    .button.primary { border-color: var(--blue); background: var(--blue); color: white; }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.85fr) minmax(310px, .85fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid #d8d0bb;
+      border-radius: 18px;
+      background: rgba(255,255,255,.26);
+      box-shadow: var(--shadow);
+    }
+
+    .map-card { overflow: hidden; }
+
+    .map-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 15px 18px;
+      border-bottom: 1px solid #d8d0bb;
+      background: rgba(238,232,213,.45);
+    }
+
+    .map-heading strong { color: var(--base02); }
+    .map-heading span { color: var(--base00); font-size: .9rem; text-align: right; }
+
+    .canvas-wrap { position: relative; padding: 12px; }
+
+    canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 900 / 620;
+      border-radius: 12px;
+      touch-action: none;
+      cursor: default;
+    }
+
+    .canvas-note {
+      position: absolute;
+      left: 28px;
+      bottom: 26px;
+      max-width: min(500px, calc(100% - 56px));
+      padding: 8px 11px;
+      border: 1px solid rgba(147,161,161,.55);
+      border-radius: 9px;
+      background: rgba(253,246,227,.92);
+      color: var(--base00);
+      font-size: .83rem;
+      pointer-events: none;
+    }
+
+    .side { display: grid; gap: 14px; }
+    .panel { padding: 16px; }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      color: var(--base02);
+      font-size: 1rem;
+      letter-spacing: -.01em;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 15px;
+      border-radius: 14px;
+      background: var(--base02);
+      color: var(--base3);
+    }
+
+    .status small { display: block; color: #c7d2d0; margin-bottom: 2px; }
+    .status strong { font-size: 1.05rem; }
+    .status .total { font-size: 2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+
+    .cost-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .cost-box {
+      border: 1px solid #d8d0bb;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: rgba(253,246,227,.60);
+    }
+
+    .cost-box span { display: block; color: var(--base00); font-size: .78rem; }
+    .cost-box strong { color: var(--base02); font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+
+    .warehouse-list, .assignment-list { display: grid; gap: 8px; }
+
+    .warehouse-toggle {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 12px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #d8d0bb;
+      border-radius: 11px;
+      padding: 10px 11px;
+      background: rgba(253,246,227,.65);
+      color: var(--base01);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .warehouse-toggle:hover { border-color: var(--base1); }
+    .warehouse-toggle:focus-visible { outline: 3px solid rgba(38,139,210,.30); outline-offset: 2px; }
+    .warehouse-toggle .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .warehouse-toggle .name { font-weight: 720; color: var(--base02); }
+    .warehouse-toggle .cost { color: var(--base00); font-size: .86rem; }
+
+    .switch {
+      width: 38px;
+      height: 22px;
+      padding: 2px;
+      border-radius: 999px;
+      background: #c8c4b7;
+      transition: background .18s ease;
+    }
+
+    .switch::after {
+      content: "";
+      display: block;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 1px 4px rgba(7,54,66,.25);
+      transition: transform .18s ease;
+    }
+
+    [aria-pressed="true"] .switch { background: var(--green); }
+    [aria-pressed="true"] .switch::after { transform: translateX(16px); }
+
+    .assignment-row {
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      gap: 9px;
+      align-items: center;
+      min-height: 39px;
+      border-bottom: 1px solid rgba(216,208,187,.7);
+      color: var(--base00);
+    }
+
+    .assignment-row:last-child { border-bottom: 0; }
+    .zone-badge {
+      display: grid;
+      place-items: center;
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      background: var(--base02);
+      color: white;
+      font-weight: 750;
+      font-size: .82rem;
+    }
+
+    .assignment-row strong { color: var(--base02); font-size: .92rem; }
+    .assignment-row .route-cost { font-variant-numeric: tabular-nums; font-weight: 750; }
+
+    .matrix-card { margin-top: 20px; overflow: hidden; }
+    .matrix-card .panel { padding-bottom: 8px; }
+
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { padding: 10px 13px; text-align: center; border-top: 1px solid #d8d0bb; }
+    th:first-child, td:first-child { text-align: left; }
+    thead th { color: var(--base02); background: rgba(238,232,213,.48); font-size: .86rem; }
+    tbody th { color: var(--base02); font-weight: 680; }
+    td.best { color: #14786f; font-weight: 800; background: rgba(42,161,152,.08); }
+
+    .model {
+      margin: 20px 0 0;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .model strong { color: var(--base02); white-space: nowrap; }
+    .formula { overflow-x: auto; color: var(--base00); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88rem; }
+
+    @media (max-width: 980px) {
+      header { align-items: flex-start; flex-direction: column; }
+      .workspace { grid-template-columns: 1fr; }
+      .side { grid-template-columns: 1fr 1fr; }
+      .side .status-wrap { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 650px) {
+      .page { padding-inline: 12px; }
+      .side { grid-template-columns: 1fr; }
+      .side .status-wrap { grid-column: auto; }
+      .map-heading { align-items: flex-start; flex-direction: column; }
+      .map-heading span { text-align: left; }
+      .canvas-note { position: static; max-width: none; margin: 0 14px 14px; }
+      .model { grid-template-columns: 1fr; gap: 6px; }
+      th, td { padding: 9px 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>Facility Location Explorer</h1>
+        <p class="lede">Open warehouse, then drag each grocery store onto an open warehouse. The integer-program cost updates with every decision.</p>
+      </div>
+      <div class="toolbar" aria-label="Plan controls">
+        <button class="button" id="clearButton" type="button">Clear plan</button>
+        <button class="button primary" id="optimalButton" type="button">Show optimal plan</button>
+      </div>
+    </header>
+
+    <section class="workspace" aria-label="Interactive facility location model">
+      <div class="card map-card">
+        <div class="map-heading">
+          <strong>Assignment map</strong>
+          <span>Drag a numbered grocery store to an open warehouse<br>or select a grocery store, then click a warehouse.</span>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="map" width="900" height="620" aria-label="Map with three warehouses and four draggable stores"></canvas>
+          <div class="canvas-note" id="canvasNote">All four stores must be assigned to open warehouses.</div>
+        </div>
+      </div>
+
+      <aside class="side">
+        <div class="status-wrap">
+          <div class="status" aria-live="polite">
+            <div><small>Current plan</small><strong id="planStatus">Feasible</strong></div>
+            <div class="total" id="totalCost">36</div>
+          </div>
+          <div class="cost-strip">
+            <div class="cost-box"><span>Opening cost</span><strong id="openingCost">24</strong></div>
+            <div class="cost-box"><span>Transport cost</span><strong id="transportCost">12</strong></div>
+          </div>
+        </div>
+
+        <section class="card panel">
+          <h2>Open warehouses</h2>
+          <div class="warehouse-list" id="warehouseControls"></div>
+        </section>
+
+        <section class="card panel">
+          <h2>Store assignments</h2>
+          <div class="assignment-list" id="assignmentList"></div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="card matrix-card" aria-labelledby="costHeading">
+      <div class="panel"><h2 id="costHeading">Cost data</h2></div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Grocery Store</th><th>Opening</th><th>Zone 1</th><th>Zone 2</th><th>Zone 3</th><th>Zone 4</th></tr></thead>
+          <tbody>
+            <tr><th>North</th><td>12</td><td class="best">2</td><td class="best">4</td><td>18</td><td>22</td></tr>
+            <tr><th>East</th><td>15</td><td>10</td><td>7</td><td>8</td><td>11</td></tr>
+            <tr><th>South</th><td>12</td><td>22</td><td>17</td><td class="best">4</td><td class="best">2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card model" aria-label="Integer programming formulation">
+      <strong>Integer-program structure</strong>
+      <div class="formula">min Σⱼ fⱼyⱼ + ΣᵢΣⱼ cᵢⱼxᵢⱼ &nbsp;·&nbsp; Σⱼxᵢⱼ = 1 &nbsp;·&nbsp; xᵢⱼ ≤ yⱼ &nbsp;·&nbsp; xᵢⱼ, yⱼ ∈ {0,1}</div>
+    </section>
+  </main>
+
+  <script>
+    const LOGICAL_WIDTH = 900;
+    const LOGICAL_HEIGHT = 620;
+    const colors = {
+      background: "#fdf6e3", grid: "#d9d1bc", text: "#586e75",
+      dark: "#073642", muted: "#93a1a1", north: "#268bd2",
+      central: "#b58900", south: "#2aa198", warning: "#dc322f"
+    };
+
+    const warehouses = {
+      N: { id: "N", name: "North", x: 185, y: 135, opening: 12, color: colors.north },
+      C: { id: "C", name: "East", x: 430, y: 310, opening: 15, color: colors.central },
+      S: { id: "S", name: "South", x: 300, y: 505, opening: 12, color: colors.south }
+    };
+
+    const zones = [
+      { id: 1, x: 730, y: 125, costs: { N: 2, C: 10, S: 22 } },
+      { id: 2, x: 735, y: 300, costs: { N: 4, C: 7, S: 17 } },
+      { id: 3, x: 625, y: 490, costs: { N: 18, C: 8, S: 4 } },
+      { id: 4, x: 115, y: 470, costs: { N: 22, C: 11, S: 2 } }
+    ];
+
+    const state = {
+      open: new Set(["N", "S"]),
+      assignments: { 1: "N", 2: "N", 3: "S", 4: "S" },
+      dragging: null,
+      pointer: null,
+      selected: null,
+      message: "Optimal plan: North serves zones 1–2; South serves zones 3–4."
+    };
+
+    const canvas = document.getElementById("map");
+    const ctx = canvas.getContext("2d");
+    const warehouseControls = document.getElementById("warehouseControls");
+    const assignmentList = document.getElementById("assignmentList");
+    const note = document.getElementById("canvasNote");
+
+    function roundedRectPath(x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cssHeight = rect.width * LOGICAL_HEIGHT / LOGICAL_WIDTH;
+      canvas.style.height = `${cssHeight}px`;
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(cssHeight * dpr);
+      ctx.setTransform((rect.width / LOGICAL_WIDTH) * dpr, 0, 0,
+                       (cssHeight / LOGICAL_HEIGHT) * dpr, 0, 0);
+      draw();
+    }
+
+    function drawBackground() {
+      ctx.fillStyle = colors.background;
+      ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+      ctx.strokeStyle = colors.grid;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 9]);
+      for (let x = 55; x < LOGICAL_WIDTH; x += 95) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, LOGICAL_HEIGHT); ctx.stroke();
+      }
+      for (let y = 55; y < LOGICAL_HEIGHT; y += 95) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(LOGICAL_WIDTH, y); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "rgba(238,232,213,.72)";
+      [[35,45,270,105],[520,32,335,90],[500,390,350,170],[30,250,220,120]].forEach(([x,y,w,h]) => {
+        roundedRectPath(x,y,w,h,18); ctx.fill();
+      });
+    }
+
+    function drawRoute(zone, warehouseId, provisional = false) {
+      const w = warehouses[warehouseId];
+      if (!w) return;
+      ctx.save();
+      ctx.strokeStyle = provisional ? colors.warning : w.color;
+      ctx.lineWidth = provisional ? 3 : 4;
+      ctx.globalAlpha = provisional ? .75 : .62;
+      if (provisional) ctx.setLineDash([9, 8]);
+      ctx.beginPath();
+      ctx.moveTo(zone.x, zone.y);
+      ctx.quadraticCurveTo((zone.x + w.x) / 2, Math.min(zone.y, w.y) - 24, w.x, w.y);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawWarehouse(w) {
+      const isOpen = state.open.has(w.id);
+      const isTarget = state.dragging && state.pointer && distance(state.pointer, w) < 74;
+      ctx.save();
+      ctx.translate(w.x, w.y);
+      ctx.shadowColor = isOpen ? "rgba(7,54,66,.22)" : "transparent";
+      ctx.shadowBlur = isOpen ? 15 : 0;
+      ctx.shadowOffsetY = 5;
+      roundedRectPath(-56, -43, 112, 86, 15);
+      ctx.fillStyle = isOpen ? w.color : "#e3ddca";
+      ctx.fill();
+      ctx.shadowColor = "transparent";
+      ctx.lineWidth = isTarget ? 5 : 2;
+      ctx.strokeStyle = isTarget ? colors.warning : (isOpen ? colors.dark : colors.muted);
+      ctx.stroke();
+
+      ctx.fillStyle = isOpen ? "white" : colors.muted;
+      ctx.fillRect(-28, -16, 56, 35);
+      ctx.beginPath();
+      ctx.moveTo(-35, -16); ctx.lineTo(0, -34); ctx.lineTo(35, -16); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = isOpen ? w.color : "#c8c3b4";
+      ctx.fillRect(-18, -7, 12, 26); ctx.fillRect(6, -7, 12, 26);
+
+      if (!isOpen) {
+        ctx.strokeStyle = colors.warning; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(-42,-31); ctx.lineTo(42,31); ctx.stroke();
+      }
+      ctx.restore();
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = colors.dark;
+      ctx.font = "700 17px Inter, system-ui, sans-serif";
+      ctx.fillText(w.name, w.x, w.y + 67);
+      ctx.fillStyle = colors.text;
+      ctx.font = "14px Inter, system-ui, sans-serif";
+      ctx.fillText(`${isOpen ? "OPEN" : "CLOSED"} · cost ${w.opening}`, w.x, w.y + 88);
+    }
+
+    function drawZone(zone) {
+      const isDragging = state.dragging === zone.id;
+      const isSelected = state.selected === zone.id;
+      ctx.save();
+      ctx.translate(zone.x, zone.y);
+      ctx.shadowColor = "rgba(7,54,66,.18)";
+      ctx.shadowBlur = isDragging ? 20 : 9;
+      ctx.shadowOffsetY = isDragging ? 8 : 3;
+      ctx.beginPath(); ctx.arc(0, 0, isDragging ? 34 : 30, 0, Math.PI * 2);
+      ctx.fillStyle = colors.background; ctx.fill();
+      ctx.shadowColor = "transparent";
+      ctx.lineWidth = isSelected || isDragging ? 5 : 3;
+      const assigned = state.assignments[zone.id];
+      ctx.strokeStyle = assigned ? warehouses[assigned].color : colors.warning;
+      ctx.stroke();
+      ctx.fillStyle = colors.dark;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.font = "800 20px Inter, system-ui, sans-serif";
+      ctx.fillText(zone.id, 0, 1);
+      ctx.restore();
+
+      ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = colors.text; ctx.font = "600 14px Inter, system-ui, sans-serif";
+      ctx.fillText(`Store ${zone.id}`, zone.x, zone.y + 49);
+    }
+
+    function draw() {
+      drawBackground();
+      zones.forEach(zone => {
+        const assignment = state.assignments[zone.id];
+        if (assignment && state.dragging !== zone.id) drawRoute(zone, assignment);
+      });
+      if (state.dragging && state.pointer) {
+        const zone = zones.find(z => z.id === state.dragging);
+        ctx.save();
+        ctx.strokeStyle = colors.warning; ctx.lineWidth = 3; ctx.setLineDash([9,8]);
+        ctx.beginPath(); ctx.moveTo(zone.x, zone.y); ctx.lineTo(state.pointer.x, state.pointer.y); ctx.stroke();
+        ctx.restore();
+      }
+      Object.values(warehouses).forEach(drawWarehouse);
+      zones.forEach(drawZone);
+    }
+
+    function distance(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+
+    function pointerPosition(event) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (event.clientX - rect.left) * LOGICAL_WIDTH / rect.width,
+        y: (event.clientY - rect.top) * LOGICAL_HEIGHT / rect.height
+      };
+    }
+
+    function targetWarehouse(point) {
+      return Object.values(warehouses).find(w => distance(point, w) < 74) || null;
+    }
+
+    function updateUI() {
+      warehouseControls.innerHTML = Object.values(warehouses).map(w => `
+        <button class="warehouse-toggle" type="button" data-warehouse="${w.id}" aria-pressed="${state.open.has(w.id)}">
+          <span class="dot" style="background:${w.color}"></span>
+          <span><span class="name">${w.name}</span><br><span class="cost">Opening cost ${w.opening}</span></span>
+          <span class="switch" aria-hidden="true"></span>
+        </button>`).join("");
+
+      assignmentList.innerHTML = zones.map(zone => {
+        const warehouseId = state.assignments[zone.id];
+        const warehouse = warehouseId ? warehouses[warehouseId] : null;
+        return `<div class="assignment-row">
+          <span class="zone-badge">${zone.id}</span>
+          <strong>${warehouse ? warehouse.name : "Unassigned"}</strong>
+          <span class="route-cost">${warehouse ? zone.costs[warehouseId] : "—"}</span>
+        </div>`;
+      }).join("");
+
+      const opening = [...state.open].reduce((sum, id) => sum + warehouses[id].opening, 0);
+      const transport = zones.reduce((sum, zone) => {
+        const w = state.assignments[zone.id];
+        return sum + (w ? zone.costs[w] : 0);
+      }, 0);
+      const unassigned = zones.filter(z => !state.assignments[z.id]).length;
+      const validAssignments = zones.every(z => !state.assignments[z.id] || state.open.has(state.assignments[z.id]));
+      const feasible = unassigned === 0 && validAssignments;
+
+      document.getElementById("openingCost").textContent = opening;
+      document.getElementById("transportCost").textContent = transport;
+      document.getElementById("totalCost").textContent = opening + transport;
+      document.getElementById("planStatus").textContent = feasible ? "Feasible" : `${unassigned} unassigned`;
+      note.textContent = state.message || (feasible
+        ? "Every store is assigned to an open warehouse."
+        : "All four store must be assigned to open warehouses.");
+      draw();
+    }
+
+    function toggleWarehouse(id) {
+      if (state.open.has(id)) {
+        state.open.delete(id);
+        zones.forEach(zone => { if (state.assignments[zone.id] === id) state.assignments[zone.id] = null; });
+        state.message = `${warehouses[id].name} closed; its assignments were cleared.`;
+      } else {
+        state.open.add(id);
+        state.message = `${warehouses[id].name} is now open.`;
+      }
+      updateUI();
+    }
+
+    warehouseControls.addEventListener("click", event => {
+      const button = event.target.closest("[data-warehouse]");
+      if (button) toggleWarehouse(button.dataset.warehouse);
+    });
+
+    canvas.addEventListener("pointerdown", event => {
+      const p = pointerPosition(event);
+      const zone = zones.find(z => distance(p, z) < 42);
+      if (zone) {
+        state.dragging = zone.id;
+        state.selected = zone.id;
+        state.pointer = p;
+        canvas.setPointerCapture(event.pointerId);
+        canvas.style.cursor = "grabbing";
+        draw();
+        return;
+      }
+      const warehouse = targetWarehouse(p);
+      if (warehouse && state.selected) {
+        if (state.open.has(warehouse.id)) {
+          state.assignments[state.selected] = warehouse.id;
+          state.message = `Store ${state.selected} assigned to ${warehouse.name} at cost ${zones[state.selected - 1].costs[warehouse.id]}.`;
+          state.selected = null;
+          updateUI();
+        } else {
+          state.message = `Open ${warehouse.name} before assigning a store to it.`;
+          updateUI();
+        }
+      } else if (warehouse) {
+        toggleWarehouse(warehouse.id);
+      }
+    });
+
+    canvas.addEventListener("pointermove", event => {
+      const p = pointerPosition(event);
+      state.pointer = p;
+      if (state.dragging) {
+        canvas.style.cursor = "grabbing";
+        draw();
+      } else {
+        const overZone = zones.some(z => distance(p, z) < 42);
+        const overWarehouse = Boolean(targetWarehouse(p));
+        canvas.style.cursor = overZone ? "grab" : (overWarehouse ? "pointer" : "default");
+      }
+    });
+
+    function endDrag(event) {
+      if (!state.dragging) return;
+      const p = pointerPosition(event);
+      const warehouse = targetWarehouse(p);
+      const zoneId = state.dragging;
+      if (warehouse && state.open.has(warehouse.id)) {
+        state.assignments[zoneId] = warehouse.id;
+        state.message = `Store ${zoneId} assigned to ${warehouse.name} at cost ${zones[zoneId - 1].costs[warehouse.id]}.`;
+        state.selected = null;
+      } else if (warehouse) {
+        state.message = `Open ${warehouse.name} before assigning a store to it.`;
+      } else {
+        state.message = `Store ${zoneId} was not reassigned. Drop it on an open warehouse.`;
+      }
+      state.dragging = null;
+      state.pointer = null;
+      canvas.style.cursor = "default";
+      updateUI();
+    }
+
+    canvas.addEventListener("pointerup", endDrag);
+    canvas.addEventListener("pointercancel", endDrag);
+
+    document.getElementById("clearButton").addEventListener("click", () => {
+      state.open.clear();
+      state.assignments = { 1: null, 2: null, 3: null, 4: null };
+      state.selected = null;
+      state.message = "Start by opening one or more warehouses.";
+      updateUI();
+    });
+
+    document.getElementById("optimalButton").addEventListener("click", () => {
+      state.open = new Set(["N", "S"]);
+      state.assignments = { 1: "N", 2: "N", 3: "S", 4: "S" };
+      state.selected = null;
+      state.message = "Optimal plan: total cost 36.";
+      updateUI();
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+    updateUI();
+    resizeCanvas();
+  </script>
+</body>
+</html>

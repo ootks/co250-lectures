@@ -216,149 +216,102 @@
               </table>
             </p>
             <p> Here, $x \in \Z$ means that $x$ should be an integer (meaning that $x$ is either a whole number or its negative).</p>
+            <p> More generally, we can let some of the variables be continuous, and other ones be discrete.</p>
+          </section>
+          <section>
+            <h4>Integer Linear Programming Examples </h4>
+            <div class=flexbox>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                  <tr> <td> such that </td> <td> $2x_1 + 3x_2 \le 3$ </td> </tr>
+                  <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
+                  <tr> <td> </td> <td> $x \in \Z$ </td> </tr>
+              </table>
+              <div>
+                  <img src="integer_program_feasible_region.svg" height=300px />
+              </div>
+            </div>
+            <p>There are three integral points satisfying the conditions: $(0,0)$, $(1,0)$, and $(0,1)$. Note that the linear program would have $(1.5,0)$ as a vertex. </p>
+          </section>
+          <section data-auto-animate>
+            <h4>Integer Linear Programming Examples </h4>
+            <h4> The Cafeteria Problem </h4>
+            <p> Note that the Cafeteria problem can be described as an integer program.
+              <table> 
+                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{i=1}^N v_i x_i$ </td> </tr>
+                  <tr> <td> such that </td> <td> $\sum_{i=1}^N c_i x_i \le B$ </td> </tr>
+                  <tr> <td> </td> <td> $x_i \in \{0,1\}$ </td> </tr>
+              </table>
+          </section>
+          <section data-auto-animate>
+            <h4>Integer Linear Programming Examples </h4>
+            <h4> The Cafeteria Problem </h4>
+            <p> Note that the Cafeteria problem can be described as an integer program.
+              <table> 
+                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{i=1}^N v_i x_i$ </td> </tr>
+                  <tr> <td> such that </td> <td> $\sum_{i=1}^N c_i x_i \le B$ </td> </tr>
+                  <tr style="color:blue;"> <td> </td> <td> $0 \le x_i \le 1$ </td> </tr>
+                  <tr style="color:blue;"> <td> </td> <td> $x_i \in \Z$ </td> </tr>
+              </table>
+              <p class=fragment>This problem is more often called the knapsack problem. </p>
           </section>
           <section>
             <h3>Integer Linear Programming Examples </h3>
-              <div class=flexbox>
-                  <div>
-                      <p> The following is an LP </p>
-                      <table> 
-                          <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_2$ </td> </tr>
-                          <tr> <td> such that </td> <td> $ x_1 + x_2 \le 1$ </td> </tr>
-                          <tr> <td> </td> <td> $x_1 - x_2 \ge 0$ </td></tr>
-                          <tr> <td> </td> <td> $x_2 \ge 0.$ </td></tr>
-                      </table>
-                  </div>
-                  <img src="lp_feasible_region.png" height=300px />
-              </div>
+            <h4> Warehouse Allocation</h4>
+            <p> Food Corp. is looking to decide where to build warehouses to service some grocery locations in the city of Brockton Bay. </p>
+            <p class=fragment> There are 3 locations in the Brockton Bay that are available to open a warehouse: North, South, and East. </p>
+            <p class=fragment> There are 4 stores in Brockton Bay that need to be serviced, numbered 1 through 4. </p>
+            <p class=fragment> Each store should be assigned to one warehouse. </p>
           </section>
           <section>
-              <h3> Diet Problem </h3>
-              <table class="nutrition-table">
-                  <caption>Nutrition per standard serving</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Nutrient</th>
-                      <th scope="col">Egg</th>
-                      <th scope="col">Banana</th>
-                      <th scope="col">Chicken Breast</th>
-                    </tr>
-                  </thead>
+            <h3>Integer Linear Programming Examples </h3>
+            <h4> Warehouse Allocation</h4>
+            <p> Costs of opening warehouses and transportation costs of going to different stores. </p>
+            <table> 
+                <tr> <td> Location </td> <td> Cost </td> <td> Store 1 </td> <td> Store 2 </td> <td> Store 3 </td> <td> Store 4 </td> </tr>
+                <tr> <td> North </td> <td> 12 </td> <td> 2 </td> <td> 4 </td> <td> 18 </td> <td> 22 </td> </tr>
+                <tr> <td> South </td> <td> 15 </td> <td> 10 </td> <td> 7 </td> <td> 8 </td> <td> 11 </td> </tr>
+                <tr> <td> East </td> <td> 12 </td> <td> 22 </td> <td> 17 </td> <td> 4 </td> <td> 2 </td> </tr>
+            </table>
+          </section>
 
-                  <tbody>
-                    <tr>
-                      <th scope="row">Calories</th>
-                      <td>72 kcal</td>
-                      <td>105 kcal</td>
-                      <td>128 kcal</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Protein</th>
-                      <td>6.3 g</td>
-                      <td>1.3 g</td>
-                      <td>26 g</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Carbohyrdates</th>
-                      <td>0.4 g</td>
-                      <td>27 g</td>
-                      <td>0 g</td>
-                    </tr>
-                  </tbody>
-                </table>
-                <p> We can format this data into a matrix $A$. </p>
-                <p> The daily recommended values can be formatted into a matrix $b$. </p>
-                <p class=fragment> A feasible point satisfies $Ax \ge b$. </p>
+          <section>
+              <embed src="FacilityLocationExplorer.html" style="width:1000px; height:700px;">
           </section>
           <section>
-            <h3>Linear Programming Review</h3>
-            <p> Given a linear program
+            <h3>Integer Linear Programming Examples </h3>
+            <h4> Warehouse Allocation</h4>
+            <p> What are the decision variables?</p>
+            <p class=fragment> Which warehouses do we open? Let $x_i$ be 1 if the warehouse is open and 0 otherwise. </p>
+            <p class=fragment> Which warehouses should be connected to which grocery stores? Let $y_{ij}$ be 1 if warehouse $i$ is connected to grocery store $j$. </p>
+          </section>
+          <section>
+            <h3>Integer Linear Programming Examples </h3>
+            <h4> Warehouse Allocation</h4>
+            <p> What are the constraints?</p>
+            <p class=fragment> If warehouse $i$ is closed, then no grocery stores connect to it.  </p>
+            <p class=fragment> For all $i$ and $j$, $y_{ij} \le x_i$.  </p>
+            <p class=fragment> Each grocery store should be connected to exactly one warehouse.</p>
+            <p class=fragment> For all $j$, $\sum_{i=1}^3y_{ij} = 1$.  </p>
+          </section>
+          <section>
+            <h3>Integer Linear Programming Examples </h3>
+            <h4> Warehouse Allocation</h4>
+            <p> What is the objective?</p>
+            <p class=fragment> Minimize $\sum_{i=1}^3 c_i x_i + \sum_{i=1}^3 \sum_{j=1}^4 d_{ij}y_{ij}$</p>
+          </section>
+          <section>
+            <h3>Integer Linear Programming Examples </h3>
+            <h4> Warehouse Allocation</h4>
+            <p> Assembling</p>
               <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal}x$ </td> </tr>
-                  <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{i=1}^3 c_i x_i + \sum_{i=1}^3 \sum_{j=1}^4 d_{ij}y_{ij}$ </td> </tr>
+                  <tr> <td> such that </td> <td> $y_{ij} \le x_i$ </td> </tr>
+                  <tr> <td> </td> <td> $\sum_{i=1}^3 y_{ij} = 1$ </td> </tr>
+                  <tr> <td> </td> <td> $0 \le x_i \le 1$ </td> </tr>
+                  <tr> <td> </td> <td> $0 \le y_{ij} \le 1$ </td> </tr>
+                  <tr> <td> </td> <td> $x_i, y_{ij} \in \Z$ </td> </tr>
               </table>
-            </p>
-            <p class=fragment> A <b>feasible point</b> is a point satisfying the constraints $Ax \le b$.  </p>
-            <p class=fragment> An <b>optimal point</b> is a feasible point $x$ so that for any other feasible $y$, $c^{\intercal}x \le c^{\intercal}y$.</p>
-          </section>
-          <section>
-            <h3>Linear Programming Review</h3>
-            <p> Given a linear program
-              <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
-                  <tr> <td> such that </td> <td> $x_1 \le 0$ </td> </tr>
-              </table>
-            </p>
-            <p class=fragment> This is feasible, for example $x_1 = 0$ is feasible. </p>
-            <p class=fragment> There is no optimal point because the constraints allow $x_1$ to be arbitrarily small. </p>
-          </section>
-          <section>
-            <h3>Linear Programming Review</h3>
-              <div class=flexbox>
-                  <div>
-                      <p> The following is an LP
-                      <table> 
-                          <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_2$ </td> </tr>
-                          <tr> <td> such that </td> <td>
-                                  $ x_1 + x_2 \le 1$
-         </td> </tr>
-                          <tr> <td> </td> <td>
-                                  $x_1 - x_2 \ge 0$
-                          </td>
-                          <tr> <td> </td> <td>
-                                  $x_2 \ge 0.$
-                          </td>
-                      </table>
-                      </p>
-                  </div>
-                  <img src="lp_feasible_region.png" height=300px />
-              </div>
-              <p> There is an optimal point for this problem at $(x_1, x_2) = (\frac{1}{2},\frac{1}{2})$. </p>
-          </section>
-          <section>
-            <h3>Linear Programming Review</h3>
-            <p> The variables in a linear program are continuous in nature.</p>
-            <p> Linear programs have a harder time capturing <b>discrete decisions</b>.</p>
-          </section>
-          <section>
-            <h3> More than Linear Programming </h3>
-            <h4> The Cafeteria Problem </h4>
-            <p> A cafeteria offers a number of different options for what to eat. </p>
-            <img src="cafeteria_foods" />
-            <p> For each food option, you can either take some or not, but <b>you can't take part of a food</b>. </p>
-          </section>
-          <section>
-            <h3>More than Linear Programming </h3>
-            <h4> The Cafeteria Problem </h4>
-            <p> Say that there are $N$ food options. </p>
-            <p> As in linear programming, we want to have a variable $x_i$ for each $i = 1,\dots,N$ that represents our decisions. </p>
-            <p class=fragment> But now, each $x_i$ has to be either <b>0 or 1</b>, and can't be a fraction. </p>
-          </section>
-          <section>
-            <h3>More than Linear Programming </h3>
-            <h4> The Cafeteria Problem </h4>
-            <p> Say that we have a budget of $B$ and food $i$ costs $c_i$. </p>
-            <p> Now, we have a constraint that says that 
-            \[
-                \sum_{i=1}^N c_i x_i \le B.
-            \]
-            </p>
-            <p class=fragment> To define an objective, we want to have a value $v_i$ for each food item $i$. Then our objective is
-            \[
-                \text{max }\sum_{i=1}^N v_i x_i.
-            \]
-            </p>
-          </section>
-          <section>
-            <h3>More than Linear Programming</h3>
-            <h4> The Cafeteria Problem </h4>
-            <p> Overall, our problem becomes 
-          <table> 
-              <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{i=1}^N v_i x_i$ </td> </tr>
-              <tr> <td> such that </td> <td> $\sum_{i=1}^N c_i x_i \le B$ </td> </tr>
-              <tr> <td> </td> <td> $x_i \in \{0,1\}$ </td> </tr>
-          </table>
-          <p> This will be our first example of an <b>integer linear program</b>. </p>
           </section>
       </section>
 
