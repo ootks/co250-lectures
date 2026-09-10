@@ -161,7 +161,7 @@
           <p> E.g. what is the rectangle with perimeter 1 that has the largest area? </p>
           <table class=fragment> 
               <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $ab$ </td> </tr>
-              <tr> <td> such that </td> <td> $a+b = 1, a,b \ge 0.$ </td> </tr>
+              <tr> <td> such that </td> <td> $2(a+b) = 1, a,b \ge 0.$ </td> </tr>
           </table>
         </section>
       </section>
@@ -788,13 +788,13 @@
             </p>
             <p> 
             \[
-                \forall i\le 3, j \le 2, t \le T,\;n_{ij} q_{jt} \le p_{it} + s_{it}
+                \sum_{j=1}^2n_{ij} q_{jt} \le p_{it} + s_{it} \text{ for }i=1,2,3;t=1,\dots,T.
             \]
             \[
-                \forall j \le 2, t \le T,\;q_{it} \le D_{it}.
+                q_{it} \le D_{it}\text{ for }j=1,2;T=1,\dots,T.
             \]
             \[
-                \forall i\le 3, t \le T-1,\;s_{i+1\;t} \le p_{it} + s_{it} - n_{ij} q_{jt}.
+                s_{i\;t+1} \le p_{it} + s_{it} - \sum_{j=1}^2 n_{ij} q_{jt}\text{ for }i=1,2,3;T=1,\dots,T.
             \]
             </p>
           </section>
@@ -841,14 +841,11 @@
             
           <table> 
               <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{t=1}^T \left(\sum_{i=1}^2v_{it} q_{it} - \sum_{i=1}^3 (c_{it} p_{it} + r_{it} s_{it})  \right)$ </td> <td>(Profit)</td></tr>
-              <tr> <td> such that </td> <td> $\forall i\le 3, j \le 2, t \le T,\;n_{ij} q_{jt} \le p_{it} + s_{it}$ </td><td>(Ingredients required) </td> </tr>
-              <tr> <td> </td> <td> $\forall j \le 2, t \le T,\;q_{it} \le D_{it}.$ </td><td> (Demand constraint)</td> </tr>
-              <tr> <td> </td> <td> $\forall i\le 3, t \le T-1,\;s_{i+1\;t} \le p_{it} + s_{it} - n_{ij} q_{jt}.$ </td><td>(Storage conservation)</td> </tr>
+              <tr> <td> such that </td> <td> $\\sum_{j=1}^2n_{ij} q_{jt} \le p_{it} + s_{it} \text{ for }i=1,2,3;t=1,\dots,T$ </td><td>(Ingredients required) </td> </tr>
+              <tr> <td> </td> <td> $q_{it} \le D_{it}\text{ for }j=1,2;T=1,\dots,T$ </td><td> (Demand constraint)</td> </tr>
+              <tr> <td> </td> <td> $s_{i\;t+1} \le p_{it} + s_{it} - \sum_{j=1}^2 n_{ij} q_{jt}\text{ for }i=1,2,3;T=1,\dots,T$ </td><td>(Storage conservation)</td> </tr>
               <tr> <td> </td> <td> $\forall i\le 3, j \le 2, t \le T,p_{it}, q_{jt}, s_{it} \ge 0.$ </td><td>(Nonnegativity)</td> </tr>
           </table>
-            \[
-                
-            \]
           </section>
 
           <section data-auto-animate>
