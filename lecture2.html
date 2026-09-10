@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="solarized.css" id="theme">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>
+            Lecture 2
+        </h4>
+        <br>
+        <p class=centered>
+          Kevin Shu
+        </p>
+        <aside class="notes">
+          Add private speaker notes here. Press S during the presentation to open speaker view.
+        </aside>
+      </section>
+
+      <section>
+        <h2>Lecture Outline</h2>
+        <ul>
+          <li>Linear programming review</li>
+          <li>Integer (Linear) Programs</li>
+        </ul>
+      </section>
+
+      <section>
+          <section>
+            <h1>Linear Programming Review</h1>
+          </section>
+          <section>
+            <h3>Linear Programming Review</h3>
+            <p> A linear program is an optimization problem of the form
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal}x$ </td> </tr>
+                  <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+              </table>
+            </p>
+            <p> $A$ is an $m \times n$ matrix, $b \in \R^m$, $c,x \in \R^n$.</p>
+            <p> The min can also be a max, and we can mix $\le$ and $\ge$ in the constraints. These changes can be made by flipping signs.</p>
+          </section>
+          <section>
+            <h3>Linear Programming Review</h3>
+              <div class=flexbox>
+                  <div>
+                      <p> The following is an LP </p>
+                      <table> 
+                          <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_2$ </td> </tr>
+                          <tr> <td> such that </td> <td> $ x_1 + x_2 \le 1$ </td> </tr>
+                          <tr> <td> </td> <td> $x_1 - x_2 \ge 0$ </td></tr>
+                          <tr> <td> </td> <td> $x_2 \ge 0.$ </td></tr>
+                      </table>
+                  </div>
+                  <img src="lp_feasible_region.png" height=300px />
+              </div>
+          </section>
+          <section>
+              <h3> Diet Problem </h3>
+              <table class="nutrition-table">
+                  <caption>Nutrition per standard serving</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Nutrient</th>
+                      <th scope="col">Egg</th>
+                      <th scope="col">Banana</th>
+                      <th scope="col">Chicken Breast</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <th scope="row">Calories</th>
+                      <td>72 kcal</td>
+                      <td>105 kcal</td>
+                      <td>128 kcal</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Protein</th>
+                      <td>6.3 g</td>
+                      <td>1.3 g</td>
+                      <td>26 g</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Carbohyrdates</th>
+                      <td>0.4 g</td>
+                      <td>27 g</td>
+                      <td>0 g</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p> We can format this data into a matrix $A$. </p>
+                <p> The daily recommended values can be formatted into a matrix $b$. </p>
+                <p class=fragment> A feasible point satisfies $Ax \ge b$. </p>
+          </section>
+          <section>
+            <h3>Linear Programming Review</h3>
+            <p> Given a linear program
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal}x$ </td> </tr>
+                  <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+              </table>
+            </p>
+            <p class=fragment> A <b>feasible point</b> is a point satisfying the constraints $Ax \le b$.  </p>
+            <p class=fragment> An <b>optimal point</b> is a feasible point $x$ so that for any other feasible $y$, $c^{\intercal}x \le c^{\intercal}y$.</p>
+          </section>
+          <section>
+            <h3>Linear Programming Review</h3>
+            <p> Given a linear program
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                  <tr> <td> such that </td> <td> $x_1 \le 0$ </td> </tr>
+              </table>
+            </p>
+            <p class=fragment> This is feasible, for example $x_1 = 0$ is feasible. </p>
+            <p class=fragment> There is no optimal point because the constraints allow $x_1$ to be arbitrarily small. </p>
+          </section>
+          <section>
+            <h3>Linear Programming Review</h3>
+              <div class=flexbox>
+                  <div>
+                      <p> The following is an LP
+                      <table> 
+                          <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_2$ </td> </tr>
+                          <tr> <td> such that </td> <td>
+                                  $ x_1 + x_2 \le 1$
+         </td> </tr>
+                          <tr> <td> </td> <td>
+                                  $x_1 - x_2 \ge 0$
+                          </td>
+                          <tr> <td> </td> <td>
+                                  $x_2 \ge 0.$
+                          </td>
+                      </table>
+                      </p>
+                  </div>
+                  <img src="lp_feasible_region.png" height=300px />
+              </div>
+              <p> There is an optimal point for this problem at $(x_1, x_2) = (\frac{1}{2},\frac{1}{2})$. </p>
+          </section>
+          <section>
+            <h3>Linear Programming Review</h3>
+            <p> The variables in a linear program are continuous in nature.</p>
+            <p> Linear programs have a harder time capturing <b>discrete decisions</b>.</p>
+          </section>
+          <section>
+            <h3> More than Linear Programming </h3>
+            <h4> The Cafeteria Problem </h4>
+            <p> A cafeteria offers a number of different options for what to eat. </p>
+            <img src="cafeteria_foods" />
+            <p> For each food option, you can either take some or not, but <b>you can't take part of a food</b>. </p>
+          </section>
+          <section>
+            <h3>More than Linear Programming </h3>
+            <h4> The Cafeteria Problem </h4>
+            <p> Say that there are $N$ food options. </p>
+            <p> As in linear programming, we want to have a variable $x_i$ for each $i = 1,\dots,N$ that represents our decisions. </p>
+            <p class=fragment> But now, each $x_i$ has to be either <b>0 or 1</b>, and can't be a fraction. </p>
+          </section>
+          <section>
+            <h3>More than Linear Programming </h3>
+            <h4> The Cafeteria Problem </h4>
+            <p> Say that we have a budget of $B$ and food $i$ costs $c_i$. </p>
+            <p> Now, we have a constraint that says that 
+            \[
+                \sum_{i=1}^N c_i x_i \le B.
+            \]
+            </p>
+            <p class=fragment> To define an objective, we want to have a value $v_i$ for each food item $i$. Then our objective is
+            \[
+                \text{max }\sum_{i=1}^N v_i x_i.
+            \]
+            </p>
+          </section>
+          <section>
+            <h3>More than Linear Programming</h3>
+            <h4> The Cafeteria Problem </h4>
+            <p> Overall, our problem becomes 
+          <table> 
+              <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{i=1}^N v_i x_i$ </td> </tr>
+              <tr> <td> such that </td> <td> $\sum_{i=1}^N c_i x_i \le B$ </td> </tr>
+              <tr> <td> </td> <td> $x_i \in \{0,1\}$ </td> </tr>
+          </table>
+          <p> This will be our first example of an <b>integer linear program</b>. </p>
+          </section>
+      </section>
+
+      <section>
+          <section>
+            <h1>Integer Linear Programming</h1>
+          </section>
+          <section>
+            <h3>Integer Linear Programming</h3>
+            <p>
+            A linear program is an optimization problem of the form
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal}x$ </td> </tr>
+                  <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+                  <tr> <td> </td> <td> $x \in \Z$ </td> </tr>
+              </table>
+            </p>
+            <p> Here, $x \in \Z$ means that $x$ should be an integer (meaning that $x$ is either a whole number or its negative).</p>
+          </section>
+          <section>
+            <h3>Integer Linear Programming Examples </h3>
+              <div class=flexbox>
+                  <div>
+                      <p> The following is an LP </p>
+                      <table> 
+                          <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_2$ </td> </tr>
+                          <tr> <td> such that </td> <td> $ x_1 + x_2 \le 1$ </td> </tr>
+                          <tr> <td> </td> <td> $x_1 - x_2 \ge 0$ </td></tr>
+                          <tr> <td> </td> <td> $x_2 \ge 0.$ </td></tr>
+                      </table>
+                  </div>
+                  <img src="lp_feasible_region.png" height=300px />
+              </div>
+          </section>
+          <section>
+              <h3> Diet Problem </h3>
+              <table class="nutrition-table">
+                  <caption>Nutrition per standard serving</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Nutrient</th>
+                      <th scope="col">Egg</th>
+                      <th scope="col">Banana</th>
+                      <th scope="col">Chicken Breast</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <th scope="row">Calories</th>
+                      <td>72 kcal</td>
+                      <td>105 kcal</td>
+                      <td>128 kcal</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Protein</th>
+                      <td>6.3 g</td>
+                      <td>1.3 g</td>
+                      <td>26 g</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Carbohyrdates</th>
+                      <td>0.4 g</td>
+                      <td>27 g</td>
+                      <td>0 g</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p> We can format this data into a matrix $A$. </p>
+                <p> The daily recommended values can be formatted into a matrix $b$. </p>
+                <p class=fragment> A feasible point satisfies $Ax \ge b$. </p>
+          </section>
+          <section>
+            <h3>Linear Programming Review</h3>
+            <p> Given a linear program
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal}x$ </td> </tr>
+                  <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+              </table>
+            </p>
+            <p class=fragment> A <b>feasible point</b> is a point satisfying the constraints $Ax \le b$.  </p>
+            <p class=fragment> An <b>optimal point</b> is a feasible point $x$ so that for any other feasible $y$, $c^{\intercal}x \le c^{\intercal}y$.</p>
+          </section>
+          <section>
+            <h3>Linear Programming Review</h3>
+            <p> Given a linear program
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                  <tr> <td> such that </td> <td> $x_1 \le 0$ </td> </tr>
+              </table>
+            </p>
+            <p class=fragment> This is feasible, for example $x_1 = 0$ is feasible. </p>
+            <p class=fragment> There is no optimal point because the constraints allow $x_1$ to be arbitrarily small. </p>
+          </section>
+          <section>
+            <h3>Linear Programming Review</h3>
+              <div class=flexbox>
+                  <div>
+                      <p> The following is an LP
+                      <table> 
+                          <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_2$ </td> </tr>
+                          <tr> <td> such that </td> <td>
+                                  $ x_1 + x_2 \le 1$
+         </td> </tr>
+                          <tr> <td> </td> <td>
+                                  $x_1 - x_2 \ge 0$
+                          </td>
+                          <tr> <td> </td> <td>
+                                  $x_2 \ge 0.$
+                          </td>
+                      </table>
+                      </p>
+                  </div>
+                  <img src="lp_feasible_region.png" height=300px />
+              </div>
+              <p> There is an optimal point for this problem at $(x_1, x_2) = (\frac{1}{2},\frac{1}{2})$. </p>
+          </section>
+          <section>
+            <h3>Linear Programming Review</h3>
+            <p> The variables in a linear program are continuous in nature.</p>
+            <p> Linear programs have a harder time capturing <b>discrete decisions</b>.</p>
+          </section>
+          <section>
+            <h3> More than Linear Programming </h3>
+            <h4> The Cafeteria Problem </h4>
+            <p> A cafeteria offers a number of different options for what to eat. </p>
+            <img src="cafeteria_foods" />
+            <p> For each food option, you can either take some or not, but <b>you can't take part of a food</b>. </p>
+          </section>
+          <section>
+            <h3>More than Linear Programming </h3>
+            <h4> The Cafeteria Problem </h4>
+            <p> Say that there are $N$ food options. </p>
+            <p> As in linear programming, we want to have a variable $x_i$ for each $i = 1,\dots,N$ that represents our decisions. </p>
+            <p class=fragment> But now, each $x_i$ has to be either <b>0 or 1</b>, and can't be a fraction. </p>
+          </section>
+          <section>
+            <h3>More than Linear Programming </h3>
+            <h4> The Cafeteria Problem </h4>
+            <p> Say that we have a budget of $B$ and food $i$ costs $c_i$. </p>
+            <p> Now, we have a constraint that says that 
+            \[
+                \sum_{i=1}^N c_i x_i \le B.
+            \]
+            </p>
+            <p class=fragment> To define an objective, we want to have a value $v_i$ for each food item $i$. Then our objective is
+            \[
+                \text{max }\sum_{i=1}^N v_i x_i.
+            \]
+            </p>
+          </section>
+          <section>
+            <h3>More than Linear Programming</h3>
+            <h4> The Cafeteria Problem </h4>
+            <p> Overall, our problem becomes 
+          <table> 
+              <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{i=1}^N v_i x_i$ </td> </tr>
+              <tr> <td> such that </td> <td> $\sum_{i=1}^N c_i x_i \le B$ </td> </tr>
+              <tr> <td> </td> <td> $x_i \in \{0,1\}$ </td> </tr>
+          </table>
+          <p> This will be our first example of an <b>integer linear program</b>. </p>
+          </section>
+      </section>
+
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

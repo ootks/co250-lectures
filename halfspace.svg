@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+  <title id="title">A halfspace in three-dimensional space</title>
+  <desc id="desc">A translucent blue region lies on one side of a purple boundary plane. A normal vector labeled a points out of the halfspace.</desc>
+  <defs>
+    <linearGradient id="halfspace-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#60A5FA" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#2563EB" stop-opacity="0.34"/>
+    </linearGradient>
+    <marker id="axis-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="18" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="normal-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="32" markerHeight="32" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#DC2626"/>
+    </marker>
+  </defs>
+
+  <text x="70" y="78" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="700" fill="#172033">A halfspace</text>
+  <text x="70" y="118" font-family="Inter, Arial, sans-serif" font-size="24" fill="#526178">All points on one side of a boundary plane</text>
+
+  <!-- Coordinate axes -->
+  <path d="M600 410 L1040 595" fill="none" stroke="#CBD5E1" stroke-width="4" marker-end="url(#axis-arrow)"/>
+  <path d="M600 410 L160 595" fill="none" stroke="#CBD5E1" stroke-width="4" marker-end="url(#axis-arrow)"/>
+  <path d="M600 410 L600 92" fill="none" stroke="#CBD5E1" stroke-width="4" marker-end="url(#axis-arrow)"/>
+  <text x="1050" y="617" font-family="Inter, Arial, sans-serif" font-size="25" font-style="italic" fill="#526178">x₁</text>
+  <text x="122" y="620" font-family="Inter, Arial, sans-serif" font-size="25" font-style="italic" fill="#526178">x₂</text>
+  <text x="617" y="98" font-family="Inter, Arial, sans-serif" font-size="25" font-style="italic" fill="#526178">x₃</text>
+
+  <!-- Finite window representing the halfspace below the boundary -->
+  <polygon points="190,365 660,205 1020,365 550,525" fill="url(#halfspace-fill)" stroke="#7C3AED" stroke-width="5" stroke-linejoin="round"/>
+  <polygon points="190,365 550,525 550,640 190,480" fill="#2563EB" fill-opacity="0.16" stroke="#60A5FA" stroke-width="3"/>
+  <polygon points="550,525 1020,365 1020,480 550,640" fill="#1D4ED8" fill-opacity="0.20" stroke="#60A5FA" stroke-width="3"/>
+  <polygon points="190,480 550,640 1020,480 660,320" fill="#3B82F6" fill-opacity="0.10" stroke="#60A5FA" stroke-width="3" stroke-dasharray="10 8"/>
+
+  <!-- Boundary plane and outward normal -->
+  <path d="M600 410 L600 172" fill="none" stroke="#DC2626" stroke-width="9" stroke-linecap="round" marker-end="url(#normal-arrow)"/>
+  <circle cx="600" cy="410" r="11" fill="#172033"/>
+  <text x="620" y="438" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600" fill="#172033">x₀</text>
+  <text x="624" y="205" font-family="Inter, Arial, sans-serif" font-size="29" font-weight="700" font-style="italic" fill="#B91C1C">a</text>
+
+  <rect x="347" y="666" width="506" height="58" rx="18" fill="#EFF6FF" stroke="#93C5FD" stroke-width="2"/>
+  <text x="600" y="704" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="600" fill="#1D4ED8">H = {x ∈ ℝ³ : aᵀx ≤ b}</text>
+</svg>

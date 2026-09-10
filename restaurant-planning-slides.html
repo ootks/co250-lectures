@@ -1,0 +1,226 @@
+<!-- Paste this outer <section> directly inside <div class="slides">. -->
+<section>
+
+  <section>
+    <h2>Multi-Day Restaurant Planning</h2>
+    <blockquote>
+      When should a restaurant buy ingredients if prices change, storage costs money, and food spoils?
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Two dishes share three ingredients</h2>
+    <p>Suppose the restaurant produces chicken bowls and vegetable bowls.</p>
+    <table class="nutrition-table">
+      <caption>Ingredient use per serving</caption>
+      <thead>
+        <tr>
+          <th scope="col">Ingredient</th>
+          <th scope="col">Chicken bowl</th>
+          <th scope="col">Vegetable bowl</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Chicken</th><td>0.20 kg</td><td>0 kg</td></tr>
+        <tr><th scope="row">Rice</th><td>0.15 kg</td><td>0.18 kg</td></tr>
+        <tr><th scope="row">Vegetables</th><td>0.10 kg</td><td>0.20 kg</td></tr>
+      </tbody>
+    </table>
+    <p class="fragment">
+      If \(B\) is this ingredient-use matrix and \(q_t\) is the vector of dishes produced on day \(t\), then daily ingredient use is \(Bq_t\).
+    </p>
+  </section>
+
+  <section>
+    <h2>Demand changes from day to day</h2>
+    <table class="nutrition-table">
+      <caption>Required servings</caption>
+      <thead>
+        <tr>
+          <th scope="col">Day</th>
+          <th scope="col">Chicken bowls</th>
+          <th scope="col">Vegetable bowls</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">1</th><td>40</td><td>25</td></tr>
+        <tr><th scope="row">2</th><td>55</td><td>20</td></tr>
+        <tr><th scope="row">3</th><td>45</td><td>35</td></tr>
+        <tr><th scope="row">4</th><td>60</td><td>30</td></tr>
+      </tbody>
+    </table>
+    <p class="fragment">For example, day 1 requires</p>
+    <p class="fragment centered">
+      \[
+      8\text{ kg chicken},\qquad 10.5\text{ kg rice},\qquad 9\text{ kg vegetables}.
+      \]
+    </p>
+  </section>
+
+  <section data-auto-animate>
+    <h2>Buying early may avoid a higher future price</h2>
+    <table class="nutrition-table">
+      <caption>Purchase prices in dollars per kilogram</caption>
+      <thead>
+        <tr>
+          <th scope="col">Ingredient</th>
+          <th scope="col">Day 1</th>
+          <th scope="col">Day 2</th>
+          <th scope="col">Day 3</th>
+          <th scope="col">Day 4</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Chicken</th><td>$10.00</td><td>$14.00</td><td>$13.00</td><td>$16.00</td></tr>
+        <tr><th scope="row">Rice</th><td>$2.40</td><td>$2.60</td><td>$2.30</td><td>$2.80</td></tr>
+        <tr><th scope="row">Vegetables</th><td>$4.00</td><td>$5.00</td><td>$3.50</td><td>$5.50</td></tr>
+      </tbody>
+    </table>
+    <p class="fragment">But advance purchases incur storage costs and may partially spoil.</p>
+  </section>
+
+  <section data-auto-animate>
+    <h2>Different ingredients survive storage differently</h2>
+    <table class="nutrition-table">
+      <thead>
+        <tr>
+          <th scope="col">Ingredient</th>
+          <th scope="col">Storage cost</th>
+          <th scope="col">Fraction surviving overnight</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Chicken</th><td>$0.30/kg</td><td>0.90</td></tr>
+        <tr><th scope="row">Rice</th><td>$0.05/kg</td><td>1.00</td></tr>
+        <tr><th scope="row">Vegetables</th><td>$0.20/kg</td><td>0.80</td></tr>
+      </tbody>
+    </table>
+    <p class="fragment">
+      If 10 kg of vegetables remain after day \(t\), only \(0.8(10)=8\) kg are usable on day \(t+1\).
+    </p>
+  </section>
+
+  <section>
+    <h2>The decisions link production and inventory</h2>
+    <div class="boxed blue">
+      \[
+      \begin{aligned}
+      p_{it}&=\text{kilograms of ingredient \(i\) purchased on day \(t\)},\\
+      q_{jt}&=\text{servings of dish \(j\) produced on day \(t\)},\\
+      s_{it}&=\text{usable inventory of ingredient \(i\) after day \(t\)}.
+      \end{aligned}
+      \]
+    </div>
+    <p class="fragment">We take the initial inventory to be \(s_{i0}=0\).</p>
+  </section>
+
+  <section>
+    <h2>Inventory must balance every day</h2>
+    <p>Let \(\alpha_i\) be the fraction of ingredient \(i\) that survives overnight.</p>
+    <div class="boxed blue">
+      \[
+      \underbrace{\alpha_i s_{i,t-1}}_{\text{inventory that survives}}
+      +\underbrace{p_{it}}_{\text{new purchases}}
+      =\underbrace{\sum_j B_{ij}q_{jt}}_{\text{ingredient used}}
+      +\underbrace{s_{it}}_{\text{inventory stored}}.
+      \]
+    </div>
+    <p class="fragment">This is a linear equality in the decision variables.</p>
+  </section>
+
+  <section>
+    <h2>The objective prices purchasing and storage</h2>
+    <p>Let \(c_{it}\) be the purchase price and \(h_i\) the daily storage cost.</p>
+    \[
+    \min_{p,q,s}\quad
+    \sum_{t=1}^{T}\sum_i c_{it}p_{it}
+    +\sum_{t=1}^{T-1}\sum_i h_i s_{it}.
+    \]
+    <ul>
+      <li class="fragment">The first term is the total purchase cost.</li>
+      <li class="fragment">The second term charges for inventory carried to another day.</li>
+      <li class="fragment">Spoilage appears through the factors \(\alpha_i\) in the balance equations.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>The complete model is a linear program</h2>
+    <p>Let \(D_\alpha=\operatorname{diag}(\alpha_1,\ldots,\alpha_m)\).</p>
+    \[
+    \begin{aligned}
+    \min_{p,q,s}\quad &\sum_{t=1}^{T}c_t^{\intercal}p_t
+      +\sum_{t=1}^{T-1}h^{\intercal}s_t\\[2mm]
+    \text{such that}\quad
+      &D_\alpha s_{t-1}+p_t=Bq_t+s_t,\qquad &&t=1,\ldots,T,\\
+      &q_t\ge d_t,\qquad &&t=1,\ldots,T,\\
+      &p_t,q_t,s_t\ge0,\qquad &&t=1,\ldots,T.
+    \end{aligned}
+    \]
+    <p class="fragment">With positive costs, the restaurant produces exactly the required demand.</p>
+  </section>
+
+  <section data-auto-animate>
+    <h2>The model purchases cheap ingredients in advance</h2>
+    <table class="nutrition-table">
+      <caption>Optimal purchases in kilograms</caption>
+      <thead>
+        <tr>
+          <th scope="col">Ingredient</th>
+          <th scope="col">Day 1</th>
+          <th scope="col">Day 2</th>
+          <th scope="col">Day 3</th>
+          <th scope="col">Day 4</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Chicken</th><td>20.222</td><td>0</td><td>22.333</td><td>0</td></tr>
+        <tr><th scope="row">Rice</th><td>22.350</td><td>0</td><td>27.450</td><td>0</td></tr>
+        <tr><th scope="row">Vegetables</th><td>9.000</td><td>9.500</td><td>26.500</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p class="fragment">No purchases are needed on day 4 because day 3 prices justify carrying inventory overnight.</p>
+  </section>
+
+  <section data-auto-animate>
+    <h2>Stored inventory covers the next day's demand</h2>
+    <table class="nutrition-table">
+      <caption>Optimal end-of-day inventory in kilograms</caption>
+      <thead>
+        <tr>
+          <th scope="col">Ingredient</th>
+          <th scope="col">Day 1</th>
+          <th scope="col">Day 2</th>
+          <th scope="col">Day 3</th>
+          <th scope="col">Day 4</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Chicken</th><td>12.222</td><td>0</td><td>13.333</td><td>0</td></tr>
+        <tr><th scope="row">Rice</th><td>11.850</td><td>0</td><td>14.400</td><td>0</td></tr>
+        <tr><th scope="row">Vegetables</th><td>0</td><td>0</td><td>15.000</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p class="fragment centered">
+      \[
+      0.9(13.333)=12\text{ kg of chicken for day 4}.
+      \]
+    </p>
+  </section>
+
+  <section>
+    <h2>Demand can instead be a sales limit</h2>
+    <p>If \(d_{jt}\) is the maximum number of dishes that can be sold, impose</p>
+    \[
+    0\le q_{jt}\le d_{jt}.
+    \]
+    <p>Let \(r_{jt}\) be the revenue from selling dish \(j\) on day \(t\). The restaurant can then maximize profit:</p>
+    \[
+    \max_{p,q,s}\quad
+    \sum_{t,j}r_{jt}q_{jt}
+    -\sum_{t,i}c_{it}p_{it}
+    -\sum_{t<T,i}h_i s_{it}.
+    \]
+    <p class="fragment">Now the model decides both what to purchase and which dishes are profitable to produce.</p>
+  </section>
+
+</section>

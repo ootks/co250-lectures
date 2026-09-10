@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="650" viewBox="0 0 1400 650" role="img" aria-labelledby="title desc">
+  <title id="title">From a real-world question through a mathematical model</title>
+  <desc id="desc">A real-world question sits within a larger real-world boundary. A thick arrow leads into a second shared boundary containing inputs above a mathematical model and output below it.</desc>
+
+  <defs>
+    <linearGradient id="world-area-fill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F4F8FD"/>
+      <stop offset="1" stop-color="#E8F1FA"/>
+    </linearGradient>
+    <linearGradient id="system-area-fill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FCFBFF"/>
+      <stop offset="1" stop-color="#F5F1FD"/>
+    </linearGradient>
+    <linearGradient id="question-fill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#EAF3FF"/>
+      <stop offset="1" stop-color="#D9E9FF"/>
+    </linearGradient>
+    <linearGradient id="model-fill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F0EAFE"/>
+      <stop offset="1" stop-color="#E4D9FC"/>
+    </linearGradient>
+    <linearGradient id="input-fill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#EAF8F1"/>
+      <stop offset="1" stop-color="#D7F0E4"/>
+    </linearGradient>
+    <linearGradient id="output-fill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF5DD"/>
+      <stop offset="1" stop-color="#FBE9B9"/>
+    </linearGradient>
+
+    <marker id="arrow-main" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+      <path d="M 1 1 L 11 6 L 1 11 Z" fill="#3569A8"/>
+    </marker>
+    <marker id="arrow-input" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M 1 1 L 11 6 L 1 11 Z" fill="#2F8060"/>
+    </marker>
+    <marker id="arrow-output" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M 1 1 L 11 6 L 1 11 Z" fill="#B57913"/>
+    </marker>
+  </defs>
+
+  <!-- Real-world region and question -->
+  <rect x="30" y="100" width="380" height="450" rx="42" fill="url(#world-area-fill)" stroke="#7D9DBF" stroke-width="5" stroke-dasharray="13 10"/>
+  <rect x="70" y="245" width="300" height="160" rx="30" fill="url(#question-fill)" stroke="#4B7FBC" stroke-width="4"/>
+  <text x="220" y="334" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="700" fill="#172033">Real-world decision</text>
+
+  <!-- Shared input-model-output region -->
+  <rect x="640" y="40" width="700" height="570" rx="42" fill="url(#system-area-fill)" stroke="#8C74C9" stroke-width="5"/>
+
+  <!-- Heavier transition into the mathematical model -->
+  <path d="M 440 325 C 385 325, 485 325, 605 325" fill="none" stroke="#3569A8" stroke-width="12" stroke-linecap="round" marker-end="url(#arrow-main)"/>
+
+  <!-- Inputs -->
+  <rect x="840" y="75" width="300" height="120" rx="28" fill="url(#input-fill)" stroke="#3D8E6D" stroke-width="4"/>
+  <text x="990" y="147" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="31" font-weight="700" fill="#172033">Decisions</text>
+  <path d="M 990 210 L 990 242" fill="none" stroke="#2F8060" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-input)"/>
+
+  <!-- Mathematical model -->
+  <rect x="790" y="260" width="400" height="130" rx="30" fill="url(#model-fill)" stroke="#7253B6" stroke-width="4"/>
+  <text x="990" y="337" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="31" font-weight="700" fill="#172033">Mathematical model</text>
+  <path d="M 990 405 L 990 437" fill="none" stroke="#B57913" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-output)"/>
+
+  <!-- Output -->
+  <rect x="850" y="455" width="280" height="120" rx="28" fill="url(#output-fill)" stroke="#C48A20" stroke-width="4"/>
+  <text x="990" y="527" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="31" font-weight="700" fill="#172033">Output</text>
+</svg>

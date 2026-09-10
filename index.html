@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Algebraic Methods in Optimization</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+		<link rel="stylesheet" href="solarized.css" id="theme">
+        <style>
+            p {font-size: 30px}
+            li {font-size: 30px}
+        </style>
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+
+				<section>
+					<h2>Algebraic Methods in Optimization</h2>
+					<p>Kevin Shu</p>
+				</section>
+
+
+
+			</div>
+		</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+		<script>
+			Reveal.initialize({
+				history: true,
+				transition: 'linear',
+
+				mathjax2: {
+					config: 'TeX-AMS_HTML-full',
+					TeX: {
+						Macros: {
+							R: '\\mathbb{R}',
+							Z: '\\mathbb{Z}',
+							set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+							SO: '\\text{SO}',
+							tr: '\\text{tr}',
+						}
+					}
+				},
+
+				// There are three typesetters available
+				// RevealMath.MathJax2 (default)
+				// RevealMath.MathJax3
+				// RevealMath.KaTeX
+				//
+				// More info at https://revealjs.com/math/
+				plugins: [ RevealMath.MathJax2 ]
+			});
+		</script>
+
+	</body>
+</html>

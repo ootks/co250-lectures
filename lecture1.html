@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="solarized.css" id="theme">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>
+            Lecture 1
+        </h4>
+        <br>
+        <p class=centered>
+          Kevin Shu
+        </p>
+      </section>
+
+      <section>
+        <h2>Lecture Outline</h2>
+        <ul>
+          <li>Course Policies</li>
+          <li>What is Optimization?</li>
+          <li>Linear Algebra Review</li>
+          <li>Linear Programming</li>
+        </ul>
+      </section>
+
+      <section>
+          <section>
+              <h1> <a href="https://outline.uwaterloo.ca/viewer/view/n7ngxf">Course Policies</a> </h1>
+          </section>
+          <section>
+            <h3>Course Structure</h3>
+            <ul>
+              <li>Lectures on Tuesdays &amp; Thursdays - 10:00-11:30am </li>
+              <li>Tutorials on Mondays - 2:30-3:20pm</li>
+                  <ul>
+                      <li>Group Work </li>
+                      <li>Quizzes </li>
+                  </ul>
+              <li>Exams</li>
+              <ul>
+                  <li>Midterm - Oct 26</li>
+                  <li>Final - TBD </li>
+              </ul>
+              <li>Homeworks</li>
+              <ul>
+                  <li>Ungraded - unsubmitted</li>
+              </ul>
+            </ul>
+            <p><a href="https://outline.uwaterloo.ca/viewer/view/n7ngxf">Outline - https://outline.uwaterloo.ca/viewer/view/n7ngxf</a></p>
+          </section>
+          <section>
+              <h2> Grading </h2>
+                <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Submission</th>
+                    <th scope="col">Percentage*</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Homework</th>
+                    <td>0 %</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Quizzes</th>
+                    <td>10 %</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Groupwork</th>
+                    <td>10 %</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Midterm</th>
+                    <td>25%</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Final</th>
+                    <td>55%</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p> * If a quiz or groupwork is missed, then we will not count that quiz, and instead, the weight of that work will be moved to the final.  </p>
+              <p> At least 3 quizzes must be submitted to pass.  </p>
+          </section>
+          <section>
+            <h3>Textbook</h3>
+            <h4> A Gentle Introduction to Optimization </h4>
+            <img src="textbook.jpeg" alt="Cover of A Gentle Introduction to Optimization" />
+          </section>
+          <section>
+              <h2> Groupwork </h2>
+              <h4> Circular Learning </h4>
+              <ul>
+                  <li> Break up into groups with a problem sheet </li>
+                  <li> Go around in a circle (taking turns talking) </li>
+                  <li> Summarize your contributions on a sheet of paper </li>
+                  <li> Submit the discussion summary for participation credit.</li>
+              </ul>
+              <p><a href="https://learn.uwaterloo.ca/d2l/le/content/1289412/viewContent/6673033/View">More details: https://learn.uwaterloo.ca/d2l/le/content/1289412/viewContent/6673033/View</a></p>
+          </section>
+          <section>
+            <h3>Resources</h3>
+            <ul>
+              <li>My Office Hours - Monday 10am-11am - MC 5028</li>
+              <li><a href="https://uwaterloo.ca/math/about/teaching/learning-how-learn">Learning How to Learn</a></li>
+              <li><a href="https://uwaterloo.ca/students/academic-success/learning-support">Student Success Office</a></li>
+            </ul>
+          </section>
+      </section>
+
+      <section>
+        <section>
+          <h2>What is Optimization?</h2>
+          <blockquote>
+              How do we use mathematics to make better decisions? 
+          </blockquote>
+        </section>
+        <section>
+          <h2>Mathematical Modelling</h2>
+          <img src="modelling.svg" alt="A real-world question is converted into a mathematical model with inputs and outputs"/> 
+          <p> Optimization is about studying the purple box. </p>
+        </section>
+        <section>
+          <h2>Mathematical Optimization Problems</h2>
+          <p> A mathematical optimization problem consists of </p>
+          <ul>
+              <li>a <b>decision variable</b> $x$ describing the choice we control,</li>
+              <li>a <b>feasible set</b> $F$ describing which choices are allowed, and</li>
+              <li>an <b>objective function</b> $f$ measuring the quality of a choice.</li>
+          </ul>
+          <p class="fragment">A feasible set can be <b>discrete</b> (for example, a yes/no decision) or <b>continuous</b> (for example, an amount of money).</p>
+        </section>
+        <section>
+          <h2>Mathematical Optimization Problems</h2>
+          <p> In notation, we often write </p>
+          <table> 
+              <tr> <td style="border-bottom: none;"> max/min </td> <td style="border-bottom: none;"> $f(x)$ </td> </tr>
+              <tr> <td> such that </td> <td> $x \in F$ </td> </tr>
+          </table>
+          <p> Here, $f(x)$ is the objective function, and $F$ is the feasible set. We can choose the sense of the optimization to be max or min. </p>
+        </section>
+        <section>
+          <h2>Mathematical Optimization Problems</h2>
+          <p> E.g. what is the rectangle with perimeter 1 that has the largest area? </p>
+          <table class=fragment> 
+              <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $ab$ </td> </tr>
+              <tr> <td> such that </td> <td> $a+b = 1, a,b \ge 0.$ </td> </tr>
+          </table>
+        </section>
+      </section>
+
+      <section>
+          <section>
+              <h2> Linear Algebra Review </h2>
+          </section>
+          <section>
+              <h2>Linear Equations</h2>
+              <div class="boxed blue">
+                  <p>A <b>linear equation</b> in variables $x_1, \dots, x_n$ is an equation of the form 
+                  \[
+                    a_1 x_1 + a_2 x_2 + \dots + a_n x_n = b.
+                  \]
+                  </p>
+                  <p>The coefficients $a_i$ are fixed numbers.</p>
+              </div>
+              <p>
+              E.g.
+              \[
+                x_1 + 2 x_2 + 5 x_3 = 1.
+              \]
+              </p>
+          </section>
+          <section>
+              <h2>Linear Equations</h2>
+              <div class="boxed blue">
+                  <p>A <b>system of linear equations</b> in variables $x_1, \dots, x_n$ is the simultaneous list of linear equations 
+                  \[
+                  a_{11} x_1 + a_{12} x_2 + \dots + a_{1n} x_n = b_1.
+                  \]
+                  \[
+                  a_{21} x_1 + a_{22} x_2 + \dots + a_{2n} x_n = b_2.
+                  \]
+                  \[\dots\]
+                  \[
+                  a_{m1} x_1 + a_{m2} x_2 + \dots + a_{mn} x_n = b_m.
+                  \]
+                  </p>
+                  <p>Note that $m$ can take on any value, and does not need to be $n$.</p>
+              </div>
+          </section>
+          <section data-auto-animate>
+              <h4>Matrices</h4>
+              <p> We can make these equations easier to read with matrix vector notation. </p>
+              <div class="boxed blue" style="display:flex">
+                  <div style="flex:1; margin-right:30px;">
+                      <p> A <b>vector</b> is a list of numbers, where the ordering of the numbers matters
+                      \[
+                      \begin{aligned}
+                      x = \begin{bmatrix}x_1\\x_2\\\dots\\x_n\end{bmatrix} \qquad&
+                      b = \begin{bmatrix}b_1\\b_2\\\dots\\b_m\end{bmatrix}
+                      \end{aligned}
+                      \]
+                      </p>
+                  </div>
+                  <div style="flex:1">
+                      <p>A <b>matrix</b> is a rectangular array of numbers.
+                      \[
+                      A = \begin{pmatrix}
+                            a_{11} & a_{12} & \dots & a_{1n}\\
+                            a_{21} & a_{22} & \dots & a_{2n}\\
+                            &&\dots&\\
+                            a_{m1} & a_{m2} & \dots & a_{mn}\\
+                            \end{pmatrix}
+                      \]
+                      </p>
+                   </div>
+              </div>
+              <p> An equation can then be written
+              \[
+              Ax = b.
+              \]
+              </p>
+          </section>
+          <section data-auto-animate>
+              <h4>Matrices</h4>
+              <p> An equation can then be written
+              \[
+              Ax = b.
+              \]
+              </p>
+              <p> We write $x \in \R^n$ to mean that $x$ is a length $n$ vector and $A \in \R^{m \times n}$ to denote that $A$ is a $m \times n$ matrix.</p>
+              <p class=fragment> <b>If $m = n$ and $A$ is invertible,</b> then there is a unique solution to this equation, and we denote it by $x = A^{-1}b$.</p>
+              <p class=fragment> <b>If $A$ is not invertible or $m \neq n$,</b> then there are either no solutions to the equation, one solution, or infinitely many.</p>
+          </section>
+          <section data-auto-animate>
+              <h4>Matrices</h4>
+              <p> In general, a system of equations can be characterized by the <b> rank </b> of the matrix.
+              </p>
+              <div class="boxed blue">
+                  <p>The <b>rank</b> of a matrix is any of the following (equal) quantities:</p>
+                  <ul>
+                      <li> The number of linearly independent rows of the matrix. </li>
+                      <li> The number of linearly independent columns of the matrix. </li>
+                      <li> The number of nonzero singular values of the matrix. </li>
+                  </ul>
+              </div>
+              <p class=fragment> If the rank of the matrix is at least $n$, then there is at most one solution to any such equation, and if the rank is at least $m$, then there is at least one such solution.
+              </p>
+          </section>
+          <section>
+              <h2>Linear (and Affine) Subspaces</h2>
+              <p>
+                  The set of solutions to a linear equation forms an affine subspace. The geometry of the set of solutions is then determined by the rank (assuming that it is nonempty).
+              </p>
+              <table>
+                  <tbody>
+                      <tr><th scope="row">Rank </th> <td style="text-align:center"> 1 </td> <td style="text-align:center"> 2 </td> <td style="text-align:center"> 3 </td> </tr>
+                      <tr><th scope="row">Subspace </th> <td> <img src="subspace-dimension-2.svg" height=200px /> </td> <td> <img src="subspace-dimension-1.svg" height=200px/> </td> <td> <img src="subspace-dimension-0.svg" height=200px/> </td> </tr>
+                  </tbody>
+              </table>
+          </section>
+          <section>
+              <h2> Diet Problem (Linear Algebra Model) </h2>
+              <p> The back of any food item will have nutrition values. </p>
+              <table class="nutrition-table">
+                  <caption>Nutrition per standard serving</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Nutrient</th>
+                      <th scope="col">Egg</th>
+                      <th scope="col">Banana</th>
+                      <th scope="col">Chicken Breast</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <th scope="row">Calories</th>
+                      <td>72 kcal</td>
+                      <td>105 kcal</td>
+                      <td>128 kcal</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Protein</th>
+                      <td>6.3 g</td>
+                      <td>1.3 g</td>
+                      <td>26 g</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Carbohyrdates</th>
+                      <td>0.4 g</td>
+                      <td>27 g</td>
+                      <td>0 g</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p>For this simplified example, our targets are 2000 calories, 50 g of protein, and 275 g of carbohydrates per day.</p>
+          </section>
+          <section>
+              <h2> Diet Problem </h2>
+              <p> 
+                  We can formulate this as a linear system. Let $x_1$ be the number of large eggs, $x_2$ the number of medium bananas, and $x_3$ the number of 3-ounce chicken portions.
+              </p>
+              \[
+                \begin{aligned}
+                72x_1 + 105x_2 + 128x_3 &= 2000,
+                    &&\text{(calories)},\\
+                6.3x_1 + 1.3x_2 + 26x_3 &= 50,
+                    &&\text{(protein)},\\
+                0.4x_1 + 27x_2 &= 275,
+                    &&\text{(carbohydrates)}.
+                \end{aligned}
+                \]
+                <p class="fragment">
+                \[
+                \begin{bmatrix}
+                x_1\\x_2\\x_3
+                \end{bmatrix}
+                \approx
+                \begin{bmatrix}
+                18.965\\
+                9.904\\
+                -3.168
+                \end{bmatrix}.
+                \]
+                </p>
+                <p class="fragment">The negative value $x_3\approx-3.168$ makes this solution physically impossible.</p>
+          </section>
+      </section>
+
+      <section>
+          <section>
+              <h2> Linear Programming </h2>
+          </section>
+          <section>
+              <h2>Linear Inequalities</h2>
+              <div class="boxed blue">
+                  <p>A <b>linear inequality</b> in variables $x_1, \dots, x_n$ is an inequality of the form 
+                  \[
+                    a_1 x_1 + a_2 x_2 + \dots + a_n x_n \le b,
+                  \]
+                  or
+                  \[
+                    a_1 x_1 + a_2 x_2 + \dots + a_n x_n \ge b,
+                  \]
+                  </p>
+                  <p>The coefficients $a_i$ and $b$ are fixed numbers.</p>
+              </div>
+              <p>
+              E.g.
+              \[
+                x_1 + 2 x_2 + 5 x_3 \le 1.
+              \]
+              </p>
+          </section>
+          <section>
+              <h2>Linear Inequalities</h2>
+              <p>Each linear inequality defines a half-space, i.e. a collection of points on one side of a linear subspace.
+              </p>
+              <div style="display:flex">
+              <p style="flex:1">
+              \[
+                x_1 + 2 x_2 + 5 x_3 \le 1.
+              \]
+              </p>
+              <img src="halfspace.svg" style="flex:1" height=200px/>
+              </div>
+              <p class=fragment> Each $\le$ inequality is equivalent to a $\ge$ inequality.
+                  \[
+                    a_1 x_1 + a_2 x_2 + \dots + a_n x_n \le b \Leftrightarrow
+                  \]
+                  \[
+                    -a_1 x_1 - a_2 x_2 - \dots - a_n x_n \ge -b.
+                  \]
+              </p>
+          </section>
+          <section>
+              <h2>Linear Inequalities</h2>
+              <p> As with linear equations, we can collect multiple inequalities together to get systems. </p>
+              <div class="boxed blue">
+                  <p>A <b>system of linear inequalities</b> in variables $x_1, \dots, x_n$ is the simultaneous list of linear inequalities
+                  \[
+                  a_{11} x_1 + a_{12} x_2 + \dots + a_{1n} x_n \le b_1
+                  \]
+                  \[
+                  a_{21} x_1 + a_{22} x_2 + \dots + a_{2n} x_n \le b_2
+                  \]
+                  \[\dots\]
+                  \[
+                  a_{m1} x_1 + a_{m2} x_2 + \dots + a_{mn} x_n \le b_m
+                  \]
+                  </p>
+                  <p>The $\le$ can also be $\ge$. </p>
+              </div>
+          </section>
+          <section>
+              <h2>Linear Inequalities</h2>
+              <p> We will introduce the notation $x \ge y$ for $x,y \in \R^n$ if for each $i$, $x_i \ge y_i$. </p>
+              <p> We can again collect the inequalities with matrix notation.
+              \[
+                Ax \le b.
+              \]
+              </p>
+          </section>
+          <section>
+              <h2>Linear Inequalities</h2>
+              <p> Systems of linear inequalities define <b>polyhedra</b>. These can be much more complicated than linear subspaces. </p>
+              <img src="polyhedra-collection.svg" height=450px />
+          </section>
+          <section>
+              <h2>Linear Inequalities</h2>
+              <div class=flexbox>
+              <p> Consider the system of linear inequalities
+                  \[
+                      x_1 + x_2 \le 1
+                  \]
+                  \[
+                      x_1 - x_2 \ge 0
+                  \]
+                  \[
+                      x_2 \ge 0.
+                  \]
+                  The points satisfying these inequalities defines a subset of $\R^2$.
+              </p>
+              <img src="lp_feasible_region.png" height=300px />
+              </div>
+
+          </section>
+
+          <section>
+              <h2>Linear Programming</h2>
+              <p> A linear program (LP) is an optimization problem whose objective is a <b>linear function</b> and whose feasible set is the set of solutions to some linear inequality.</p>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
+                  <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+              </table>
+              <img src="linear-programming-2d.svg" height=300px />
+          </section>
+
+          <section>
+              <h2>Linear Programs</h2>
+              <div class=flexbox>
+                  <div>
+                  <p> The following is an LP
+                  <table> 
+                      <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_2$ </td> </tr>
+                      <tr> <td> such that </td> <td> $ x_1 + x_2 \le 1$
+     </td> </tr>
+                      <tr> <td> </td> <td> $x_1 - x_2 \ge 0$ </td></tr>
+                      <tr> <td> </td> <td> $x_2 \ge 0.$ </td> </tr>
+                  </table>
+                  </p>
+                  </div>
+                  <img src="lp_feasible_region.png" height=300px />
+              </div>
+
+          </section>
+
+          <section>
+              <h2>Linear Programming Feasibility</h2>
+              <p> A linear program is said to be <b>feasible</b> if there is some $x$ so that $Ax \le b$.</p>
+              <p> The linear programming feasibility problem is that of deciding whether a linear program is feasible. </p>
+              <p class=fragment> A feasible point $x$ satisfying $Ax \le b$ is said to be optimal if for every other feasible point $y$ satisfying $Ay \le b$, $c^{\intercal} x \le c^{\intercal} y$.</p>
+              <p class=fragment> Even if a linear program has a feasible point, it may not have an optimal point! It could also be <b> unbounded</b>.</p>
+              <p class=fragment> These are the three possibilities: a linear program can be <b>infeasible</b>, <b>unbounded</b>, or <b>feasible with an optimal point</b>.
+          </section>
+          <section data-auto-animate>
+              <h2> Diet Problem (Revisited) </h2>
+              <table class="nutrition-table">
+                  <caption>Nutrition per standard serving</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Nutrient</th>
+                      <th scope="col">Egg</th>
+                      <th scope="col">Banana</th>
+                      <th scope="col">Chicken Breast</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <th scope="row">Calories</th>
+                      <td>72 kcal</td>
+                      <td>105 kcal</td>
+                      <td>128 kcal</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Protein</th>
+                      <td>6.3 g</td>
+                      <td>1.3 g</td>
+                      <td>26 g</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Carbohyrdates</th>
+                      <td>0.4 g</td>
+                      <td>27 g</td>
+                      <td>0 g</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p> We will let 
+                    \[
+                    \begin{align}
+                    A = \begin{pmatrix} 72 & 105 & 128 \\ 6.3 & 1.3 & 26 \\ 0.4 & 27 & 0\end{pmatrix} \qquad&
+                    b = \begin{bmatrix} 2000 \\ 50 \\ 275 \end{bmatrix}
+                    \end{align}
+                    \]
+                </p>
+                  <p class=fragment> How can we model the diet problem as a linear program? </p>
+          </section>
+          <section data-auto-animate>
+              <h2> Diet Problem (Revisited) </h2>
+                <p> We will let 
+                    \[
+                    \begin{align}
+                    A = \begin{pmatrix} 72 & 105 & 128 \\ 6.3 & 1.3 & 26 \\ 0.4 & 27 & 0\end{pmatrix} \qquad&
+                    b = \begin{bmatrix} 2000 \\ 50 \\ 275 \end{bmatrix}
+                    \end{align}
+                    \]
+                </p>
+              <p> How can we model the diet problem as a linear program? </p>
+              <p class=fragment> 
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
+                  <tr> <td style="border-bottom: none;"> such that  </td> <td style="border-bottom: none;"> $Ax \ge b$ </td> </tr>
+                  <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+              </table>
+              </p>
+          </section>
+          <section>
+              <h2> Linear Programs </h2>
+              <p> The variables in a linear program represent <b>decisions</b> that are to be made. </p>
+              <p> The constraints in a linear program represent <b>requirements</b> that those decisions must satisfy. </p>
+              <p> Linear programs are often good tools when the decisions that we want to make are continuous in nature (such as being measurements or amounts of money). </p>
+          </section>
+      </section>
+      <section>
+          <section>
+              <h2>Solving Linear Programs  <small>(slowly)</small></h2>
+          </section>
+          <section>
+              <h2>Solving Linear Programs  <small>(slowly)</small></h2>
+              <p> Note that any procedure for determining if an LP is feasible can be used to solve an LP. The optimal value for an LP is at most $t$ if and only if the constraints
+              \[
+              \begin{align}
+                Ax &\ge b\\
+                c^{\intercal}x &\le t
+              \end{align}
+              \]
+              are feasible. 
+              </p>
+              <p> 
+              By applying binary search, we can estimate the optimal value of $t$ (assuming the LP is bounded).
+              </p>
+          </section>
+          <section>
+              <h2>Solving Linear Programs  <small>(slowly)</small></h2>
+              <p> We want to check if the system of linear inequalities $Ax \le b$ is feasible. For now, we will assume that $A$ is of rank $n$ and that $m \ge n$. </p>
+              <p class=fragment> 
+                  <b> Idea: </b> If there is any feasible point $x$ and $A$ is of full rank, then there must be some feasible point where at least one of the inequalities is an equality. 
+              </p>
+              <p class=fragment> 
+                For each inequality $a_i^{\intercal} x \le b_i$, we can solve the linear equation $a_i^{\intercal}x = b_i$ for some $x_i$, and then substitute this back into the LP. 
+              </p>
+              <p class=fragment> 
+                This reduces the number of variables and equations by 1. Applying this recursively leads to a 1 variable LP that can be solved.
+              </p>
+          </section>
+          <section>
+              <h2>Solving Linear Programs <small>(slowly)</small></h2>
+              <p class=centered> <b>An Algorithm</b> </p>
+              <ol> 
+                  <li> Choose $n$ inequalities, say $i_1, \dots, i_n$, and look at the linear system
+                      \[
+                      \begin{align}
+                      a_{i_1}^{\intercal}x = b_{i_1}\\
+                      \dots \\
+                      a_{i_n}^{\intercal}x = b_{i_n}\\
+                      \end{align}
+                      \]
+                      </li>
+                  <li> If there is a unique solution to this system, and that unique solution is feasible for the LP, then we are done. </li>
+                  <li> If none of these systems yields a feasible point, then the LP is infeasible.</li>
+              </ol>
+          </section>
+          <section>
+              <h2>Solving Linear Programs <small>(slowly)</small></h2>
+              <p> A feasible point of an LP that comes about this way (i.e. as the unique solution to an $n\times n$ system of equations arising from choosing $n$ of the inequalities and making them equalities) is called an <b>extreme point</b>.
+              </p>
+              <p class=fragment> If there is an optimal point for an LP, and $A$ is full rank, then there is an optimal point which is an extreme point. </p>
+              <p class=fragment> This is not the most efficient algorithm for solving LPs! We will discuss a more efficient one based on this idea later. </p>
+          </section>
+          <section>
+              <h2>Solving the Diet Problem</h2>
+              <p> The feasible region for the diet problem is given by the linear inequality
+              \[
+              \begin{pmatrix} 72 & 105 & 128 \\ 6.3 & 1.3 & 26 \\ 0.4 & 27 & 0 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ x_3\end{pmatrix} \ge \begin{pmatrix} 2000 \\ 50 \\ 275 \\ 0 \\ 0 \\ 0 \end{pmatrix}.
+              \]
+              </p>
+          </section>
+          <section>
+              <h2>Solving the Diet Problem</h2>
+              <p> If we pick the first three inequalities to make equalities, we once again get the system 
+              \[
+                  \begin{pmatrix} 72 & 105 & 128 \\ 6.3 & 1.3 & 26 \\ 0.4 & 27 & 0 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ x_3\end{pmatrix} = \begin{pmatrix} 2000 \\ 50 \\ 275 \end{pmatrix},
+              \]
+              We saw this gives.
+            \[
+            \begin{bmatrix}
+            x_1\\x_2\\x_3
+            \end{bmatrix}
+            \approx
+            \begin{bmatrix}
+            18.965\\
+            9.904\\
+            -3.168
+            \end{bmatrix}.
+            \]
+            This is not a solution.
+              </p>
+          </section>
+          <section>
+              <h2>Solving the Diet Problem</h2>
+              <p> The next reasonable system we get from the diet problem is
+              \[
+                  \begin{pmatrix} 72 & 105 & 128 \\ 6.3 & 1.3 & 26 \\ 1 & 0 & 0 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ x_3\end{pmatrix} = \begin{pmatrix} 2000 \\ 50 \\ 0 \end{pmatrix},
+              \]
+              Solving this system gives 
+            \[
+            \begin{bmatrix}
+            x_1\\x_2\\x_3
+            \end{bmatrix}
+            \approx
+            \begin{bmatrix}
+            0\\
+            17.8\\
+            1.03
+            \end{bmatrix}.
+            \]
+                This is a feasible point!
+          </p>
+          </section>
+          <section>
+              <h2>Solving the Diet Problem</h2>
+              <p> The other extreme points for the diet problem are 
+              </p>
+              <p style="margin-left:-100px;">
+              \[
+                 \begin{pmatrix}0\\38.461538\\0\end{pmatrix},
+                 \begin{pmatrix}0\\10.185185\\7.269965\end{pmatrix},
+                 \begin{pmatrix}0\\17.787486\\1.033703\end{pmatrix},
+                 \begin{pmatrix}4.666314\\15.847861\\0\end{pmatrix},
+                 \begin{pmatrix}13.209779\\9.989485\\0\end{pmatrix},
+                 \begin{pmatrix}687.5\\0\\0\end{pmatrix}
+              \]
+              </p>
+              <p>
+                If there is an optimal solution to an LP whose feasible region is the diet problem, then one of these will be an optimal solution.
+              </p>
+          </section>
+      </section>
+      <section>
+          <section>
+              <h2> Example: Restaurant Planning </h2>
+          </section>
+          <section>
+            <h3>Multi-Day Restaurant Planning</h3>
+            <p> A restaurant needs to buy ingredients every day in order to produce food that it then sells to customers. The restaurant also needs to storage costs.
+            <div class=fragment style="display:flex">
+                <p> The restaurant will use <b> chicken, rice and vegetables </b> as ingredients to produce either <b>chicken bowls or vegetable bowls</b>. </p>
+                <img src="restaurant.jpg" height=200px />
+            </div>
+            <p class=fragment> Every day, the restaurant purchases a certain amount of each ingredient, and sells a certain amount of each menu item. <p>
+            <p class=fragment> If ingredients are left over at the end of the day, they can be stored, but at a cost. <p>
+          </section>
+          <section>
+            <h3>Multi-Day Restaurant Planning</h3>
+            <h4> Modeling </h4>
+            <p> We want to introduce variables to describe the state of the restaurant each day. </p>
+            <p> On days $t=1,\dots,T$, restaurant needs to decide how much of each ingredient it purchases each day, how much of each food item it produces each day, and how much of each ingredient to store each day.  </p>
+          </section>
+          <section>
+            <h3>The decisions link production and inventory</h3>
+            <div class="boxed blue">
+              \[
+              \begin{align}
+              p_{it}&=\text{kilograms of ingredient \(i\) purchased on day \(t\)},\\
+              q_{jt}&=\text{servings of dish \(j\) produced on day \(t\)},\\
+              s_{it}&=\text{usable inventory of ingredient \(i\) after day \(t\)}.
+              \end{align}
+              \]
+            </div>
+            <p class="fragment">We take the initial inventory to be \(s_{i0}=0\).</p>
+          </section>
+          <section>
+            <h3>Multi-Day Restaurant Planning</h3>
+            <h4> Objective </h4>
+            <p> To define the objective (which is net profit), we need to know the following:</p>
+            <ul class=fragment> <li> how much does each ingredient cost on each day ($c$)</li>
+                <li>how much does each menu item sell for ($v$)</li>
+                <li> how much does it cost to store each ingredient for a given day ($r_i$)</li>
+            </ul>
+            <p class=fragment> 
+            Objective is
+            \[
+                \sum_{t=1}^T \left(\sum_{i=1}^2v_{it} q_{it} - \sum_{i=1}^3 (c_{it} p_{it} + r_{it} s_{it})  \right)
+            \]
+            </p>
+          </section>
+
+          <section data-auto-animate>
+            <h3>Multi-Day Restaurant Planning</h3>
+            <div style="display:flex; font-size:20px;">
+            <table class="nutrition-table">
+              <caption>Menu Item Prices ($v$)</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Item</th>
+                  <th scope="col">Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Vegetable Bowl</th><td>$20.00</td></tr>
+                <tr><th scope="row">Chicken Bowl</th><td>$25.00</td></tr>
+              </tbody>
+            </table>
+            <table class="nutrition-table">
+              <caption>Storage cost ($r$)</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Ingredient</th>
+                  <th scope="col">Storage cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Chicken</th><td>$0.30/kg</td></tr>
+                <tr><th scope="row">Rice</th><td>$0.05/kg</td></tr>
+                <tr><th scope="row">Vegetables</th><td>$0.20/kg</td></tr>
+              </tbody>
+            </table>
+            </div>
+            <table class="nutrition-table" style="font-size:20px;">
+              <caption>Purchase prices in dollars per kilogram ($c$)</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Ingredient</th>
+                  <th scope="col">Day 1</th>
+                  <th scope="col">Day 2</th>
+                  <th scope="col">Day 3</th>
+                  <th scope="col">Day 4</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Chicken</th><td>$10.00</td><td>$14.00</td><td>$13.00</td><td>$16.00</td></tr>
+                <tr><th scope="row">Rice</th><td>$2.40</td><td>$2.60</td><td>$2.30</td><td>$2.80</td></tr>
+                <tr><th scope="row">Vegetables</th><td>$4.00</td><td>$5.00</td><td>$3.50</td><td>$5.50</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section>
+            <h3>Multi-Day Restaurant Planning</h3>
+            <h4> Constraints </h4>
+            <p> One obvious constraint is that all variables must be nonnegative, i.e. $p_{it}, q_{it}, s_{it} \ge 0$. </p>
+            <p> To find other constraints, we need to know how much of each ingredient is needed to produce each menu item ($n_{ij}$), and how much of each food item we can actually sell each day ($D_{it}$). </p>
+            </p>
+            <p> 
+            \[
+                \forall i\le 3, j \le 2, t \le T,\;n_{ij} q_{jt} \le p_{it} + s_{it}
+            \]
+            \[
+                \forall j \le 2, t \le T,\;q_{it} \le D_{it}.
+            \]
+            \[
+                \forall i\le 3, t \le T-1,\;s_{i+1\;t} \le p_{it} + s_{it} - n_{ij} q_{jt}.
+            \]
+            </p>
+          </section>
+          <section>
+            <h3>Multi-Day Restaurant Planning</h3>
+            <p>Suppose the restaurant produces chicken bowls and vegetable bowls.</p>
+            <table class="nutrition-table" style="font-size:20px;">
+              <caption>Ingredient use per serving ($n$)</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Ingredient</th>
+                  <th scope="col">Chicken bowl</th>
+                  <th scope="col">Vegetable bowl</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Chicken</th><td>0.20 kg</td><td>0 kg</td></tr>
+                <tr><th scope="row">Rice</th><td>0.15 kg</td><td>0.18 kg</td></tr>
+                <tr><th scope="row">Vegetables</th><td>0.10 kg</td><td>0.20 kg</td></tr>
+              </tbody>
+            </table>
+            <table class="nutrition-table" style="font-size:20px;">
+              <caption>Demand ($D$)</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Day</th>
+                  <th scope="col">Chicken bowls</th>
+                  <th scope="col">Vegetable bowls</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">1</th><td>40</td><td>25</td></tr>
+                <tr><th scope="row">2</th><td>55</td><td>20</td></tr>
+                <tr><th scope="row">3</th><td>45</td><td>35</td></tr>
+                <tr><th scope="row">4</th><td>60</td><td>30</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+
+          <section>
+            <h3>Multi-Day Restaurant Planning</h3>
+            <p> Bringing things together, we need to maximize profit, while meeting all of the relevant constraints. </p>
+            
+          <table> 
+              <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{t=1}^T \left(\sum_{i=1}^2v_{it} q_{it} - \sum_{i=1}^3 (c_{it} p_{it} + r_{it} s_{it})  \right)$ </td> <td>(Profit)</td></tr>
+              <tr> <td> such that </td> <td> $\forall i\le 3, j \le 2, t \le T,\;n_{ij} q_{jt} \le p_{it} + s_{it}$ </td><td>(Ingredients required) </td> </tr>
+              <tr> <td> </td> <td> $\forall j \le 2, t \le T,\;q_{it} \le D_{it}.$ </td><td> (Demand constraint)</td> </tr>
+              <tr> <td> </td> <td> $\forall i\le 3, t \le T-1,\;s_{i+1\;t} \le p_{it} + s_{it} - n_{ij} q_{jt}.$ </td><td>(Storage conservation)</td> </tr>
+              <tr> <td> </td> <td> $\forall i\le 3, j \le 2, t \le T,p_{it}, q_{jt}, s_{it} \ge 0.$ </td><td>(Nonnegativity)</td> </tr>
+          </table>
+            \[
+                
+            \]
+          </section>
+
+          <section data-auto-animate>
+            <h3>The model purchases cheap ingredients in advance</h3>
+            <table class="nutrition-table">
+              <caption>Optimal purchases in kilograms</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Ingredient</th>
+                  <th scope="col">Day 1</th>
+                  <th scope="col">Day 2</th>
+                  <th scope="col">Day 3</th>
+                  <th scope="col">Day 4</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Chicken</th><td>20.222</td><td>0</td><td>22.333</td><td>0</td></tr>
+                <tr><th scope="row">Rice</th><td>22.350</td><td>0</td><td>27.450</td><td>0</td></tr>
+                <tr><th scope="row">Vegetables</th><td>9.000</td><td>9.500</td><td>26.500</td><td>0</td></tr>
+              </tbody>
+            </table>
+            <p class="fragment">No purchases are needed on day 4 because day 3 prices justify carrying inventory overnight.</p>
+          </section>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

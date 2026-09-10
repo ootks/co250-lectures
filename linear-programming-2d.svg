@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+  <title id="title">A two-dimensional linear programming problem</title>
+  <desc id="desc">The feasible polygon for maximizing three x plus two y subject to x plus two y at most eight, three x plus y at most nine, and nonnegative x and y. The optimum is the vertex two comma three.</desc>
+  <defs>
+    <marker id="axis-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="18" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#475569"/>
+    </marker>
+    <marker id="objective-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="25" markerHeight="25" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#DC2626"/>
+    </marker>
+  </defs>
+
+  <text x="70" y="72" font-family="Inter,Arial,sans-serif" font-size="42" font-weight="700" fill="#172033">Linear programming in 2D</text>
+  <text x="70" y="112" font-family="Inter,Arial,sans-serif" font-size="24" fill="#526178">A linear objective optimized over a polygonal feasible region</text>
+
+  <g transform="translate(0 50)">
+  <!-- Plot grid -->
+  <g stroke="#CBD5E1" stroke-width="2" stroke-opacity="0.48">
+    <path d="M285 650 V130 M425 650 V130 M565 650 V130 M705 650 V130 M845 650 V130 M985 650 V130"/>
+    <path d="M145 540 H1010 M145 430 H1010 M145 320 H1010 M145 210 H1010 M145 100 H1010"/>
+  </g>
+
+  <!-- Feasible region: (0,0), (0,4), (2,3), (3,0) -->
+  <polygon points="145,650 145,210 425,320 565,650" fill="#DBEAFE" stroke="#2563EB" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- Constraint boundaries -->
+  <path d="M145 210 L1010 550" fill="none" stroke="#7C3AED" stroke-width="6" stroke-linecap="round"/>
+  <path d="M332 100 L565 650" fill="none" stroke="#D97706" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Objective level line through the optimum -->
+  <path d="M238 100 L705 650" fill="none" stroke="#DC2626" stroke-width="5" stroke-dasharray="14 10"/>
+  <path d="M710 385 L807 321" fill="none" stroke="#DC2626" stroke-width="7" stroke-linecap="round" marker-end="url(#objective-arrow)"/>
+  <text x="820" y="308" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="700" fill="#B91C1C">increasing 3x + 2y</text>
+
+  <!-- Axes -->
+  <path d="M145 650 H1025" fill="none" stroke="#475569" stroke-width="5" marker-end="url(#axis-arrow)"/>
+  <path d="M145 650 V82" fill="none" stroke="#475569" stroke-width="5" marker-end="url(#axis-arrow)"/>
+  <text x="1045" y="661" font-family="Inter,Arial,sans-serif" font-size="27" font-style="italic" fill="#334155">x</text>
+  <text x="132" y="67" font-family="Inter,Arial,sans-serif" font-size="27" font-style="italic" fill="#334155">y</text>
+
+  <!-- Ticks and values -->
+  <g font-family="Inter,Arial,sans-serif" font-size="18" fill="#64748B" text-anchor="middle">
+    <path d="M285 643 V657 M425 643 V657 M565 643 V657 M705 643 V657 M845 643 V657 M985 643 V657" stroke="#475569" stroke-width="3"/>
+    <text x="285" y="681">1</text><text x="425" y="681">2</text><text x="565" y="681">3</text>
+    <text x="705" y="681">4</text><text x="845" y="681">5</text><text x="985" y="681">6</text>
+  </g>
+  <g font-family="Inter,Arial,sans-serif" font-size="18" fill="#64748B" text-anchor="end">
+    <path d="M138 540 H152 M138 430 H152 M138 320 H152 M138 210 H152 M138 100 H152" stroke="#475569" stroke-width="3"/>
+    <text x="126" y="546">1</text><text x="126" y="436">2</text><text x="126" y="326">3</text>
+    <text x="126" y="216">4</text><text x="126" y="106">5</text>
+  </g>
+
+  <!-- Vertices and optimum -->
+  <g fill="#2563EB">
+    <circle cx="145" cy="650" r="8"/><circle cx="145" cy="210" r="8"/><circle cx="565" cy="650" r="8"/>
+  </g>
+  <circle cx="425" cy="320" r="15" fill="#FFFFFF" stroke="#DC2626" stroke-width="7"/>
+  <text x="443" y="301" font-family="Inter,Arial,sans-serif" font-size="23" font-weight="700" fill="#B91C1C">optimum (2, 3)</text>
+  <text x="248" y="495" font-family="Inter,Arial,sans-serif" font-size="25" font-weight="700" fill="#1D4ED8" transform="rotate(-16 248 495)">feasible region</text>
+
+  <!-- Direct labels for the two constraints -->
+  <rect x="730" y="475" width="225" height="43" rx="12" fill="#FFFFFF" fill-opacity="0.92"/>
+  <text x="842" y="504" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="21" font-weight="600" fill="#6D28D9">x + 2y = 8</text>
+  <rect x="486" y="142" width="225" height="43" rx="12" fill="#FFFFFF" fill-opacity="0.92"/>
+  <text x="598" y="171" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="21" font-weight="600" fill="#B45309">3x + y = 9</text>
+
+  </g>
+
+  <!-- Problem statement -->
+  <g transform="translate(1080 180)">
+    <text x="0" y="0" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="700" fill="#172033">maximize</text>
+    <text x="0" y="48" font-family="Inter,Arial,sans-serif" font-size="31" font-weight="700" fill="#DC2626">3x + 2y</text>
+    <text x="0" y="108" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="700" fill="#172033">subject to</text>
+    <text x="0" y="151" font-family="Inter,Arial,sans-serif" font-size="24" fill="#6D28D9">x + 2y ≤ 8</text>
+    <text x="0" y="193" font-family="Inter,Arial,sans-serif" font-size="24" fill="#B45309">3x + y ≤ 9</text>
+    <text x="0" y="235" font-family="Inter,Arial,sans-serif" font-size="24" fill="#334155">x, y ≥ 0</text>
+    <path d="M0 274 H235" stroke="#CBD5E1" stroke-width="2"/>
+    <text x="0" y="319" font-family="Inter,Arial,sans-serif" font-size="21" fill="#526178">Optimal value</text>
+    <text x="0" y="362" font-family="Inter,Arial,sans-serif" font-size="31" font-weight="700" fill="#172033">3(2) + 2(3) = 12</text>
+  </g>
+</svg>
