@@ -168,6 +168,12 @@
             <p> Linear programs have a harder time capturing <b>discrete decisions</b>.</p>
           </section>
           <section>
+            <h3>Linear Programming Review</h3>
+            <p> Linear programs have a harder time capturing <b>discrete decisions</b>.</p>
+            <p class=fragment> Note that the solution to the diet problem has fractional values. </p>
+            <p class=fragment> If we are trying to decide what to buy at the grocery store, this may be an issue. </p>
+          </section>
+          <section>
             <h3> More than Linear Programming </h3>
             <h4> The Cafeteria Problem </h4>
             <p> A cafeteria offers a number of different options for what to eat. </p>
@@ -184,7 +190,7 @@
           <section>
             <h3>More than Linear Programming </h3>
             <h4> Indicator Variables</h4>
-            <p> We want to model <b> binary decisions: </b> $x_i$ should take on two values: either $x_i$ is </p>
+            <p> We want to model <b> binary decisions: </b> $x_i$ should take on two values. </p>
             <p class="fragment"> An <b>indicator variable</b> is a variable that only on values of $0$ or $1$ (and not anything in between).</p>
             <p class=fragment> Indicator variables are very useful for describing binary decisions. For example, we can <b> count </b> the number of positive decisions we make by adding up indicator variables.</p>
           </section>
@@ -296,46 +302,6 @@
               <p class=fragment>This problem is more often called the knapsack problem. </p>
           </section>
           <section>
-            <h3>Integer Linear Programming Examples </h3>
-            <h4> The Diet Problem, Revisited</h4>
-            <p> Recall the diet problem: we want to choose servings of foods so that we meet the daily recommended values for each nutrient at least cost. </p>
-            <p class=fragment> As a linear program, a serving could be any fractional amount, e.g. $0.37$ of a chicken breast. </p>
-            <p class=fragment> Suppose instead that each food can only be eaten in <b>whole servings</b>. </p>
-          </section>
-          <section>
-            <h3>Integer Linear Programming Examples </h3>
-            <h4> The Diet Problem, Revisited</h4>
-            <p> We have $n$ foods and $m$ nutrients. </p>
-            <p class=fragment> Let $x_i$ be the number of servings of food $i$, for $i = 1, \dots, n$. </p>
-            <p class=fragment> Let $a_{ji}$ be the amount of nutrient $j$ in one serving of food $i$, and let $b_j$ be the required amount of nutrient $j$. </p>
-            <p class=fragment> Let $c_i$ be the cost of one serving of food $i$. </p>
-          </section>
-          <section>
-            <h3>Integer Linear Programming Examples </h3>
-            <h4> The Diet Problem, Revisited</h4>
-            <p> We need to meet the requirement for each nutrient $j$. </p>
-            <p class="fragment centered"> <b>Should this be a $\ge$ or a $\le$ constraint?</b> </p>
-            <p class=fragment>
-            \[
-              \sum_{i=1}^n a_{ji} x_i \ge b_j.
-            \]
-            </p>
-            <p class=fragment> We can only eat a nonnegative, whole number of servings, so $x_i \ge 0$ and $x_i \in \Z$. </p>
-          </section>
-          <section>
-            <h3>Integer Linear Programming Examples </h3>
-            <h4> The Diet Problem, Revisited</h4>
-            <p> Assembling
-              <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{i=1}^n c_i x_i$ </td> </tr>
-                  <tr> <td> such that </td> <td> $\sum_{i=1}^n a_{ji} x_i \ge b_j$ </td> </tr>
-                  <tr> <td> </td> <td> $x_i \ge 0$ </td> </tr>
-                  <tr> <td> </td> <td> $x_i \in \Z$ </td> </tr>
-              </table>
-            </p>
-            <p class=fragment> In matrix form, this is $\text{min } c^{\intercal} x$ such that $Ax \ge b$, $x \ge 0$, $x \in \Z$. </p>
-          </section>
-          <section>
             <h3>ILP Examples </h3>
             <h4> Warehouse Allocation</h4>
             <p> Food Corp. is looking to decide where to build warehouses to service some grocery locations in the city of Brockton Bay. </p>
@@ -406,22 +372,22 @@
           <section>
             <h3>ILP Examples </h3>
             <h4> Cookie Assembly Setup</h4>
-            <p> Say we are given $C$ cookie sheets, each one of size $\ell \times w$. </p>
-            <p class="fragment"> We also have $K$ cookies, and cookie $i$ is a rectangle of size $a_i \times b_i$. </p>
+            <p> Say we are given $K$ cookie sheets, each one of size $\ell \times w$. </p>
+            <p class="fragment"> We also have $B$ cookies, and cookie $i$ is a rectangle of size $a_i \times b_i$. </p>
             <p class="fragment centered"> <b>What decisions do we need to make?</b> </p>
           </section>
           <section>
             <h3>ILP Examples </h3>
             <h4> Cookie Assembly Decision Variables</h4>
             <p> First, we decide whether to use each cookie sheet. </p>
-            <p class="fragment"> Let $y_k$ be a variable that is 1 if cookie sheet $k$ is used, and 0 otherwise, for $k = 1,\dots, C$. </p>
+            <p class="fragment"> Let $y_k$ be a variable that is 1 if cookie sheet $k$ is used, and 0 otherwise, for $k = 1,\dots, K$. </p>
           </section>
           <section>
             <h3>ILP Examples </h3>
             <h4> Cookie Assembly Decision Variables</h4>
             <p> Second, we decide where each cookie goes. </p>
             <p class="fragment"> Cookie $i$ can have its top left corner at location $(r,c)$ on sheet $k$ whenever $r \le \ell - a_i + 1$ and $c \le w - b_i + 1$. </p>
-            <p class="fragment"> For each such location, include a variable $x_{ikrc}$ that is 1 if we put cookie $i$ there. </p>
+            <p class="fragment"> For each such location, include a variable $x_{ikrc}$ that is 1 if we put cookie $i$ there and 0 otherwise. </p>
           </section>
           <section>
             <h3>ILP Examples </h3>
@@ -437,7 +403,7 @@
             <h3>ILP Examples </h3>
             <h4> Cookie Assembly Constraints</h4>
             <p> We can only place one cookie in each cell of a sheet that is used. </p>
-            <p class="fragment"> So for each $k = 1, \dots, C$, each $r = 1,\dots,\ell$, and each $c = 1,\dots,w$,
+            <p class="fragment"> So for each $k = 1, \dots, K$, each $r = 1,\dots,\ell$, and each $c = 1,\dots,w$,
               \[
               \sum_{i}^K \sum_{r' = r-a_i+1}^{r}\sum_{c' = c-b_i+1}^{c} x_{ikr'c'} \le y_k.
               \]
@@ -451,11 +417,11 @@
             <div class="fragment">
             <p> Assembling </p>
               <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{k=1}^K y_k$ </td> </tr>
-                  <tr> <td> such that </td> <td> $ \sum_{k=1}^C \sum_{r = 1}^{\ell - a_i + 1}\sum_{c = 1}^{w - b_i + 1} x_{ikrc} = 1  $ </td> </tr>
-                  <tr> <td> </td> <td> $ \sum_{i}^K \sum_{r' = r-a_i+1}^{r}\sum_{c' = c-b_i+1}^{c} x_{ikr'c'} \le y_k $ </td> </tr>
-                  <tr> <td> </td> <td> $0 \le x_{ikrc} \le 1$ </td> </tr>
-                  <tr> <td> </td> <td> $0 \le y_k \le 1$ </td> </tr>
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{k=1}^K y_k$ </td> <td></td></tr>
+                  <tr> <td> such that </td> <td> $ \sum_{k=1}^K \sum_{r = 1}^{\ell - a_i + 1}\sum_{c = 1}^{w - b_i + 1} x_{ikrc} = 1  $ </td><td>for $i=1,\dots,B$</td> </tr>
+                  <tr> <td> </td> <td> $ \sum_{i}^K \sum_{r' = r-a_i+1}^{r}\sum_{c' = c-b_i+1}^{c} x_{ikr'c'} \le y_k $ </td><td> for each $k =1,\dots,K$</td> </tr>
+                  <tr> <td> </td> <td> $0 \le x_{ikrc} \le 1$ </td><td></td> </tr>
+                  <tr> <td> </td> <td> $0 \le y_k \le 1$ </td><td></td> </tr>
                   <tr> <td> </td> <td> $x_{ikrc}, y_k \in \Z$ </td> </tr>
               </table>
             </div>
