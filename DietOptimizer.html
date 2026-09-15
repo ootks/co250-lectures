@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Solve a large diet linear program from a Google Sheet of nutrition data">
+  <title>Diet LP Optimizer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --base3: #fdf6e3;
+      --base2: #eee8d5;
+      --base1: #93a1a1;
+      --base00: #657b83;
+      --base01: #586e75;
+      --base02: #073642;
+      --blue: #268bd2;
+      --cyan: #2aa198;
+      --yellow: #b58900;
+      --orange: #cb4b16;
+      --red: #dc322f;
+      --green: #859900;
+      --magenta: #d33682;
+      --violet: #6c71c4;
+      --shadow: 0 18px 48px rgba(7, 54, 66, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--base3);
+      color: var(--base01);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    button, select, input { font: inherit; }
+
+    .page {
+      width: min(1480px, 100%);
+      margin: 0 auto;
+      padding: 28px clamp(18px, 3vw, 44px) 42px;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--base02);
+      font-size: clamp(1.75rem, 3vw, 2.65rem);
+      letter-spacing: -0.045em;
+      line-height: 1.06;
+    }
+
+    .lede {
+      max-width: 780px;
+      margin: 9px 0 0;
+      color: var(--base00);
+      font-size: 1.02rem;
+    }
+
+    .button {
+      border: 1px solid #c7c0aa;
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.34);
+      color: var(--base01);
+      cursor: pointer;
+      font-weight: 680;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .button:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(7,54,66,.10); }
+    .button:focus-visible { outline: 3px solid rgba(38,139,210,.35); outline-offset: 2px; }
+    .button.primary { border-color: var(--blue); background: var(--blue); color: white; }
+
+    .source-bar {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border: 1px solid #d8d0bb;
+      border-radius: 14px;
+      background: rgba(255,255,255,.26);
+      box-shadow: var(--shadow);
+    }
+
+    .source-bar input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #c7c0aa;
+      border-radius: 10px;
+      background: rgba(253,246,227,.75);
+      color: var(--base02);
+    }
+    .source-bar input:focus-visible { outline: 3px solid rgba(38,139,210,.30); outline-offset: 1px; }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(330px, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid #d8d0bb;
+      border-radius: 18px;
+      background: rgba(255,255,255,.26);
+      box-shadow: var(--shadow);
+    }
+
+    .card-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 15px 18px;
+      border-bottom: 1px solid #d8d0bb;
+      background: rgba(238,232,213,.45);
+    }
+    .card-heading strong { color: var(--base02); }
+    .card-heading span { color: var(--base00); font-size: .9rem; text-align: right; }
+
+    .table-scroll { overflow-x: auto; max-height: 460px; overflow-y: auto; }
+
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { padding: 8px 12px; text-align: right; border-top: 1px solid #d8d0bb; white-space: nowrap; }
+    th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: rgba(253,246,227,.94); max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
+    thead th { color: var(--base02); background: rgba(238,232,213,.7); font-size: .82rem; position: sticky; top: 0; }
+    td.serve { font-weight: 800; color: #14786f; }
+    tr.chosen td { background: rgba(42,161,152,.10); }
+
+    input.cell {
+      width: 78px;
+      padding: 4px 6px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--base02);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    input.cell.name-cell { width: 210px; text-align: left; }
+    input.cell:hover { border-color: #d8d0bb; }
+    input.cell:focus-visible { outline: none; border-color: var(--blue); background: rgba(253,246,227,.95); }
+    .row-del {
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--base1);
+      cursor: pointer;
+      font-size: 1.05rem;
+      line-height: 1;
+      padding: 2px 8px;
+    }
+    .row-del:hover { color: var(--red); border-color: rgba(220,50,47,.4); background: rgba(220,50,47,.06); }
+
+    .side { display: grid; gap: 14px; }
+    .panel { padding: 16px; }
+    .panel h2 { margin: 0 0 12px; color: var(--base02); font-size: 1rem; }
+
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 15px;
+      border-radius: 14px;
+      background: var(--base02);
+      color: var(--base3);
+    }
+    .status small { display: block; color: #c7d2d0; margin-bottom: 2px; }
+    .status strong { font-size: 1.05rem; }
+    .status .total { font-size: 1.9rem; line-height: 1; font-variant-numeric: tabular-nums; }
+
+    .stat-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 9px; }
+    .stat-box { border: 1px solid #d8d0bb; border-radius: 10px; padding: 8px 10px; background: rgba(253,246,227,.60); }
+    .stat-box span { display: block; color: var(--base00); font-size: .78rem; }
+    .stat-box strong { color: var(--base02); font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+
+    .diet-list { display: grid; gap: 7px; }
+    .diet-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: baseline;
+      min-height: 32px;
+      border-bottom: 1px solid rgba(216,208,187,.7);
+    }
+    .diet-row:last-child { border-bottom: 0; }
+    .diet-row strong { color: var(--base02); font-size: .9rem; white-space: normal; }
+    .diet-row .amt { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--base02); }
+
+    .nutrient-grid { display: grid; gap: 8px; }
+    .nutrient-item {
+      display: grid;
+      grid-template-columns: 1fr 88px auto;
+      gap: 9px;
+      align-items: center;
+      border-bottom: 1px solid rgba(216,208,187,.7);
+      padding-bottom: 6px;
+    }
+    .nutrient-item:last-child { border-bottom: 0; }
+    .nutrient-item label { color: var(--base01); font-size: .88rem; }
+    .nutrient-item input {
+      width: 100%;
+      padding: 5px 8px;
+      border: 1px solid #c7c0aa;
+      border-radius: 8px;
+      background: rgba(253,246,227,.8);
+      color: var(--base02);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .nutrient-item .got { font-variant-numeric: tabular-nums; font-size: .82rem; text-align: right; }
+    .nutrient-item .got.tight { color: #14786f; font-weight: 700; }
+    .nutrient-item .got.slack { color: var(--base00); }
+
+    .notice {
+      margin: 0 0 16px;
+      padding: 10px 13px;
+      border-radius: 10px;
+      font-size: .9rem;
+      border: 1px solid;
+    }
+    .notice.err { border-color: var(--red); background: rgba(220,50,47,.08); color: #a5201d; }
+    .notice.ok { border-color: var(--green); background: rgba(133,153,0,.10); color: #5c6600; }
+    .notice.info { border-color: var(--blue); background: rgba(38,139,210,.08); color: #1a5f8f; }
+
+    .model {
+      margin: 20px 0 0;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+    .model strong { color: var(--base02); white-space: nowrap; }
+    .formula { overflow-x: auto; color: var(--base00); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88rem; }
+
+    details { margin-top: 12px; color: var(--base00); font-size: .9rem; }
+    summary { cursor: pointer; color: var(--base01); font-weight: 650; }
+    code { background: rgba(238,232,213,.7); padding: 1px 5px; border-radius: 5px; font-size: .86em; }
+
+    @media (max-width: 980px) {
+      header { align-items: flex-start; flex-direction: column; }
+      .workspace { grid-template-columns: 1fr; }
+      .source-bar { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>Diet LP Optimizer</h1>
+        <p class="lede">A table of foods, their price, and their nutrients (per 100&nbsp;g). The optimizer builds the diet linear program and solves it in the browser: choose amounts of each food to <b>minimize total price</b> while meeting every nutrient minimum. Edit any value, add your own foods, and it re-solves instantly — the contrast with integer programs is the whole point.</p>
+      </div>
+    </header>
+
+    <div id="notice" class="notice info">Loading…</div>
+
+    <section class="workspace" aria-label="Diet LP workspace">
+      <div class="card">
+        <div class="card-heading">
+          <strong>Foods, price &amp; nutrients (per 100 g)</strong>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <span id="dataMeta">no data</span>
+            <button class="button" id="addFoodButton" type="button">+ Add food</button>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table id="dataTable"><thead></thead><tbody></tbody></table>
+        </div>
+      </div>
+
+      <aside class="side">
+        <div class="status" aria-live="polite">
+          <div><small>Minimum total price</small><strong id="statusText">not solved</strong></div>
+          <div class="total" id="totalCost">—</div>
+        </div>
+        <div class="stat-strip">
+          <div class="stat-box"><span>Variables (foods)</span><strong id="numVars">—</strong></div>
+          <div class="stat-box"><span>Constraints (nutrients)</span><strong id="numCons">—</strong></div>
+          <div class="stat-box"><span>Simplex iterations</span><strong id="numIters">—</strong></div>
+          <div class="stat-box"><span>Solve time</span><strong id="solveTime">—</strong></div>
+        </div>
+
+        <section class="card panel">
+          <h2>Daily minimums &amp; amounts met</h2>
+          <div class="nutrient-grid" id="nutrientGrid"><em>Loading…</em></div>
+          <button class="button" id="resolveButton" type="button" style="margin-top:12px;width:100%;">Re-solve with these minimums</button>
+        </section>
+
+        <section class="card panel">
+          <h2>Optimal diet (100 g servings)</h2>
+          <div class="diet-list" id="dietList"><em>Solve to see the diet.</em></div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="card model" aria-label="Linear programming formulation">
+      <strong>Linear-program structure</strong>
+      <div class="formula">min &nbsp; priceᵀ x &nbsp;·&nbsp; (nutrients) x ≥ minimums &nbsp;·&nbsp; x ≥ 0 &nbsp;&nbsp;(x is continuous — no integrality)</div>
+    </section>
+
+    <details>
+      <summary>About this table</summary>
+      <p>Every cell is editable: change a food's name, its price, or any nutrient value and the diet re-solves automatically.
+      Use <b>+ Add food</b> to append a new row. The constraint nutrients are
+      <code>Calories</code>, <code>Fat (g)</code>, <code>Protein (g)</code>, <code>Carbohydrate (g)</code>, <code>Sugars (g)</code>, <code>Fiber (g)</code>, <code>Cholesterol (mg)</code>, and <code>Saturated Fats (g)</code>; the cost is <code>Price</code>.
+      Amounts are per 100&nbsp;g servings.</p>
+    </details>
+  </main>
+
+  <script>
+    // ---------------------------------------------------------------------
+    // Configuration: which columns become constraints and which is the cost.
+    // ---------------------------------------------------------------------
+    const LABEL_COL = "Name";
+    const COST_COL = "Price";
+    // The seed CSV below still carries the original nutrition column in the
+    // "Sucrose (g)" slot; we reinterpret that number as a generic "Price".
+    const SEED_COST_COL = "Sucrose (g)";
+    // constraint column -> default daily minimum (per day, in the column's units)
+    const CONSTRAINTS = [
+      { name: "Calories",           min: 2000 },
+      { name: "Fat (g)",            min: 50 },
+      { name: "Protein (g)",        min: 50 },
+      { name: "Carbohydrate (g)",   min: 250 },
+      { name: "Sugars (g)",         min: 20 },
+      { name: "Fiber (g)",          min: 28 },
+      { name: "Cholesterol (mg)",   min: 100 },
+      { name: "Saturated Fats (g)", min: 10 }
+    ];
+
+    // A tiny inline sample in the SAME schema, for offline / blocked-fetch use.
+    const SAMPLE_CSV =
+`Preamble junk row,,,,,,,,,,
+ID,Name,Food Group,Calories,Fat (g),Protein (g),Carbohydrate (g),Sugars (g),Fiber (g),Cholesterol (mg),Saturated Fats (g),Sucrose (g)
+1,Cowpeas Leafy Tips Raw,Vegetables,29,0.25,4.1,4.82,0,0,0,0.066,1
+2,Fish Pollock Atlantic Raw,Fish,92,0.98,19.44,0,0,0,71,0.135,1
+3,Pork Or Ham With Soy-Based Sauce,Prepared Meals,187,12.52,14.84,3.37,1.16,0.5,39,2.787,1
+4,Caribou Tongue Raw (Alaska Native),American Indian,260,22.8,13.7,0,0,0,0,0,2
+5,Honey Mustard Dip,Soups and Sauces,267,17.82,1.64,25.5,23.98,0.9,51,2.66,2
+6,Halibut Coated Fried Made With Oil,Fish,222,11.46,18.84,9.85,0.88,0.6,77,2.899,1
+7,Pie Black Bottom,Baked Foods,308,15.54,5.45,37.47,21.11,1.2,68,6.837,2
+8,Queso Chihuahua,Dairy and Egg Products,374,29.68,21.56,5.56,5.56,0,106,18.843,1
+9,Shrimp Teriyaki,Prepared Meals,120,1.56,21.62,3.34,1.76,0,193,0.478,2
+10,Mixed Salad Greens Raw,Vegetables,17,0.24,1.52,3.22,0.92,2,0,0.038,2
+11,Turnover Meat-Filled No Gravy,Prepared Meals,371,23.6,12.87,26.16,0.13,1,36,6.81,1
+12,Flax Seeds,Nuts and Seeds,534,42.16,18.29,28.88,1.55,27.3,0,3.663,1.17
+13,Taco Bell Nachos Supreme,Fast Foods,223,12.48,6.21,21.39,1.63,3.7,14,3.549,0.28
+14,Brussels Sprouts Frozen Unprepared,Vegetables,41,0.41,3.78,7.86,2.03,3.8,0,0.85,1
+15,Cherry Pie Filling,Sweets,120,0.85,0.6,28.66,24.96,0.9,0,0.163,2
+16,Cooked Yellow Snap Beans,Vegetables,35,0.28,1.89,7.88,3.63,3.3,1,0.064,1
+17,Taro Leaves Raw,Vegetables,42,0.74,4.98,6.7,3.01,3.7,0,0.151,2
+18,Dry Roasted Pistachio Nuts,Nuts and Seeds,572,45.82,21.05,28.29,7.74,10.3,0,5.645,7.10
+19,Fiddlehead Ferns,Vegetables,34,0.4,4.55,5.54,0,0,0,0,2
+20,Fish Carp Cooked Dry Heat,Fish,162,7.17,22.86,0,0,0,85,1.388,1
+21,Bagel Wheat Bran,Baked Foods,250,1.53,10.2,48.89,6.12,4.1,0,0,2
+22,Crackers Wheat,Snacks,441,15.26,8.94,70.14,8.34,8.6,0,2.636,2
+23,Yam Cooked Puerto Rican,Vegetables,115,0.14,1.48,27.29,0.49,4.9,0,0.029,1
+24,Funnel Cake With Sugar,Baked Foods,349,16.26,7.65,43.12,16.04,1,58,3.143,2
+25,Gooseberries,Fruits,44,0.58,0.88,10.18,0,4.3,0,0.038,2
+26,Pancakes Whole Grain,Fast Foods,271,12.1,7.85,32.87,7.02,3.2,62,3.095,1
+27,Singapore Sling,Beverages,98,0.04,0.12,7.8,6.7,0.2,0,0.008,2
+28,Post Selects Maple Pecan Crunch,Breakfast Cereals,413,8.7,8.6,77.4,22.5,7.4,0,1,1
+29,Olive Garden Lasagna Classico,Restaurant Foods,184,10.84,11.28,10.33,3.53,1.6,40,6.347,1
+30,Lowfat Ricotta,Dairy and Egg Products,138,7.91,11.39,5.14,0.31,0,31,4.927,2
+31,Nance Canned Syrup Drained,Fruits,95,1.28,0.56,22.79,15.66,7,0,0,0.011
+32,Sauvignon Blanc,Beverages,81,0,0.07,2.05,0,0,0,0,2
+33,Turkey Pot Pie Frozen Entree,Prepared Meals,176,8.9,6.5,17.7,0,1.1,16,2.88,1
+34,Coffee Cappuccino Nonfat,Beverages,19,0.07,1.72,2.78,2.56,0,1,0.044,2
+35,Pan Broiled Cured Ham,Meats,123,5.06,15.09,4.69,4.69,0,45,1.528,2
+36,Salami,Meats,425,37,21.7,1.2,1.2,0,80,13.1,2
+37,Beef Chuck Pot Roast,Meats,212,7.67,33.36,0,1,0,100,2.903,1
+38,Beef Dried Chipped Cooked In Fat,Meats,229,11.9,27.94,2.48,3.43,0,81,4.833,1
+39,Poultry Seasoning,Spices and Herbs,307,7.53,9.59,65.59,1.8,11.3,0,3.29,2
+40,Epazote Raw,Vegetables,32,0.52,0.33,7.44,0,3.8,0,0,2
+41,Wheat Flour White Cake Enriched,Grains and Pasta,363,0.86,8.2,78.03,0.31,1.7,0,0.127,1
+42,Sea Bass Steamed Or Poached,Fish,122,2.52,23.18,0,0,0,52,0.643,2
+43,Potato Chips Reduced Fat,Snacks,482,20.59,7.03,67.13,0.22,6,0,4.120,1
+44,Pizza No Cheese Thin Crust,Baked Foods,276,13.64,7.38,30.77,4.94,2,15,3.432,1
+45,Dried Hickorynuts,Nuts and Seeds,657,64.37,12.72,18.25,0,6.4,0,7.038,2
+46,Lemonade Frozen Concentrate White,Beverages,196,0.7,0.22,49.89,44.46,1.3,0,0.025,9.8
+47,Snacks Granola Bars Hard Plain,Snacks,471,19.8,10.1,64.4,28.57,5.3,0,2.37,2
+48,Coffee Brewed Breakfast Blend,Beverages,2,0,0.3,0.17,0,0,0,0,2
+49,Cheese Cheddar,Dairy and Egg Products,404,33.31,22.87,3.09,0.49,0,99,18.867,1
+50,Ocean Perch Steamed Or Poached,Fish,99,1.94,19.25,0,0,0,65,0.343,2
+51,Stuffed Pepper With Rice Meatless,Vegetables,161,11.05,3.79,12.02,2.54,1.2,10,3.011,1
+52,Cooked Pacific Cod,Fish,85,0.5,18.73,0,0,0,57,0.105,2
+53,Coffee,Beverages,1,0.02,0.12,0,0,0,0,0.002,2
+54,Potato Scalloped Ready-To-Heat,Prepared Meals,176,10.68,6.68,13.42,2.25,0.7,28,5.797,1
+55,Rolls Dinner Wheat,Baked Foods,273,6.3,8.6,46,1.63,3.8,0,1.497,2
+56,Cracker Barrel Macaroni N Cheese,Restaurant Foods,194,11.75,6.50,15.61,2.83,1.1,18,4.178,1
+57,Silk Plain Soy Yogurt,Beans and Lentils,66,1.76,2.64,9.69,5.29,0.4,0,0.22,2
+58,Pie Lemon Not Cream Or Meringue,Baked Foods,384,15.52,5.06,57.19,36.21,0.9,68,3.858,1
+59,Oranges Raw With Peel,Fruits,63,0.3,1.3,15.5,0,4.5,0,0.035,2
+60,Snacks Fruit Leather Rolls,Sweets,371,3,0.1,85.8,49.16,0,0,1.672,1
+61,Mackerel Cake Or Patty,Fish,258,15.12,16.5,13.18,0.87,1,74,4.087,2
+62,Chick-Fil-A Chicken Sandwich,Fast Foods,249,11.19,16.28,20.89,3.65,1.4,35,2.123,1.16
+63,Beef Retail Cuts Separable Fat Raw,Meats,674,70.89,8.21,0,0,0,99,29.45,2
+64,Tamales (Navajo),American Indian,153,6.12,6.28,18.12,0.99,3.1,17,2.396,1.5
+65,Seafood Newburg,Fish,245,20.26,12.02,3.82,2.4,0.1,173,11.07,2
+66,Broccoli Stalks Raw,Vegetables,28,0.35,2.98,5.24,0,0,0,0.054,2
+67,Strudel Cheese,Baked Foods,305,12.83,10.1,37.65,21.12,0.7,62,7.092,1
+68,Black Tea (Brewed),Beverages,1,0,0,0.3,0,0,0,0.002,2
+69,Snacks Trail Mix Regular Unsalted,Snacks,462,29.4,14.8,44.9,0,0,0,5.55,1
+70,Pie Blueberry Prepared From Recipe,Baked Foods,245,11.9,2.7,33.5,0,0,0,3.911,1
+71,Cobb Salad No Dressing,Vegetables,92,4.34,11.36,2.48,1.08,1.2,61,1.045,2
+72,Popover,Baked Foods,265,8.78,10.82,34.8,4.23,1.1,136,4.389,2
+73,Lentils Pink Or Red Raw,Beans and Lentils,358,2.17,23.91,63.2,0,10.8,0,0.379,1
+74,Knish Meat,Prepared Meals,349,21.28,13.12,25.65,0.74,1.1,95,5.192,2
+75,Black-Eyed Peas (Cowpeas),Beans and Lentils,116,0.53,7.73,20.76,3.4,6.5,0,0.138,1
+76,Cereal Rice Flakes,Breakfast Cereals,394,1.26,6.69,86.22,12.12,0.7,0,0.36,2
+77,Pudding Mexican Bread,Sweets,280,11.5,5.06,40.98,26.57,1.3,13,4.284,2
+78,Ham And Cheese Loaf Or Roll,Meats,241,18.7,13.6,4,0,0,58,6.966,2
+79,Instant Soup Noodle,Soups and Sauces,25,0.44,1.03,4.17,0.13,0.2,6,0.132,1
+80,Dressing With Meat And Vegetables,Prepared Meals,261,16.85,6.73,20.52,2.80,1.4,19,4.899,1
+81,Ham Croquette,Meats,273,20.7,17.98,2.58,0.51,0.2,84,4.535,2
+82,Bulgur Dry,Grains and Pasta,342,1.33,12.29,75.87,0.41,12.5,1,0.232,1
+83,Canned Sardines,Fish,208,11.45,24.62,0,0,0,142,1.528,2
+84,Silk (Soy Milk),Beans and Lentils,41,1.65,2.88,3.29,2.48,0.4,0,0.206,1
+85,Horned Melon (Kiwano),Fruits,44,1.26,1.78,7.56,0,0,0,0,2
+86,Cooked Green Bell Peppers,Vegetables,28,0.2,0.92,6.7,3.20,1.2,0,0.029,0.16
+87,Cheese Flavored Corn Snacks,Snacks,560,36.01,5.85,53.53,3.19,1.4,7,5.36,2
+88,Burdock Root Raw,Vegetables,72,0.15,1.53,17.34,2.9,3.3,0,0.025,2
+89,Ham Smoked Extra Lean Low Sodium,Meats,141,2.71,18.52,10.7,10.69,0,50,1.786,0.34
+90,Coconut Water Sweetened,Beverages,38,0.19,0.68,8.58,7.53,1,0,0.167,2
+91,Dry-Roasted Mixed Nuts (Salted),Nuts and Seeds,607,53.5,19.5,22.42,6,6.4,0,8.01,6
+92,Sweetened Vanilla Almond Milk,Beverages,38,1.04,0.42,6.59,6.25,0.4,0,0,2
+93,Kippered Herring,Fish,217,12.37,24.58,0,0,0,82,2.791,2
+94,Pizza With Extra Meat Thick Crust,Baked Foods,280,13.9,13.53,26.75,2.76,1.8,30,5.125,1
+95,Breadsticks Soft Nfs,Baked Foods,342,12.85,12.18,44.39,1.11,2.4,7,2.96,2
+96,Soft Taco With Meat And Sour Cream,Prepared Meals,221,11.97,9.75,18.64,4.1,1.9,31,4.88,1
+97,Pork Fresh Backfat Raw,Meats,812,88.69,2.92,0,0,0,57,32.21,2
+98,Passion Fruit (Granadilla),Fruits,97,0.7,2.2,23.38,11.2,10.5,0,0.059,1
+99,Dasheen Fried,Vegetables,253,8.85,0.64,42.81,0.61,6.3,0,2.206,2
+100,Pannetone,Baked Foods,321,8.24,8.61,53.79,17.63,2.3,59,4.366,1`;
+
+    // ---------------------------------------------------------------------
+    // CSV parsing (handles quoted fields, embedded commas and newlines).
+    // ---------------------------------------------------------------------
+    function parseCSV(text) {
+      const rows = [];
+      let row = [], field = "", inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (inQuotes) {
+          if (ch === '"') {
+            if (text[i + 1] === '"') { field += '"'; i++; }
+            else inQuotes = false;
+          } else field += ch;
+        } else if (ch === '"') {
+          inQuotes = true;
+        } else if (ch === ",") {
+          row.push(field); field = "";
+        } else if (ch === "\n" || ch === "\r") {
+          if (ch === "\r" && text[i + 1] === "\n") i++;
+          row.push(field); field = "";
+          if (row.some(c => c.trim() !== "")) rows.push(row);
+          row = [];
+        } else field += ch;
+      }
+      if (field !== "" || row.length) { row.push(field); if (row.some(c => c.trim() !== "")) rows.push(row); }
+      return rows;
+    }
+
+    function num(v) {
+      if (v == null) return 0;
+      const s = String(v).trim();
+      if (s === "" || /^null$/i.test(s)) return 0;
+      const x = parseFloat(s.replace(/,/g, ""));
+      return isFinite(x) ? x : 0;
+    }
+
+    // ---------------------------------------------------------------------
+    // In-memory data model: an array of foods, each
+    //   { name, price, nut: [one value per CONSTRAINTS entry] }
+    // This is the single source of truth; the editable table binds to it.
+    // ---------------------------------------------------------------------
+    let foodsData = [];
+
+    // Seed foodsData once from the embedded sample CSV.
+    function seedFromCSV(csv) {
+      const rows = parseCSV(csv);
+      let hi = -1;
+      for (let i = 0; i < Math.min(rows.length, 25); i++) {
+        const r = rows[i].map(s => s.trim());
+        if (r.includes(LABEL_COL) && r.includes("Calories")) { hi = i; break; }
+      }
+      if (hi === -1) throw new Error("Sample data is missing its header row.");
+      const header = rows[hi].map(s => s.trim());
+      const colOf = name => header.indexOf(name);
+      const labelIdx = colOf(LABEL_COL);
+      const costIdx = colOf(SEED_COST_COL);
+      const consIdx = CONSTRAINTS.map(c => colOf(c.name));
+
+      const data = [];
+      for (let r = hi + 1; r < rows.length; r++) {
+        const cells = rows[r];
+        const label = (cells[labelIdx] || "").trim();
+        if (!label) continue;
+        data.push({
+          name: label,
+          price: num(cells[costIdx]),
+          nut: consIdx.map(ci => num(cells[ci]))
+        });
+      }
+      return data;
+    }
+
+    // Build the LP straight from foodsData + chosen minimums.
+    //   foods[], nutrients[], A (nutrient x food), cost[] (price), minimums[]
+    function buildProblemFromData(minimums) {
+      const nutrients = CONSTRAINTS.map(c => c.name);
+      const foods = foodsData.map(f => f.name);
+      const cost = foodsData.map(f => f.price);
+      const A = nutrients.map((_, j) => foodsData.map(f => f.nut[j]));
+      return { foods, nutrients, A, cost, minimums: minimums.slice() };
+    }
+
+    // ---------------------------------------------------------------------
+    // Two-phase simplex for:  min cᵀx  s.t.  Ax >= b,  x >= 0   (b >= 0).
+    // ---------------------------------------------------------------------
+    function solveDietLP(A, b, c) {
+      const m = A.length;
+      const n = c.length;
+      const nSurplus = m, nArtificial = m;
+      const total = n + nSurplus + nArtificial;
+
+      const T = [];
+      for (let i = 0; i < m; i++) {
+        const rowArr = new Array(total + 1).fill(0);
+        for (let j = 0; j < n; j++) rowArr[j] = A[i][j];
+        rowArr[n + i] = -1;
+        rowArr[n + nSurplus + i] = 1;
+        rowArr[total] = b[i];
+        T.push(rowArr);
+      }
+
+      const basis = [];
+      for (let i = 0; i < m; i++) basis.push(n + nSurplus + i);
+
+      let iterations = 0;
+      const MAX_ITERS = 100000;
+
+      function simplex(cost) {
+        while (iterations < MAX_ITERS) {
+          iterations++;
+          const cb = basis.map(bi => cost[bi]);
+          let enter = -1, best = 1e-9;
+          for (let j = 0; j < total; j++) {
+            let zj = 0;
+            for (let i = 0; i < m; i++) zj += cb[i] * T[i][j];
+            const reduced = zj - cost[j];
+            if (reduced > best) { best = reduced; enter = j; }
+          }
+          if (enter === -1) return true;
+          let leave = -1, minRatio = Infinity;
+          for (let i = 0; i < m; i++) {
+            if (T[i][enter] > 1e-9) {
+              const ratio = T[i][total] / T[i][enter];
+              if (ratio < minRatio - 1e-12) { minRatio = ratio; leave = i; }
+            }
+          }
+          if (leave === -1) return false;
+          const piv = T[leave][enter];
+          for (let j = 0; j <= total; j++) T[leave][j] /= piv;
+          for (let i = 0; i < m; i++) {
+            if (i === leave) continue;
+            const factor = T[i][enter];
+            if (Math.abs(factor) < 1e-15) continue;
+            for (let j = 0; j <= total; j++) T[i][j] -= factor * T[leave][j];
+          }
+          basis[leave] = enter;
+        }
+        return false;
+      }
+
+      const phase1Cost = new Array(total).fill(0);
+      for (let i = 0; i < nArtificial; i++) phase1Cost[n + nSurplus + i] = 1;
+      if (!simplex(phase1Cost)) return { status: "infeasible" };
+      let artSum = 0;
+      for (let i = 0; i < m; i++) if (basis[i] >= n + nSurplus) artSum += Math.abs(T[i][total]);
+      if (artSum > 1e-6) return { status: "infeasible" };
+
+      const phase2Cost = new Array(total).fill(0);
+      for (let j = 0; j < n; j++) phase2Cost[j] = c[j];
+      for (let i = 0; i < nArtificial; i++) phase2Cost[n + nSurplus + i] = 1e7;
+      if (!simplex(phase2Cost)) return { status: "unbounded" };
+
+      const x = new Array(n).fill(0);
+      for (let i = 0; i < m; i++) if (basis[i] < n) x[basis[i]] = Math.max(0, T[i][total]);
+      let objective = 0;
+      for (let j = 0; j < n; j++) objective += c[j] * x[j];
+
+      const surplusVal = new Array(m).fill(0);
+      for (let i = 0; i < m; i++) {
+        const bi = basis[i];
+        if (bi >= n && bi < n + nSurplus) surplusVal[bi - n] = T[i][total];
+      }
+      const tight = surplusVal.map(s => Math.abs(s) < 1e-4);
+      return { status: "optimal", x, objective, iterations, tight };
+    }
+
+    // ---------------------------------------------------------------------
+    // Rendering.
+    // ---------------------------------------------------------------------
+    const el = id => document.getElementById(id);
+    let lastProblem = null;
+
+    function setNotice(kind, msg) {
+      const n = el("notice");
+      n.className = `notice ${kind}`;
+      n.textContent = msg;
+    }
+
+    function currentMinimums() {
+      return CONSTRAINTS.map((c, j) => {
+        const input = document.getElementById(`min-${j}`);
+        return input ? num(input.value) : c.min;
+      });
+    }
+
+    function renderNutrientGrid(problem, solution) {
+      const met = CONSTRAINTS.map((_, j) => {
+        if (!solution || solution.status !== "optimal") return null;
+        let g = 0;
+        for (let i = 0; i < problem.foods.length; i++) g += problem.A[j][i] * solution.x[i];
+        return g;
+      });
+      el("nutrientGrid").innerHTML = CONSTRAINTS.map((c, j) => {
+        const minVal = problem ? problem.minimums[j] : c.min;
+        const g = met[j];
+        const binding = solution && solution.status === "optimal" && solution.tight[j];
+        const gotText = g === null ? "" : `${g.toFixed(0)} met`;
+        return `<div class="nutrient-item">
+          <label for="min-${j}">${c.name}</label>
+          <input id="min-${j}" type="number" step="any" value="${minVal}" />
+          <span class="got ${binding ? "tight" : "slack"}">${binding ? "binding · " : ""}${gotText}</span>
+        </div>`;
+      }).join("");
+    }
+
+    function renderData(solution) {
+      const thead = el("dataTable").querySelector("thead");
+      const tbody = el("dataTable").querySelector("tbody");
+      const nutrients = CONSTRAINTS.map(c => c.name);
+      thead.innerHTML = `<tr><th>Food</th><th>Servings</th><th>${COST_COL}</th>${nutrients.map(nu => `<th>${nu}</th>`).join("")}<th></th></tr>`;
+
+      tbody.innerHTML = foodsData.map((food, i) => {
+        const serve = solution && solution.status === "optimal" ? solution.x[i] : null;
+        const chosen = serve && serve > 1e-6;
+        const nutInputs = food.nut.map((v, j) =>
+          `<td><input class="cell" data-row="${i}" data-nut="${j}" type="number" step="any" value="${v}" aria-label="${nutrients[j]} for ${food.name}"></td>`
+        ).join("");
+        return `<tr class="${chosen ? "chosen" : ""}">
+          <td><input class="cell name-cell" data-row="${i}" data-field="name" type="text" value="${food.name.replace(/"/g, "&quot;")}" aria-label="Food name"></td>
+          <td class="${chosen ? "serve" : ""}">${serve === null ? "—" : (serve > 1e-6 ? serve.toFixed(3) : "0")}</td>
+          <td><input class="cell" data-row="${i}" data-field="price" type="number" step="any" value="${food.price}" aria-label="Price for ${food.name}"></td>
+          ${nutInputs}
+          <td><button class="row-del" data-del="${i}" type="button" title="Remove this food" aria-label="Remove ${food.name}">×</button></td>
+        </tr>`;
+      }).join("");
+      el("dataMeta").textContent = `${foodsData.length} foods · ${nutrients.length} nutrient constraints`;
+    }
+
+    function renderSolution(problem, solution) {
+      el("numVars").textContent = problem ? problem.foods.length : "—";
+      el("numCons").textContent = problem ? problem.nutrients.length : "—";
+
+      if (!solution || solution.status !== "optimal") {
+        el("statusText").textContent = solution ? solution.status : "not solved";
+        el("totalCost").textContent = "—";
+        el("numIters").textContent = solution ? solution.iterations || "—" : "—";
+        el("solveTime").textContent = "—";
+        el("dietList").innerHTML = `<em>${solution && solution.status === "infeasible"
+          ? "No diet meets every minimum with these foods." : "Solve to see the diet."}</em>`;
+        return;
+      }
+
+      el("statusText").textContent = "optimal";
+      el("totalCost").textContent = solution.objective.toFixed(2);
+      el("numIters").textContent = solution.iterations;
+      el("solveTime").textContent = solution.ms.toFixed(1) + " ms";
+
+      const chosen = problem.foods
+        .map((food, i) => ({ food, amt: solution.x[i] }))
+        .filter(d => d.amt > 1e-6)
+        .sort((a, b) => b.amt - a.amt);
+      el("dietList").innerHTML = chosen.length
+        ? chosen.map(d => `<div class="diet-row"><strong>${d.food}</strong><span class="amt">${d.amt.toFixed(3)}</span></div>`).join("")
+        : "<em>Empty diet (all minimums already satisfied at zero).</em>";
+    }
+
+    function solveAndRender(problem, rerenderTable) {
+      const t0 = performance.now();
+      const sol = solveDietLP(problem.A, problem.minimums, problem.cost);
+      const t1 = performance.now();
+      if (sol.status === "optimal") sol.ms = t1 - t0;
+      lastProblem = problem;
+      if (rerenderTable) renderData(sol);
+      else updateServings(sol);
+      renderNutrientGrid(problem, sol);
+      renderSolution(problem, sol);
+      if (sol.status === "optimal") {
+        setNotice("ok", `Solved: ${problem.foods.length} variables, ${problem.nutrients.length} constraints, ${sol.iterations} simplex iterations in ${sol.ms.toFixed(1)} ms. Minimum total price ${sol.objective.toFixed(2)}.`);
+      } else if (sol.status === "infeasible") {
+        setNotice("err", "Infeasible: no combination of these foods meets every minimum. Try lowering some minimums.");
+      } else {
+        setNotice("err", "Unbounded — check that every price is nonnegative.");
+      }
+    }
+
+    // Update just the Servings cells + chosen-row highlight without rebuilding
+    // the inputs (so the cell you are editing keeps focus).
+    function updateServings(solution) {
+      const rows = el("dataTable").querySelectorAll("tbody tr");
+      rows.forEach((tr, i) => {
+        const cell = tr.children[1];
+        const serve = solution && solution.status === "optimal" ? solution.x[i] : null;
+        const chosen = serve && serve > 1e-6;
+        cell.textContent = serve === null ? "—" : (serve > 1e-6 ? serve.toFixed(3) : "0");
+        cell.className = chosen ? "serve" : "";
+        tr.className = chosen ? "chosen" : "";
+      });
+    }
+
+    function reSolve(rerenderTable) {
+      try {
+        const problem = buildProblemFromData(currentMinimums());
+        solveAndRender(problem, rerenderTable);
+      } catch (e) {
+        setNotice("err", e.message);
+      }
+    }
+
+    // ---- editing the data table ------------------------------------------
+    let solveTimer = null;
+    function scheduleSolve() {
+      // Debounce so typing doesn't re-solve on every keystroke.
+      clearTimeout(solveTimer);
+      solveTimer = setTimeout(() => reSolve(false), 180);
+    }
+
+    el("dataTable").addEventListener("input", e => {
+      const input = e.target.closest("input.cell");
+      if (!input) return;
+      const i = +input.dataset.row;
+      if (!foodsData[i]) return;
+      if (input.dataset.field === "name") {
+        foodsData[i].name = input.value;
+        return; // name change doesn't affect the LP; no re-solve needed
+      }
+      if (input.dataset.field === "price") {
+        foodsData[i].price = num(input.value);
+      } else if (input.dataset.nut !== undefined) {
+        foodsData[i].nut[+input.dataset.nut] = num(input.value);
+      }
+      scheduleSolve();
+    });
+
+    el("dataTable").addEventListener("click", e => {
+      const del = e.target.closest(".row-del");
+      if (!del) return;
+      const i = +del.dataset.del;
+      foodsData.splice(i, 1);
+      reSolve(true); // structural change: rebuild the table
+    });
+
+    el("addFoodButton").addEventListener("click", () => {
+      foodsData.push({ name: "New food", price: 0, nut: CONSTRAINTS.map(() => 0) });
+      reSolve(true);
+      // focus the name cell of the new last row for quick editing
+      const rows = el("dataTable").querySelectorAll("tbody tr");
+      const last = rows[rows.length - 1];
+      if (last) last.querySelector("input.name-cell").focus();
+    });
+
+    // Re-solving when the minimums change.
+    el("nutrientGrid").addEventListener("input", e => {
+      if (e.target.matches('input[type="number"]')) scheduleSolve();
+    });
+    el("resolveButton").addEventListener("click", () => reSolve(false));
+
+    // ---- startup ----------------------------------------------------------
+    renderNutrientGrid(null, null); // create the minimum inputs with defaults
+    try {
+      foodsData = seedFromCSV(SAMPLE_CSV);
+    } catch (e) {
+      foodsData = [];
+      setNotice("err", e.message);
+    }
+    reSolve(true);
+  </script>
+</body>
+</html>

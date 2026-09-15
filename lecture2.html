@@ -110,6 +110,14 @@
                 <p class=fragment> A feasible point satisfies $Ax \ge b$. </p>
           </section>
           <section>
+            <h3> Diet Problem </h3>
+            <h4> Solving the Diet Problem</h4>
+            <p> Linear programs scale extremely well: we can solve one with thousands of foods in a fraction of a second. </p>
+          </section>
+          <section>
+              <embed src="DietOptimizer.html" style="width:1000px; height:700px;">
+          </section>
+          <section>
             <h3>Linear Programming Review</h3>
             <p> Given a linear program
               <table> 
@@ -171,18 +179,26 @@
             <h4> The Cafeteria Problem </h4>
             <p> Say that there are $N$ food options. </p>
             <p> As in linear programming, we want to have a variable $x_i$ for each $i = 1,\dots,N$ that represents our decisions. </p>
-            <p class=fragment> But now, each $x_i$ has to be either <b>0 or 1</b>, and can't be a fraction. </p>
+            <p class=fragment> What should this variable look like? </p>
+          </section>
+          <section>
+            <h3>More than Linear Programming </h3>
+            <h4> Indicator Variables</h4>
+            <p> We want to model <b> binary decisions: </b> $x_i$ should take on two values: either $x_i$ is </p>
+            <p class="fragment"> An <b>indicator variable</b> is a variable that only on values of $0$ or $1$ (and not anything in between).</p>
+            <p class=fragment> Indicator variables are very useful for describing binary decisions. For example, we can <b> count </b> the number of positive decisions we make by adding up indicator variables.</p>
           </section>
           <section>
             <h3>More than Linear Programming </h3>
             <h4> The Cafeteria Problem </h4>
             <p> Say that we have a budget of $B$ and food $i$ costs $c_i$. </p>
-            <p> Now, we have a constraint that says that 
+            <p> We can't spend more than our budget:
             \[
                 \sum_{i=1}^N c_i x_i \le B.
             \]
             </p>
-            <p class=fragment> To define an objective, we want to have a value $v_i$ for each food item $i$. Then our objective is
+            <p class="fragment centered"> <b>Now suppose each food $i$ has a value $v_i$. What should we maximize?</b> </p>
+            <p class=fragment> Our objective is
             \[
                 \text{max }\sum_{i=1}^N v_i x_i.
             \]
@@ -208,18 +224,18 @@
           <section>
             <h3>Integer Linear Programming</h3>
             <p>
-            A linear program is an optimization problem of the form
+            An integer linear program (ILP) is an optimization problem of the form
               <table> 
                   <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal}x$ </td> </tr>
                   <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
                   <tr> <td> </td> <td> $x \in \Z$ </td> </tr>
               </table>
             </p>
-            <p> Here, $x \in \Z$ means that $x$ should be an integer (meaning that $x$ is either a whole number or its negative).</p>
-            <p> More generally, we can let some of the variables be continuous, and other ones be discrete.</p>
+            <p> Here, $x \in \Z$ means that each entry of $x$ is an integer. </p>
+            <p class=fragment> More generally, we can let some variables be continuous and others discrete.</p>
           </section>
           <section>
-            <h4>Integer Linear Programming Examples </h4>
+            <h4>ILP Examples </h4>
             <div class=flexbox>
               <table> 
                   <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
@@ -231,10 +247,34 @@
                   <img src="integer_program_feasible_region.svg" height=300px />
               </div>
             </div>
-            <p>There are three integral points satisfying the conditions: $(0,0)$, $(1,0)$, and $(0,1)$. Note that the linear program would have $(1.5,0)$ as a vertex. </p>
+            <p class="fragment centered"> <b>Which points are feasible for the ILP?</b> </p>
+            <p class=fragment>There are three integral points: $(0,0)$, $(1,0)$, and $(0,1)$. </p>
+            <p class=fragment>Note that the linear program would have $(1.5,0)$ as a vertex. </p>
+          </section>
+          <section>
+            <h3>Integer Linear Programming</h3>
+            <p>
+              Integer programs are much more expressive than linear programs; they can express 'logical constraints'.
+            </p>
+            <div  class=fragment>
+            <p> We can express that one indicator variable implies another one:
+            \[ 
+              x_i \le y_i.
+            \]
+            </p>
+            <div  class=fragment>
+            <p> We can express that a constraint may be turned on or off depending on an indicator is true or false.
+            \[ 
+              a^{\intercal}x \le b \rightarrow
+              a^{\intercal}x \le b + Mz_i,
+            \]
+            where $M$ is a large number to make sure that any feasible $x$ will satisfy this is true if $z_i = 1$.
+            </p>
+            </div>
+            </div>
           </section>
           <section data-auto-animate>
-            <h4>Integer Linear Programming Examples </h4>
+            <h4>ILP Examples </h4>
             <h4> The Cafeteria Problem </h4>
             <p> Note that the Cafeteria problem can be described as an integer program.
               <table> 
@@ -244,7 +284,7 @@
               </table>
           </section>
           <section data-auto-animate>
-            <h4>Integer Linear Programming Examples </h4>
+            <h4>ILP Examples </h4>
             <h4> The Cafeteria Problem </h4>
             <p> Note that the Cafeteria problem can be described as an integer program.
               <table> 
@@ -257,6 +297,46 @@
           </section>
           <section>
             <h3>Integer Linear Programming Examples </h3>
+            <h4> The Diet Problem, Revisited</h4>
+            <p> Recall the diet problem: we want to choose servings of foods so that we meet the daily recommended values for each nutrient at least cost. </p>
+            <p class=fragment> As a linear program, a serving could be any fractional amount, e.g. $0.37$ of a chicken breast. </p>
+            <p class=fragment> Suppose instead that each food can only be eaten in <b>whole servings</b>. </p>
+          </section>
+          <section>
+            <h3>Integer Linear Programming Examples </h3>
+            <h4> The Diet Problem, Revisited</h4>
+            <p> We have $n$ foods and $m$ nutrients. </p>
+            <p class=fragment> Let $x_i$ be the number of servings of food $i$, for $i = 1, \dots, n$. </p>
+            <p class=fragment> Let $a_{ji}$ be the amount of nutrient $j$ in one serving of food $i$, and let $b_j$ be the required amount of nutrient $j$. </p>
+            <p class=fragment> Let $c_i$ be the cost of one serving of food $i$. </p>
+          </section>
+          <section>
+            <h3>Integer Linear Programming Examples </h3>
+            <h4> The Diet Problem, Revisited</h4>
+            <p> We need to meet the requirement for each nutrient $j$. </p>
+            <p class="fragment centered"> <b>Should this be a $\ge$ or a $\le$ constraint?</b> </p>
+            <p class=fragment>
+            \[
+              \sum_{i=1}^n a_{ji} x_i \ge b_j.
+            \]
+            </p>
+            <p class=fragment> We can only eat a nonnegative, whole number of servings, so $x_i \ge 0$ and $x_i \in \Z$. </p>
+          </section>
+          <section>
+            <h3>Integer Linear Programming Examples </h3>
+            <h4> The Diet Problem, Revisited</h4>
+            <p> Assembling
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{i=1}^n c_i x_i$ </td> </tr>
+                  <tr> <td> such that </td> <td> $\sum_{i=1}^n a_{ji} x_i \ge b_j$ </td> </tr>
+                  <tr> <td> </td> <td> $x_i \ge 0$ </td> </tr>
+                  <tr> <td> </td> <td> $x_i \in \Z$ </td> </tr>
+              </table>
+            </p>
+            <p class=fragment> In matrix form, this is $\text{min } c^{\intercal} x$ such that $Ax \ge b$, $x \ge 0$, $x \in \Z$. </p>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
             <h4> Warehouse Allocation</h4>
             <p> Food Corp. is looking to decide where to build warehouses to service some grocery locations in the city of Brockton Bay. </p>
             <p class=fragment> There are 3 locations in the Brockton Bay that are available to open a warehouse: North, South, and East. </p>
@@ -264,7 +344,7 @@
             <p class=fragment> Each store should be assigned to one warehouse. </p>
           </section>
           <section>
-            <h3>Integer Linear Programming Examples </h3>
+            <h3>ILP Examples </h3>
             <h4> Warehouse Allocation</h4>
             <p> Costs of opening warehouses and transportation costs of going to different stores. </p>
             <table> 
@@ -279,14 +359,14 @@
               <embed src="FacilityLocationExplorer.html" style="width:1000px; height:700px;">
           </section>
           <section>
-            <h3>Integer Linear Programming Examples </h3>
+            <h3>ILP Examples </h3>
             <h4> Warehouse Allocation</h4>
             <p> What are the decision variables?</p>
             <p class=fragment> Which warehouses do we open? Let $x_i$ be 1 if the warehouse is open and 0 otherwise. </p>
             <p class=fragment> Which warehouses should be connected to which grocery stores? Let $y_{ij}$ be 1 if warehouse $i$ is connected to grocery store $j$. </p>
           </section>
           <section>
-            <h3>Integer Linear Programming Examples </h3>
+            <h3>ILP Examples </h3>
             <h4> Warehouse Allocation</h4>
             <p> What are the constraints?</p>
             <p class=fragment> If warehouse $i$ is closed, then no grocery stores connect to it.  </p>
@@ -295,13 +375,13 @@
             <p class=fragment> For all $j$, $\sum_{i=1}^3y_{ij} = 1$.  </p>
           </section>
           <section>
-            <h3>Integer Linear Programming Examples </h3>
+            <h3>ILP Examples </h3>
             <h4> Warehouse Allocation</h4>
             <p> What is the objective?</p>
             <p class=fragment> Minimize $\sum_{i=1}^3 c_i x_i + \sum_{i=1}^3 \sum_{j=1}^4 d_{ij}y_{ij}$</p>
           </section>
           <section>
-            <h3>Integer Linear Programming Examples </h3>
+            <h3>ILP Examples </h3>
             <h4> Warehouse Allocation</h4>
             <p> Assembling</p>
               <table> 
@@ -312,6 +392,124 @@
                   <tr> <td> </td> <td> $0 \le y_{ij} \le 1$ </td> </tr>
                   <tr> <td> </td> <td> $x_i, y_{ij} \in \Z$ </td> </tr>
               </table>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly</h4>
+            <p> We have a number of cookies that we need to bake. We want to put all of the cookies on a baking sheet without overlapping. </p>
+            <p> For simplicity, we will imagine that each cookie is a rectangle (though we can model other shapes easily). </p>
+            <p class=fragment> We will also want to discretize each rectangle, so that they are composed of small square `pixels'. </p>
+          </section>
+          <section>
+              <embed src="CuttingStockExplorer.html" style="width:1000px; height:700px;">
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Setup</h4>
+            <p> Say we are given $C$ cookie sheets, each one of size $\ell \times w$. </p>
+            <p class="fragment"> We also have $K$ cookies, and cookie $i$ is a rectangle of size $a_i \times b_i$. </p>
+            <p class="fragment centered"> <b>What decisions do we need to make?</b> </p>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Decision Variables</h4>
+            <p> First, we decide whether to use each cookie sheet. </p>
+            <p class="fragment"> Let $y_k$ be a variable that is 1 if cookie sheet $k$ is used, and 0 otherwise, for $k = 1,\dots, C$. </p>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Decision Variables</h4>
+            <p> Second, we decide where each cookie goes. </p>
+            <p class="fragment"> Cookie $i$ can have its top left corner at location $(r,c)$ on sheet $k$ whenever $r \le \ell - a_i + 1$ and $c \le w - b_i + 1$. </p>
+            <p class="fragment"> For each such location, include a variable $x_{ikrc}$ that is 1 if we put cookie $i$ there. </p>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Constraints</h4>
+            <p> We must put each cookie in exactly one location, so for each $i \le K$,
+              \[
+              \sum_{k=1}^C \sum_{r = 1}^{\ell - a_i + 1}\sum_{c = 1}^{w - b_i + 1} x_{ikrc} = 1.
+              \]
+            </p>
+            <p class="fragment centered"> <b>What keeps two cookies from overlapping?</b> </p>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Constraints</h4>
+            <p> We can only place one cookie in each cell of a sheet that is used. </p>
+            <p class="fragment"> So for each $k = 1, \dots, C$, each $r = 1,\dots,\ell$, and each $c = 1,\dots,w$,
+              \[
+              \sum_{i}^K \sum_{r' = r-a_i+1}^{r}\sum_{c' = c-b_i+1}^{c} x_{ikr'c'} \le y_k.
+              \]
+            </p>
+            <p class="fragment"> Notice how this ties the placement variables back to $y_k$: a cell can only be filled on a sheet we actually use. </p>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Decision Constraints</h4>
+            <p> The objective here is simple; we want to use as few cookie sheets as possible, which is given by $\sum_{k=1}^K y_k$. </p>
+            <div class="fragment">
+            <p> Assembling </p>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{k=1}^K y_k$ </td> </tr>
+                  <tr> <td> such that </td> <td> $ \sum_{k=1}^C \sum_{r = 1}^{\ell - a_i + 1}\sum_{c = 1}^{w - b_i + 1} x_{ikrc} = 1  $ </td> </tr>
+                  <tr> <td> </td> <td> $ \sum_{i}^K \sum_{r' = r-a_i+1}^{r}\sum_{c' = c-b_i+1}^{c} x_{ikr'c'} \le y_k $ </td> </tr>
+                  <tr> <td> </td> <td> $0 \le x_{ikrc} \le 1$ </td> </tr>
+                  <tr> <td> </td> <td> $0 \le y_k \le 1$ </td> </tr>
+                  <tr> <td> </td> <td> $x_{ikrc}, y_k \in \Z$ </td> </tr>
+              </table>
+            </div>
+          </section>
+          <section>
+            <h3>Packing vs Covering </h3>
+            <p> Some problems put items into a container. Others cover an object with items. </p>
+            <p> A <b>packing</b> IP is an optimization problem </p>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $c^{\intercal} x_i$ </td> </tr>
+                  <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+                  <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  <tr> <td> </td> <td> $x_i \in \Z$ </td> </tr>
+              </table>
+              <p> where $A$ and $c$ have only nonnegative entries. </p>
+              <p class=fragment> The upper bounds say that we can only make the entries of $x$ so large before they `overflow' the packing bound. Our goal is to maximize our value from the packing. </p>
+          </section>
+
+          <section>
+            <h3>Packing vs Covering </h3>
+            <p> Some problems put items into a container. Others cover an object with items. </p>
+            <p> A <b>covering</b> IP is an optimization problem </p>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x_i$ </td> </tr>
+                  <tr> <td> such that </td> <td> $Ax \ge b$ </td> </tr>
+                  <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  <tr> <td> </td> <td> $x_i \in \Z$ </td> </tr>
+              </table>
+              <p> where $A$ and $c$ have only nonnegative entries. </p>
+              <p class=fragment> The lower bounds say that we have to make the entries of $x$ large enough to `cover' the bounds. Our goal is to minimize the cost of the packing. </p>
+              <p class=fragment> This is `dual' to a packing IP. </p>
+          </section>
+          <section>
+            <h3>Packing vs Covering </h3>
+            <p class="centered"> <b>Which of today's examples were packing, and which were covering?</b> </p>
+            <p class=fragment> The knapsack and cookie problems are packing: $Ax \le b$, maximizing. </p>
+            <p class=fragment> The diet problem is covering: $Ax \ge b$, minimizing. </p>
+          </section>
+          <section>
+            <h3>Packing vs Covering </h3>
+            <p> ILPs can be neither packing nor covering ILPs.</p>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1 + x_2 - x_3$ </td> </tr>
+                  <tr> <td> such that </td> <td> $x_1 + x_2 \ge 2$ </td> </tr>
+                  <tr> <td> </td> <td> $x_1 - x_3 \le 3$ </td> </tr>
+                  <tr> <td> </td> <td> $x_1, x_2, x_3 \in \Z$ </td> </tr>
+              </table>
+          </section>
+          <section>
+            <h3>Solving ILPs</h3>
+            <p> ILPs are typically much harder to solve than LPs. </p>
+            <p> LPs with millions of variables and constraints can be solved very quickly. </p>
+            <p> There are ILPs with hundreds of variables that likely will never be solved exactly. </p>
+            <p class="fragment"> Building new solvers for ILPs is a large industry. </p>
           </section>
       </section>
 

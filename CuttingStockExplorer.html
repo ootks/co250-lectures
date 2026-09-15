@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive 2D cutting stock integer-program demonstration">
+  <title>2D Cutting Stock Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --base3: #fdf6e3;
+      --base2: #eee8d5;
+      --base1: #93a1a1;
+      --base00: #657b83;
+      --base01: #586e75;
+      --base02: #073642;
+      --blue: #268bd2;
+      --cyan: #2aa198;
+      --yellow: #b58900;
+      --orange: #cb4b16;
+      --red: #dc322f;
+      --green: #859900;
+      --magenta: #d33682;
+      --violet: #6c71c4;
+      --shadow: 0 18px 48px rgba(7, 54, 66, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--base3);
+      color: var(--base01);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    button, select { font: inherit; }
+
+    .page {
+      width: min(1480px, 100%);
+      margin: 0 auto;
+      padding: 28px clamp(18px, 3vw, 44px) 42px;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--base02);
+      font-size: clamp(1.75rem, 3vw, 2.65rem);
+      letter-spacing: -0.045em;
+      line-height: 1.06;
+    }
+
+    .lede {
+      max-width: 720px;
+      margin: 9px 0 0;
+      color: var(--base00);
+      font-size: 1.02rem;
+    }
+
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .button {
+      border: 1px solid #c7c0aa;
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.34);
+      color: var(--base01);
+      cursor: pointer;
+      font-weight: 680;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .button:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(7,54,66,.10); }
+    .button:focus-visible { outline: 3px solid rgba(38,139,210,.35); outline-offset: 2px; }
+    .button.primary { border-color: var(--blue); background: var(--blue); color: white; }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.85fr) minmax(320px, .9fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid #d8d0bb;
+      border-radius: 18px;
+      background: rgba(255,255,255,.26);
+      box-shadow: var(--shadow);
+    }
+
+    .sheet-card { overflow: hidden; }
+
+    .sheet-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 15px 18px;
+      border-bottom: 1px solid #d8d0bb;
+      background: rgba(238,232,213,.45);
+    }
+
+    .sheet-heading strong { color: var(--base02); }
+    .sheet-heading span { color: var(--base00); font-size: .9rem; text-align: right; }
+
+    .canvas-wrap { position: relative; padding: 12px; }
+
+    canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 900 / 620;
+      border-radius: 12px;
+      touch-action: none;
+      cursor: default;
+    }
+
+    .canvas-note {
+      position: absolute;
+      left: 28px;
+      bottom: 26px;
+      max-width: min(560px, calc(100% - 56px));
+      padding: 8px 11px;
+      border: 1px solid rgba(147,161,161,.55);
+      border-radius: 9px;
+      background: rgba(253,246,227,.92);
+      color: var(--base00);
+      font-size: .83rem;
+      pointer-events: none;
+    }
+
+    .side { display: grid; gap: 14px; }
+    .panel { padding: 16px; }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      color: var(--base02);
+      font-size: 1rem;
+      letter-spacing: -.01em;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 15px;
+      border-radius: 14px;
+      background: var(--base02);
+      color: var(--base3);
+    }
+
+    .status small { display: block; color: #c7d2d0; margin-bottom: 2px; }
+    .status strong { font-size: 1.05rem; }
+    .status .total { font-size: 2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+
+    .cost-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .cost-box {
+      border: 1px solid #d8d0bb;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: rgba(253,246,227,.60);
+    }
+
+    .cost-box span { display: block; color: var(--base00); font-size: .78rem; }
+    .cost-box strong { color: var(--base02); font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+
+    .piece-palette { display: grid; gap: 8px; }
+
+    .piece-chip {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 18px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #d8d0bb;
+      border-radius: 11px;
+      padding: 10px 11px;
+      background: rgba(253,246,227,.65);
+      color: var(--base01);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+    }
+
+    .piece-chip:hover { border-color: var(--base1); transform: translateY(-1px); }
+    .piece-chip:focus-visible { outline: 3px solid rgba(38,139,210,.30); outline-offset: 2px; }
+    .piece-chip.selected { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(38,139,210,.25); }
+    .piece-chip.exhausted { opacity: .45; cursor: default; }
+    .piece-chip .swatch { width: 16px; height: 16px; border-radius: 4px; }
+    .piece-chip .name { font-weight: 720; color: var(--base02); }
+    .piece-chip .meta { color: var(--base00); font-size: .84rem; }
+    .piece-chip .remaining { font-variant-numeric: tabular-nums; font-weight: 750; color: var(--base02); }
+
+    .demand-list { display: grid; gap: 7px; }
+    .demand-row {
+      display: grid;
+      grid-template-columns: 16px 1fr auto;
+      gap: 9px;
+      align-items: center;
+      min-height: 34px;
+      border-bottom: 1px solid rgba(216,208,187,.7);
+      color: var(--base00);
+    }
+    .demand-row:last-child { border-bottom: 0; }
+    .demand-row .swatch { width: 13px; height: 13px; border-radius: 4px; }
+    .demand-row strong { color: var(--base02); font-size: .9rem; }
+    .demand-row .count { font-variant-numeric: tabular-nums; font-weight: 750; }
+    .demand-row .count.met { color: #14786f; }
+    .demand-row .count.short { color: var(--red); }
+
+    .model {
+      margin: 20px 0 0;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .model strong { color: var(--base02); white-space: nowrap; }
+    .formula { overflow-x: auto; color: var(--base00); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88rem; }
+
+    @media (max-width: 980px) {
+      header { align-items: flex-start; flex-direction: column; }
+      .workspace { grid-template-columns: 1fr; }
+      .side { grid-template-columns: 1fr 1fr; }
+      .side .status-wrap { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 650px) {
+      .page { padding-inline: 12px; }
+      .side { grid-template-columns: 1fr; }
+      .side .status-wrap { grid-column: auto; }
+      .sheet-heading { align-items: flex-start; flex-direction: column; }
+      .sheet-heading span { text-align: left; }
+      .canvas-note { position: static; max-width: none; margin: 0 14px 14px; }
+      .model { grid-template-columns: 1fr; gap: 6px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>2D Cutting Stock Explorer</h1>
+        <p class="lede">A cookie sheet is a fixed rectangular grid. Each order item is a rectangle of dough. Select an item, hover to find a spot, and click to stamp it out. Fill the whole order using as few sheets as possible without any overlap.</p>
+      </div>
+      <div class="toolbar" aria-label="Plan controls">
+        <button class="button" id="rotateButton" type="button">Rotate piece (R)</button>
+        <button class="button" id="addSheetButton" type="button">Add sheet</button>
+        <button class="button" id="clearButton" type="button">Clear plan</button>
+        <button class="button primary" id="optimalButton" type="button">Show optimal plan</button>
+      </div>
+    </header>
+
+    <section class="workspace" aria-label="Interactive 2D cutting stock model">
+      <div class="card sheet-card">
+        <div class="sheet-heading">
+          <strong>Cutting layout</strong>
+          <span>Select a piece, hover a sheet to preview,<br>click to place. Click a placed piece to remove it.</span>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="board" width="900" height="620" aria-label="Cookie sheets shown as grids with rectangular pieces placed on them"></canvas>
+          <div class="canvas-note" id="canvasNote">Each sheet is a 10 x 6 grid. A piece fits only inside the sheet and where no other piece already sits.</div>
+        </div>
+      </div>
+
+      <aside class="side">
+        <div class="status-wrap">
+          <div class="status" aria-live="polite">
+            <div><small>Sheets used</small><strong id="planStatus">In progress</strong></div>
+            <div class="total" id="sheetCount">0</div>
+          </div>
+          <div class="cost-strip">
+            <div class="cost-box"><span>Wasted area (cells)</span><strong id="wasteCost">0</strong></div>
+            <div class="cost-box"><span>Pieces placed</span><strong id="placedCount">0</strong></div>
+          </div>
+        </div>
+
+        <section class="card panel">
+          <h2>Pieces to cut</h2>
+          <div class="piece-palette" id="piecePalette"></div>
+        </section>
+
+        <section class="card panel">
+          <h2>Order status</h2>
+          <div class="demand-list" id="demandList"></div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="card model" aria-label="Integer programming formulation">
+      <strong>Integer-program structure</strong>
+      <div class="formula">min Σₖ yₖ &nbsp;·&nbsp; Σₖ Σ₍ᵣ,ᵨ₎ xᵢₖᵣᵨ ≥ dᵢ &nbsp;·&nbsp; Σᵢ Σ₍cover cell₎ xᵢₖᵣᵨ ≤ yₖ &nbsp;·&nbsp; x, y ∈ {0,1}</div>
+    </section>
+  </main>
+
+  <script>
+    const LOGICAL_WIDTH = 900;
+    const LOGICAL_HEIGHT = 620;
+
+    // Sheet is a discrete grid: GRID_W columns by GRID_H rows.
+    const GRID_W = 10;
+    const GRID_H = 6;
+
+    const colors = {
+      background: "#fdf6e3", grid: "#d9d1bc", gridLine: "#cabf9f",
+      text: "#586e75", dark: "#073642", muted: "#93a1a1",
+      empty: "#f4ecd4", warning: "#dc322f", ok: "#14786f"
+    };
+
+    // Rectangular dough items: w x h in grid cells, with a required count.
+    const pieceTypes = [
+      { id: "A", name: "Sheet cake",  w: 4, h: 3, demand: 2, color: "#268bd2" },
+      { id: "B", name: "Brownie bar", w: 3, h: 2, demand: 4, color: "#cb4b16" },
+      { id: "C", name: "Cookie",      w: 2, h: 2, demand: 4, color: "#859900" },
+      { id: "D", name: "Biscotti",    w: 1, h: 3, demand: 4, color: "#d33682" }
+    ];
+    const pieceById = Object.fromEntries(pieceTypes.map(p => [p.id, p]));
+
+    // A placed piece: { type, col, row, w, h } where (col,row) is its top-left cell.
+    // A sheet: { placed: [placedPiece, ...] }.
+    const state = {
+      sheets: [],
+      selected: null,     // piece type id chosen from the palette
+      rotated: false,     // whether the selected piece is rotated 90 degrees
+      hover: null,        // { sheetIndex, col, row } cell under the pointer
+      message: "Add a sheet, then select a piece and click to place it."
+    };
+
+    const canvas = document.getElementById("board");
+    const ctx = canvas.getContext("2d");
+    const piecePalette = document.getElementById("piecePalette");
+    const demandList = document.getElementById("demandList");
+    const note = document.getElementById("canvasNote");
+
+    function newSheet() { return { placed: [] }; }
+
+    // effective footprint of the selected piece accounting for rotation
+    function selectedFootprint() {
+      if (!state.selected) return null;
+      const p = pieceById[state.selected];
+      return state.rotated ? { w: p.h, h: p.w } : { w: p.w, h: p.h };
+    }
+
+    function placedCounts() {
+      const counts = Object.fromEntries(pieceTypes.map(p => [p.id, 0]));
+      state.sheets.forEach(sheet => sheet.placed.forEach(pp => counts[pp.type]++));
+      return counts;
+    }
+
+    function remainingDemand() {
+      const placed = placedCounts();
+      return Object.fromEntries(pieceTypes.map(p => [p.id, Math.max(0, p.demand - placed[p.id])]));
+    }
+
+    function usedCells(sheet) {
+      return sheet.placed.reduce((sum, pp) => sum + pp.w * pp.h, 0);
+    }
+    function wasteCells(sheet) { return GRID_W * GRID_H - usedCells(sheet); }
+
+    // ---- fit / overlap checks --------------------------------------------
+    function rectsOverlap(a, b) {
+      return a.col < b.col + b.w && b.col < a.col + a.w &&
+             a.row < b.row + b.h && b.row < a.row + a.h;
+    }
+
+    function fitsAt(sheet, footprint, col, row) {
+      if (col < 0 || row < 0) return false;
+      if (col + footprint.w > GRID_W || row + footprint.h > GRID_H) return false;
+      const candidate = { col, row, w: footprint.w, h: footprint.h };
+      return !sheet.placed.some(pp => rectsOverlap(candidate, pp));
+    }
+
+    // ---- geometry: where each sheet grid is drawn ------------------------
+    // Sheets are stacked vertically; the grid keeps square cells.
+    const BOARD_PAD_L = 70;
+    const BOARD_PAD_TOP = 30;
+    const SHEET_GAP = 26;
+
+    function cellSize() {
+      // choose a cell size so a sheet grid fits the available width and all
+      // current sheets stack vertically within the logical canvas
+      const n = Math.max(1, state.sheets.length);
+      const maxByWidth = (LOGICAL_WIDTH - BOARD_PAD_L - 150) / GRID_W;
+      const usableH = LOGICAL_HEIGHT - 2 * BOARD_PAD_TOP - (n - 1) * SHEET_GAP;
+      const maxByHeight = usableH / (n * GRID_H);
+      return Math.max(12, Math.min(46, maxByWidth, maxByHeight));
+    }
+
+    function sheetOrigin(index) {
+      const cs = cellSize();
+      const sheetH = GRID_H * cs;
+      return {
+        x: BOARD_PAD_L,
+        y: BOARD_PAD_TOP + index * (sheetH + SHEET_GAP),
+        cs
+      };
+    }
+
+    function cellAtPoint(p) {
+      const cs = cellSize();
+      for (let i = 0; i < state.sheets.length; i++) {
+        const o = sheetOrigin(i);
+        const col = Math.floor((p.x - o.x) / cs);
+        const row = Math.floor((p.y - o.y) / cs);
+        if (col >= 0 && col < GRID_W && row >= 0 && row < GRID_H) {
+          return { sheetIndex: i, col, row };
+        }
+      }
+      return null;
+    }
+
+    function placedPieceAtPoint(p) {
+      const cs = cellSize();
+      for (let i = 0; i < state.sheets.length; i++) {
+        const o = sheetOrigin(i);
+        for (let j = 0; j < state.sheets[i].placed.length; j++) {
+          const pp = state.sheets[i].placed[j];
+          const x = o.x + pp.col * cs, y = o.y + pp.row * cs;
+          if (p.x >= x && p.x <= x + pp.w * cs && p.y >= y && p.y <= y + pp.h * cs) {
+            return { sheetIndex: i, pieceIndex: j };
+          }
+        }
+      }
+      return null;
+    }
+
+    // ---- drawing ----------------------------------------------------------
+    function roundedRectPath(x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cssHeight = rect.width * LOGICAL_HEIGHT / LOGICAL_WIDTH;
+      canvas.style.height = `${cssHeight}px`;
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(cssHeight * dpr);
+      ctx.setTransform((rect.width / LOGICAL_WIDTH) * dpr, 0, 0,
+                       (cssHeight / LOGICAL_HEIGHT) * dpr, 0, 0);
+      draw();
+    }
+
+    function drawBackground() {
+      ctx.fillStyle = colors.background;
+      ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+    }
+
+    function drawSheet(index) {
+      const o = sheetOrigin(index);
+      const cs = o.cs;
+      const sheet = state.sheets[index];
+      const sheetW = GRID_W * cs, sheetH = GRID_H * cs;
+
+      // sheet body (empty dough / waste background)
+      ctx.save();
+      ctx.shadowColor = "rgba(7,54,66,.14)";
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetY = 4;
+      roundedRectPath(o.x, o.y, sheetW, sheetH, 10);
+      ctx.fillStyle = colors.empty;
+      ctx.fill();
+      ctx.restore();
+
+      // grid lines
+      ctx.strokeStyle = colors.gridLine;
+      ctx.lineWidth = 1;
+      for (let c = 1; c < GRID_W; c++) {
+        ctx.beginPath(); ctx.moveTo(o.x + c * cs, o.y); ctx.lineTo(o.x + c * cs, o.y + sheetH); ctx.stroke();
+      }
+      for (let r = 1; r < GRID_H; r++) {
+        ctx.beginPath(); ctx.moveTo(o.x, o.y + r * cs); ctx.lineTo(o.x + sheetW, o.y + r * cs); ctx.stroke();
+      }
+
+      // placed pieces
+      sheet.placed.forEach(pp => {
+        const piece = pieceById[pp.type];
+        const x = o.x + pp.col * cs, y = o.y + pp.row * cs;
+        roundedRectPath(x + 2, y + 2, pp.w * cs - 4, pp.h * cs - 4, 6);
+        ctx.fillStyle = piece.color;
+        ctx.fill();
+        ctx.fillStyle = "rgba(253,246,227,.95)";
+        ctx.font = "700 15px Inter, system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(piece.id, x + pp.w * cs / 2, y + pp.h * cs / 2);
+      });
+
+      // hover preview
+      if (state.hover && state.hover.sheetIndex === index && state.selected) {
+        const fp = selectedFootprint();
+        const ok = fitsAt(sheet, fp, state.hover.col, state.hover.row);
+        const x = o.x + state.hover.col * cs, y = o.y + state.hover.row * cs;
+        const w = fp.w * cs, h = fp.h * cs;
+        ctx.save();
+        ctx.globalAlpha = .55;
+        roundedRectPath(x + 2, y + 2, w - 4, h - 4, 6);
+        ctx.fillStyle = ok ? pieceById[state.selected].color : colors.warning;
+        ctx.fill();
+        ctx.restore();
+        roundedRectPath(x + 2, y + 2, w - 4, h - 4, 6);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = ok ? colors.ok : colors.warning;
+        ctx.stroke();
+      }
+
+      // sheet outline
+      roundedRectPath(o.x, o.y, sheetW, sheetH, 10);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = colors.muted;
+      ctx.stroke();
+
+      // labels
+      ctx.fillStyle = colors.dark;
+      ctx.font = "700 14px Inter, system-ui, sans-serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(`Sheet ${index + 1}`, o.x - 12, o.y + sheetH / 2 - 9);
+      const waste = wasteCells(sheet);
+      ctx.fillStyle = waste === 0 ? colors.ok : colors.text;
+      ctx.font = "12px Inter, system-ui, sans-serif";
+      ctx.fillText(`${waste} waste`, o.x - 12, o.y + sheetH / 2 + 9);
+    }
+
+    function draw() {
+      drawBackground();
+      if (state.sheets.length === 0) {
+        ctx.fillStyle = colors.muted;
+        ctx.font = "600 18px Inter, system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Add a sheet to begin cutting.", LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2);
+        return;
+      }
+      state.sheets.forEach((_, i) => drawSheet(i));
+    }
+
+    // ---- actions ----------------------------------------------------------
+    function tryPlace(pieceId, cell) {
+      const sheet = state.sheets[cell.sheetIndex];
+      const piece = pieceById[pieceId];
+      const fp = state.rotated ? { w: piece.h, h: piece.w } : { w: piece.w, h: piece.h };
+      if (remainingDemand()[pieceId] <= 0) {
+        state.message = `The order already has enough ${piece.name.toLowerCase()} pieces.`;
+        return false;
+      }
+      if (!fitsAt(sheet, fp, cell.col, cell.row)) {
+        state.message = `A ${piece.name.toLowerCase()} (${fp.w}x${fp.h}) does not fit there without going off the sheet or overlapping.`;
+        return false;
+      }
+      sheet.placed.push({ type: pieceId, col: cell.col, row: cell.row, w: fp.w, h: fp.h });
+      state.message = `Cut a ${piece.name.toLowerCase()} (${fp.w}x${fp.h}) on Sheet ${cell.sheetIndex + 1}.`;
+      return true;
+    }
+
+    function removePiece(sheetIndex, pieceIndex) {
+      const [pp] = state.sheets[sheetIndex].placed.splice(pieceIndex, 1);
+      state.message = `Removed a ${pieceById[pp.type].name.toLowerCase()} from Sheet ${sheetIndex + 1}.`;
+    }
+
+    function addSheet() {
+      state.sheets.push(newSheet());
+      state.message = `Added Sheet ${state.sheets.length}.`;
+      updateUI();
+    }
+
+    // ---- UI ---------------------------------------------------------------
+    function updateUI() {
+      const remaining = remainingDemand();
+      const placed = placedCounts();
+
+      piecePalette.innerHTML = pieceTypes.map(p => {
+        const left = remaining[p.id];
+        const exhausted = left <= 0;
+        return `<button class="piece-chip ${state.selected === p.id ? "selected" : ""} ${exhausted ? "exhausted" : ""}"
+            type="button" data-piece="${p.id}" ${exhausted ? "disabled" : ""}
+            aria-pressed="${state.selected === p.id}">
+          <span class="swatch" style="background:${p.color}"></span>
+          <span><span class="name">${p.name} (${p.id})</span><br><span class="meta">${p.w} x ${p.h} cells</span></span>
+          <span class="remaining">${left} left</span>
+        </button>`;
+      }).join("");
+
+      demandList.innerHTML = pieceTypes.map(p => {
+        const met = placed[p.id] >= p.demand;
+        return `<div class="demand-row">
+          <span class="swatch" style="background:${p.color}"></span>
+          <strong>${p.name}</strong>
+          <span class="count ${met ? "met" : "short"}">${placed[p.id]} / ${p.demand}</span>
+        </div>`;
+      }).join("");
+
+      const totalWaste = state.sheets.reduce((sum, sheet) => sum + wasteCells(sheet), 0);
+      const totalPlaced = state.sheets.reduce((sum, sheet) => sum + sheet.placed.length, 0);
+      const demandMet = pieceTypes.every(p => placed[p.id] >= p.demand);
+
+      document.getElementById("sheetCount").textContent = state.sheets.length;
+      document.getElementById("wasteCost").textContent = totalWaste;
+      document.getElementById("placedCount").textContent = totalPlaced;
+      document.getElementById("planStatus").textContent = demandMet ? "Order complete" : "In progress";
+      note.textContent = state.message;
+      draw();
+    }
+
+    piecePalette.addEventListener("click", event => {
+      const chip = event.target.closest("[data-piece]");
+      if (!chip || chip.disabled) return;
+      const id = chip.dataset.piece;
+      state.selected = state.selected === id ? null : id;
+      state.rotated = false;
+      state.message = state.selected
+        ? `Selected ${pieceById[id].name}. Hover a sheet and click to place it. Press R to rotate.`
+        : "Selection cleared.";
+      updateUI();
+    });
+
+    function pointerPosition(event) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (event.clientX - rect.left) * LOGICAL_WIDTH / rect.width,
+        y: (event.clientY - rect.top) * LOGICAL_HEIGHT / rect.height
+      };
+    }
+
+    canvas.addEventListener("pointerdown", event => {
+      const p = pointerPosition(event);
+      // clicking a placed piece removes it (only when not actively placing)
+      if (!state.selected) {
+        const hit = placedPieceAtPoint(p);
+        if (hit) { removePiece(hit.sheetIndex, hit.pieceIndex); updateUI(); return; }
+      }
+      const cell = cellAtPoint(p);
+      if (cell && state.selected) {
+        tryPlace(state.selected, cell);
+        if (remainingDemand()[state.selected] <= 0) { state.selected = null; state.rotated = false; }
+        updateUI();
+        return;
+      }
+      // if a piece is selected but you click a placed piece off-grid, still allow remove
+      const hit = placedPieceAtPoint(p);
+      if (hit && !cell) { removePiece(hit.sheetIndex, hit.pieceIndex); updateUI(); }
+    });
+
+    canvas.addEventListener("pointermove", event => {
+      const p = pointerPosition(event);
+      const cell = cellAtPoint(p);
+      state.hover = cell;
+      if (state.selected && cell) {
+        canvas.style.cursor = "copy";
+      } else if (!state.selected && placedPieceAtPoint(p)) {
+        canvas.style.cursor = "pointer";
+      } else {
+        canvas.style.cursor = "default";
+      }
+      draw();
+    });
+
+    canvas.addEventListener("pointerleave", () => { state.hover = null; draw(); });
+
+    function rotateSelected() {
+      if (!state.selected) { state.message = "Select a piece first, then rotate it."; updateUI(); return; }
+      state.rotated = !state.rotated;
+      const fp = selectedFootprint();
+      state.message = `${pieceById[state.selected].name} is now ${fp.w}x${fp.h}.`;
+      updateUI();
+    }
+
+    document.getElementById("rotateButton").addEventListener("click", rotateSelected);
+    window.addEventListener("keydown", e => {
+      if (e.key === "r" || e.key === "R") rotateSelected();
+    });
+
+    document.getElementById("addSheetButton").addEventListener("click", addSheet);
+
+    document.getElementById("clearButton").addEventListener("click", () => {
+      state.sheets = [];
+      state.selected = null;
+      state.rotated = false;
+      state.hover = null;
+      state.message = "Plan cleared. Add a sheet to start again.";
+      updateUI();
+    });
+
+    // Optimal plan. Demand areas: A(4x3)=12 x2=24, B(3x2)=6 x4=24,
+    // C(2x2)=4 x4=16, D(1x3)=3 x4=12. Total area = 76 cells.
+    // Each sheet has 10x6 = 60 cells, so at least ceil(76/60)=2 sheets.
+    // The plan below packs everything into exactly 2 sheets (60+60=120,
+    // 76 used, 44 waste) with no overlaps.
+    const OPTIMAL_PLAN = [
+      // Sheet 1 (10 wide x 6 tall)
+      [
+        { type: "A", col: 0, row: 0, w: 4, h: 3 },
+        { type: "A", col: 0, row: 3, w: 4, h: 3 },
+        { type: "B", col: 4, row: 0, w: 3, h: 2 },
+        { type: "B", col: 7, row: 0, w: 3, h: 2 },
+        { type: "B", col: 4, row: 2, w: 3, h: 2 },
+        { type: "B", col: 7, row: 2, w: 3, h: 2 },
+        { type: "C", col: 4, row: 4, w: 2, h: 2 },
+        { type: "C", col: 6, row: 4, w: 2, h: 2 },
+        { type: "C", col: 8, row: 4, w: 2, h: 2 }
+      ],
+      // Sheet 2
+      [
+        { type: "C", col: 0, row: 0, w: 2, h: 2 },
+        { type: "D", col: 2, row: 0, w: 1, h: 3 },
+        { type: "D", col: 3, row: 0, w: 1, h: 3 },
+        { type: "D", col: 4, row: 0, w: 1, h: 3 },
+        { type: "D", col: 5, row: 0, w: 1, h: 3 }
+      ]
+    ];
+
+    document.getElementById("optimalButton").addEventListener("click", () => {
+      state.sheets = OPTIMAL_PLAN.map(placed => ({ placed: placed.map(pp => ({ ...pp })) }));
+      state.selected = null;
+      state.rotated = false;
+      state.hover = null;
+      const waste = state.sheets.reduce((s, sh) => s + wasteCells(sh), 0);
+      state.message = `Optimal plan: ${state.sheets.length} sheets, ${waste} wasted cells.`;
+      updateUI();
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+    addSheet();
+    updateUI();
+    resizeCanvas();
+  </script>
+</body>
+</html>
