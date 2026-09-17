@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 360" width="400" height="360" font-family="Georgia, serif">
+
+  <!-- Same graph as bipartite.svg -->
+  <!-- Left U at x=110 rows 80,160,240,320 ; Right V at x=290 rows 110,210,310 -->
+
+  <!-- Non-matching edges (faint) -->
+  <g stroke="#d8d0bb" stroke-width="2">
+    <line x1="110" y1="80"  x2="290" y2="210"/>  <!-- u1-v2 -->
+    <line x1="110" y1="160" x2="290" y2="110"/>  <!-- u2-v1 -->
+    <line x1="110" y1="240" x2="290" y2="310"/>  <!-- u3-v3 -->
+    <line x1="110" y1="320" x2="290" y2="210"/>  <!-- u4-v2 -->
+  </g>
+
+  <!-- Matching edges (bold green): u1-v1, u2-v3, u3-v2 -->
+  <g stroke="#859900" stroke-width="4.5">
+    <line x1="110" y1="80"  x2="290" y2="110"/>  <!-- u1-v1 -->
+    <line x1="110" y1="160" x2="290" y2="310"/>  <!-- u2-v3 -->
+    <line x1="110" y1="240" x2="290" y2="210"/>  <!-- u3-v2 -->
+  </g>
+
+  <!-- Left part U (matched vertices green outline, unmatched muted) -->
+  <g stroke-width="2">
+    <circle cx="110" cy="80"  r="20" fill="#268bd2" stroke="#0d5a8a"/>
+    <circle cx="110" cy="160" r="20" fill="#268bd2" stroke="#0d5a8a"/>
+    <circle cx="110" cy="240" r="20" fill="#268bd2" stroke="#0d5a8a"/>
+    <circle cx="110" cy="320" r="20" fill="#93a1a1" stroke="#657b83"/>
+  </g>
+  <g fill="white" font-size="17" text-anchor="middle" font-weight="bold">
+    <text x="110" y="86">u1</text>
+    <text x="110" y="166">u2</text>
+    <text x="110" y="246">u3</text>
+    <text x="110" y="326">u4</text>
+  </g>
+
+  <!-- Right part V -->
+  <g fill="#b58900" stroke="#7a5c00" stroke-width="2">
+    <circle cx="290" cy="110" r="20"/>
+    <circle cx="290" cy="210" r="20"/>
+    <circle cx="290" cy="310" r="20"/>
+  </g>
+  <g fill="white" font-size="17" text-anchor="middle" font-weight="bold">
+    <text x="290" y="116">v1</text>
+    <text x="290" y="216">v2</text>
+    <text x="290" y="316">v3</text>
+  </g>
+
+  <!-- Part labels -->
+  <text x="110" y="30" text-anchor="middle" font-size="18" fill="#073642" font-weight="bold">U</text>
+  <text x="290" y="30" text-anchor="middle" font-size="18" fill="#073642" font-weight="bold">V</text>
+
+  <!-- Legend -->
+  <g font-size="13" fill="#586e75">
+    <line x1="20" y1="348" x2="48" y2="348" stroke="#859900" stroke-width="4.5"/>
+    <text x="54" y="353">matching edge</text>
+    <line x1="180" y1="348" x2="208" y2="348" stroke="#d8d0bb" stroke-width="2"/>
+    <text x="214" y="353">unused edge</text>
+  </g>
+</svg>

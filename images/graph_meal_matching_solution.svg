@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 380" width="420" height="380" font-family="Georgia, serif">
+
+  <!-- Column headings -->
+  <text x="110" y="34" text-anchor="middle" font-size="17" fill="#073642" font-weight="bold">People</text>
+  <text x="310" y="34" text-anchor="middle" font-size="17" fill="#073642" font-weight="bold">Meals</text>
+
+  <!-- Non-matching preference edges (faint) -->
+  <g stroke="#d8d0bb" stroke-width="2">
+    <line x1="140" y1="90"  x2="280" y2="90"/>   <!-- Ava-Pizza -->
+    <line x1="140" y1="170" x2="280" y2="170"/>  <!-- Ben-Ramen -->
+    <line x1="140" y1="250" x2="280" y2="330"/>  <!-- Cy-Tacos -->
+    <line x1="140" y1="330" x2="280" y2="330"/>  <!-- Dana-Tacos -->
+  </g>
+
+  <!-- Matching edges (bold green): Ava-Salad, Ben-Pizza, Cy-Ramen, Dana-Tacos -->
+  <g stroke="#859900" stroke-width="4.5">
+    <line x1="140" y1="90"  x2="280" y2="250"/>  <!-- Ava-Salad -->
+    <line x1="140" y1="170" x2="280" y2="90"/>   <!-- Ben-Pizza -->
+    <line x1="140" y1="250" x2="280" y2="170"/>  <!-- Cy-Ramen -->
+    <line x1="140" y1="330" x2="280" y2="330"/>  <!-- Dana-Tacos -->
+  </g>
+
+  <!-- People vertices -->
+  <g fill="#268bd2" stroke="#0d5a8a" stroke-width="2">
+    <circle cx="110" cy="90"  r="26"/>
+    <circle cx="110" cy="170" r="26"/>
+    <circle cx="110" cy="250" r="26"/>
+    <circle cx="110" cy="330" r="26"/>
+  </g>
+  <g fill="white" font-size="15" text-anchor="middle" font-weight="bold">
+    <text x="110" y="95">Ava</text>
+    <text x="110" y="175">Ben</text>
+    <text x="110" y="255">Cy</text>
+    <text x="110" y="335">Dana</text>
+  </g>
+
+  <!-- Meal vertices -->
+  <g fill="#b58900" stroke="#7a5c00" stroke-width="2">
+    <circle cx="310" cy="90"  r="26"/>
+    <circle cx="310" cy="170" r="26"/>
+    <circle cx="310" cy="250" r="26"/>
+    <circle cx="310" cy="330" r="26"/>
+  </g>
+  <g fill="white" font-size="14" text-anchor="middle" font-weight="bold">
+    <text x="310" y="95">Pizza</text>
+    <text x="310" y="175">Ramen</text>
+    <text x="310" y="255">Salad</text>
+    <text x="310" y="335">Tacos</text>
+  </g>
+
+  <!-- Legend -->
+  <g font-size="13" fill="#586e75">
+    <line x1="20" y1="366" x2="48" y2="366" stroke="#859900" stroke-width="4.5"/>
+    <text x="54" y="371">matched</text>
+    <line x1="150" y1="366" x2="178" y2="366" stroke="#d8d0bb" stroke-width="2"/>
+    <text x="184" y="371">preferred but unused</text>
+  </g>
+</svg>

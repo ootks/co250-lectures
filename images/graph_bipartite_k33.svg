@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 320" width="340" height="320" font-family="Georgia, serif">
+  <!-- K_{3,3}: top row and bottom row, every top connected to every bottom -->
+  <!-- top: (70,60) (170,60) (270,60)  bottom: (70,260) (170,260) (270,260) -->
+  <g stroke="#586e75" stroke-width="2">
+    <line x1="70"  y1="60" x2="70"  y2="260"/>
+    <line x1="70"  y1="60" x2="170" y2="260"/>
+    <line x1="70"  y1="60" x2="270" y2="260"/>
+    <line x1="170" y1="60" x2="70"  y2="260"/>
+    <line x1="170" y1="60" x2="170" y2="260"/>
+    <line x1="170" y1="60" x2="270" y2="260"/>
+    <line x1="270" y1="60" x2="70"  y2="260"/>
+    <line x1="270" y1="60" x2="170" y2="260"/>
+    <line x1="270" y1="60" x2="270" y2="260"/>
+  </g>
+  <g fill="#d33682" stroke="#8a1f52" stroke-width="2">
+    <circle cx="70"  cy="60" r="18"/>
+    <circle cx="170" cy="60" r="18"/>
+    <circle cx="270" cy="60" r="18"/>
+  </g>
+  <g fill="#b58900" stroke="#7a5c00" stroke-width="2">
+    <circle cx="70"  cy="260" r="18"/>
+    <circle cx="170" cy="260" r="18"/>
+    <circle cx="270" cy="260" r="18"/>
+  </g>
+</svg>

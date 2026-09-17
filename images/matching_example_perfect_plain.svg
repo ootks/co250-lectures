@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 320" width="360" height="320" font-family="Georgia, serif">
+  <!-- Balanced bipartite graph 3+3, no matching highlighted -->
+  <!-- Left U x=100 rows 80,160,240 ; Right V x=260 rows 80,160,240 -->
+  <!-- Edges: u1-v1, u1-v2, u2-v1, u2-v2, u3-v2, u3-v3 -->
+
+  <g stroke="#586e75" stroke-width="2.5">
+    <line x1="128" y1="80"  x2="232" y2="80"/>   <!-- u1-v1 -->
+    <line x1="128" y1="80"  x2="232" y2="160"/>  <!-- u1-v2 -->
+    <line x1="128" y1="160" x2="232" y2="80"/>   <!-- u2-v1 -->
+    <line x1="128" y1="160" x2="232" y2="160"/>  <!-- u2-v2 -->
+    <line x1="128" y1="240" x2="232" y2="160"/>  <!-- u3-v2 -->
+    <line x1="128" y1="240" x2="232" y2="240"/>  <!-- u3-v3 -->
+  </g>
+
+  <!-- left part U -->
+  <g fill="#268bd2" stroke="#0d5a8a" stroke-width="2">
+    <circle cx="100" cy="80"  r="20"/>
+    <circle cx="100" cy="160" r="20"/>
+    <circle cx="100" cy="240" r="20"/>
+  </g>
+  <g fill="white" font-size="16" text-anchor="middle" font-weight="bold">
+    <text x="100" y="86">u1</text>
+    <text x="100" y="166">u2</text>
+    <text x="100" y="246">u3</text>
+  </g>
+
+  <!-- right part V -->
+  <g fill="#b58900" stroke="#7a5c00" stroke-width="2">
+    <circle cx="260" cy="80"  r="20"/>
+    <circle cx="260" cy="160" r="20"/>
+    <circle cx="260" cy="240" r="20"/>
+  </g>
+  <g fill="white" font-size="16" text-anchor="middle" font-weight="bold">
+    <text x="260" y="86">v1</text>
+    <text x="260" y="166">v2</text>
+    <text x="260" y="246">v3</text>
+  </g>
+</svg>

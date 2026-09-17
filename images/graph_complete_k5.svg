@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320" font-family="Georgia, serif">
+  <!-- K5: 5 vertices on a circle, all pairs connected -->
+  <!-- centers: (160,40) (274,123) (231,257) (89,257) (46,123) -->
+  <g stroke="#586e75" stroke-width="2">
+    <line x1="160" y1="40"  x2="274" y2="123"/>
+    <line x1="160" y1="40"  x2="231" y2="257"/>
+    <line x1="160" y1="40"  x2="89"  y2="257"/>
+    <line x1="160" y1="40"  x2="46"  y2="123"/>
+    <line x1="274" y1="123" x2="231" y2="257"/>
+    <line x1="274" y1="123" x2="89"  y2="257"/>
+    <line x1="274" y1="123" x2="46"  y2="123"/>
+    <line x1="231" y1="257" x2="89"  y2="257"/>
+    <line x1="231" y1="257" x2="46"  y2="123"/>
+    <line x1="89"  y1="257" x2="46"  y2="123"/>
+  </g>
+  <g fill="#268bd2" stroke="#0d5a8a" stroke-width="2">
+    <circle cx="160" cy="40"  r="18"/>
+    <circle cx="274" cy="123" r="18"/>
+    <circle cx="231" cy="257" r="18"/>
+    <circle cx="89"  cy="257" r="18"/>
+    <circle cx="46"  cy="123" r="18"/>
+  </g>
+</svg>

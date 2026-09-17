@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>
+            Lecture 3
+        </h4>
+        <br>
+        <p class=centered>
+          Kevin Shu
+        </p>
+        <aside class="notes">
+          Add private speaker notes here. Press S during the presentation to open speaker view.
+        </aside>
+      </section>
+
+      <section>
+        <h2>Lecture Outline</h2>
+        <ul>
+          <li>Integer programming review</li>
+          <li>Graph Problems</li>
+        </ul>
+      </section>
+
+      <section>
+          <section>
+            <h1>Integer Linear Programming Review</h1>
+          </section>
+          <section>
+            <h3>Integer Linear Programming Review</h3>
+            <p> An integer linear program is an optimization problem of the form
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal}x$ </td> </tr>
+                  <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+                  <tr> <td> </td> <td> $x \in \Z^n$ </td> </tr>
+              </table>
+            </p>
+            <div class="fragment">
+              <p> Some variables can be allowed to be continuous.</p>
+              <p> The min can be a max. The inequalities can go the other way. Equalities are also allowed. </p>
+            </div>
+          </section>
+          <section>
+            <h4>ILP Examples </h4>
+            <div class=flexbox>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                  <tr> <td> such that </td> <td> $2x_1 + 3x_2 \le 3$ </td> </tr>
+                  <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
+                  <tr> <td> </td> <td> $x \in \Z^2$ </td> </tr>
+              </table>
+              <div>
+                  <img src="images/integer_program_feasible_region.svg" height=300px />
+              </div>
+            </div>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly</h4>
+            <p> We have a number of cookies that we need to bake. We want to put all of the cookies on a baking sheet without overlapping. </p>
+            <p> For simplicity, we will imagine that each cookie is a rectangle (though we can model other shapes easily). </p>
+            <p class=fragment> We will also want to discretize each rectangle, so that they are composed of small square `pixels'. </p>
+          </section>
+          <section>
+              <embed src="demos/CuttingStockExplorer.html" style="width:1000px; height:700px;">
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Setup</h4>
+            <p> We are given $K$ cookie sheets, each one of size $\ell \times w$. </p>
+            <p class="fragment"> We also have $B$ cookies, and cookie $i$ is a rectangle of size $a_i \times b_i$. </p>
+            <p class="fragment"> Each cookie has a number of places it can be located; we need to choose such a location for each cookie, and cookies cannot overlap. </p>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Decision Variables</h4>
+            <p> First, we decide whether to use each cookie sheet. </p>
+            <p class="fragment"> Let $y_k$ be a variable that is 1 if cookie sheet $k$ is used, and 0 otherwise, for $k = 1,\dots, K$. </p>
+          </section>
+          <section data-auto-animate>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Decision Variables</h4>
+            <p> Second, we decide where each cookie goes. </p>
+            <embed src="demos/CookiePlacementSweep.html" style="width:500px; height:300px;">
+            <p class="fragment">The fact that we have assumed that everything is a rectangle means that the top left corner of cookie $i$ can be anywhere in the top left $(\ell - a_i + 1) \times (r-b_i + 1)$ block.</p>
+          </section>
+          <section data-auto-animate>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Decision Variables</h4>
+            <p> Cookie $i$ can be located on many different places. </p>
+            <embed src="demos/CookiePlacementSweep.html" style="width:500px; height:300px;">
+            <p> For each cookie $i$, and <b>each possible placement</b>, we introduce a variable, $x_{irck}$.</p>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Constraints</h4>
+            <p> We must put each cookie in exactly one location, so for each $i \le B$
+              \[
+              \sum_{k=1}^K \sum_{r = 1}^{\ell - a_i + 1}\sum_{c = 1}^{w - b_i + 1} x_{ikrc} = 1.
+              \]
+            </p>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Constraints</h4>
+            <p> We can only place one cookie in each cell of a sheet, and we can only put a cookie at that location if that sheet is used. </p>
+            <p class="fragment"> So for each $k = 1, \dots, K$, each $r = 1,\dots,\ell$, and each $c = 1,\dots,w$,
+              \[
+              \sum_{i=1}^B \sum_{r' = r-a_i+1}^{r}\sum_{c' = c-b_i+1}^{c} x_{ikr'c'} \le y_k.
+              \]
+            </p>
+            <p class="fragment"> Notice how this ties the placement variables back to $y_k$: a cell can only be filled on a sheet we actually use. </p>
+          </section>
+          <section>
+            <h3>ILP Examples </h3>
+            <h4> Cookie Assembly Decision Constraints</h4>
+            <p> The objective here is simple; we want to use as few cookie sheets as possible, which is given by $\sum_{k=1}^K y_k$. </p>
+            <div class="fragment">
+            <p> Assembling </p>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{k=1}^K y_k$ </td> <td></td></tr>
+                  <tr> <td> such that </td> <td> $ \sum_{k=1}^K \sum_{r = 1}^{\ell - a_i + 1}\sum_{c = 1}^{w - b_i + 1} x_{ikrc} = 1  $ </td><td>for $i=1,\dots,B$</td> </tr>
+                  <tr> <td> </td> <td> $ \sum_{i=1}^B \sum_{r' = r-a_i+1}^{r}\sum_{c' = c-b_i+1}^{c} x_{ikr'c'} \le y_k $ </td><td> for each $k =1,\dots,K$</td> </tr>
+                  <tr> <td> </td> <td>  </td><td> for each $r =1,\dots,\ell$ and $c = 1,\dots,w$</td> </tr>
+                  <tr> <td> </td> <td> $0 \le x_{ikrc} \le 1$ </td><td></td> </tr>
+                  <tr> <td> </td> <td> $0 \le y_k \le 1$ </td><td></td> </tr>
+                  <tr> <td> </td> <td> $x_{ikrc}, y_k \in \Z$ </td> </tr>
+              </table>
+            </div>
+          </section>
+          <section>
+            <h3>Packing Problems More Generally</h3>
+            <p> What if the cookies here are not rectangles, but rather circles? What if we allow rotations? </p>
+            <p> It will be very complicated to keep track of all of the variables! </p>
+            <p class=fragment> We would need a way to <b>organize</b> these constraints in a neater way, so that we can more easily describe the problem.</p>
+          </section>
+          <section>
+            <h3>Packing Problems Revisited</h3>
+            <p> Abstractly, for each cookie, there is a <b> set of configurations for that cookie</b>. </p>
+            <p class=fragment> The configurations for each cookie are not independent; we must ensure they don't overlap! </p>
+            <p class=fragment> Two configurations are <b>compatible</b> as long as they don't overlap. If I have a collection of configurations for each cookie, then as long as each pair is compatible, the collection of configurations is compatible. </p>
+            <p class=fragment> We want a way to record <b>all of the possible configurations</b>, and <b>which pairs overlap</b>, and then choose a configuration so that every pair is compatible. </p>
+          </section>
+      </section>
+      <section>
+          <section>
+            <h1>Graphs</h1>
+          </section>
+          <section>
+            <h3>Graphs</h3>
+            <p>
+              A <b>graph</b> $G = (V,E)$ consists of a set of `vertices' $V$ and a set of `edges' $E$.
+            </p>
+            <p> Formally, an edge is an unordered pair $\{i,j\}$, where $i$ and $j$ are in the vertex set.</p>
+            <p> Graphs can be visualized as a picture where the vertices are points, and the edges are lines. </p>
+            <img src="images/graph_example.svg">
+          </section>
+          <section>
+            <h3>Graph Examples</h3>
+            <h4> The Cycle $C_6$ </h4>
+            <div class=flexbox>
+              <div>
+                <p> The <b>cycle</b> $C_n$ has $n$ vertices arranged in a ring, each joined to its two neighbours. </p>
+                <p class="fragment"> We can think of every vertex as labelled by an integer so that $V = \{1,2,3,4,5,6\}$, and we have edges 
+                  \[E = \{\{1,2\}, \{2,3\},\{3,4\},\{4,5\},\{5,6\},\{1,6\}\}\] </p>
+              </div>
+              <img src="images/graph_cycle_c6.svg" height=320px />
+            </div>
+          </section>
+          <section>
+            <h3>Graph Examples</h3>
+            <h4> The Complete Graph $K_5$ </h4>
+            <div class=flexbox>
+              <div>
+                <p> In the <b>complete graph</b> $K_n$, every pair of distinct vertices is joined by an edge. </p>
+              </div>
+              <img src="images/graph_complete_k5.svg" height=320px />
+            </div>
+          </section>
+          <section>
+            <h3>Graph Examples</h3>
+            <h4> The Complete Bipartite Graph $K_{3,3}$ </h4>
+            <div class=flexbox>
+              <div>
+                <p> In a <b>bipartite</b> graph the vertices split into two groups, with edges only going between the groups. </p>
+              </div>
+              <img src="images/graph_bipartite_k33.svg" height=320px />
+            </div>
+          </section>
+          <section>
+            <h3>Graph Examples</h3>
+            <h4> A Social Network </h4>
+            <div class=flexbox>
+              <div>
+                <p> Let each person be a vertex, and join two people by an edge whenever they are friends. </p>
+              </div>
+              <img src="images/graph_social_network.svg" height=320px />
+            </div>
+          </section>
+          <section>
+            <h3>Graph Examples</h3>
+            <h4> A Road Network </h4>
+            <div class=flexbox>
+              <div>
+                <p> Let each city be a vertex, and join two cities by an edge when there is a direct road between them. </p>
+              </div>
+              <img src="images/graph_road_network.svg" height=320px />
+            </div>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h3>Graph Problems</h3>
+          </section>
+          <section>
+            <h3>Graph Problems</h3>
+            <p> A graph problem is an algorithmic problem that takes in as input a graph (given as a list of vertices and edges). </p>
+            <p class=fragment> Many of these problems can be written as integer programs. We will look at two in detail: the <b>clique</b> problem and the <b>matching problem</b>. </p>
+          </section>
+          <section>
+            <h3>Cliques</h3>
+          </section>
+          <section>
+            <h3>The Clique Problem</h3>
+            <p> Let $G = (V, E)$ be a graph. A set of vertices $S \subseteq V$ is a <b>clique</b> if every pair of vertices in $S$ is joined by an edge. </p>
+            <p class=fragment> In other words, the vertices in $S$ are pairwise <b>adjacent</b>: every two vertices you pick are connected by an edge. </p>
+            <p class=fragment> The <b>maximum clique problem</b> asks for a clique with as many vertices as possible. </p>
+          </section>
+          <section>
+            <h3>The Clique Problem</h3>
+            <h4> An Example </h4>
+            <div class=flexbox>
+              <div>
+                <p> The green vertices $\{a, b, c\}$ form a clique: all three edges $ab$, $ac$, and $bc$ are present. </p>
+                <p class=fragment> We could not add $d$, since $d$ is not adjacent to $a$ or $c$. </p>
+                <p class=fragment> Is $\{a, b, c\}$ the largest possible? No four vertices are pairwise adjacent here, so this is a maximum clique of size $3$. </p>
+              </div>
+              <img src="images/graph_clique.svg" height=320px />
+            </div>
+          </section>
+          <section>
+            <h3>The Clique Problem</h3>
+            <h4> Some Familiar Graphs </h4>
+            <div class=flexbox>
+              <div>
+                <p> In the complete graph $K_n$, every pair of distinct vertices is joined by an edge. </p>
+                <p class=fragment> The maximum clique then consists of all of the vertices in the graph. </p>
+              </div>
+              <img src="images/graph_complete_k5.svg" height=320px />
+            </div>
+          </section>
+          <section>
+            <h3>The Clique Problem</h3>
+            <h4> Some Familiar Graphs </h4>
+            <div class=flexbox>
+              <div>
+                <p> In the cycle $C_n$, every edge forms a clique, but no set of 3 vertices form a clique. </p>
+                <p class=fragment> The maximum clique then consists of any edge. </p>
+              </div>
+              <img src="images/graph_cycle_c6.svg" height=320px />
+            </div>
+          </section>
+          <section>
+            <h3>The Clique Problem</h3>
+            <h4> Example: Packing Cookies </h4>
+            <p> Suppose that we only have one baking sheet, and we want to <b>pack</b> as many cookies as we can into the sheet. </p>
+            <p class=fragment> We can turn this into a clique problem using a <b>compatibility graph</b>. </p>
+            <p class=fragment> Each cookie configuration is a <b>vertex</b>. Two configurations are joined by an <b>edge</b> if they don't overlap. </p>
+          </section>
+          <section>
+            <h3>The Clique Problem</h3>
+            <h4> Example: Packing Cookies </h4>
+            <p> Consider a $3 \times 3$ tray with a big cookie $A$ ($2 \times 2$) and a finger cookie $B$ ($1 \times 2$). Here are five candidate placements. </p>
+              <img src="images/graph_cookie_compatibility.svg" height=330px />
+          </section>
+          <section>
+            <h3>The Clique Problem</h3>
+            <h4> Cliques = Valid Configurations </h4>
+            <p> A clique consists of a list of cookie configurations where no pair overlaps.  </p>
+            <p class=fragment> A valid cookie configuration is exactly a clique of the compatibility graph, and packing as many cookies as possible is finding a <b>maximum clique</b>. </p>
+          </section>
+          <section>
+            <h3>The Clique Problem</h3>
+            <h4> ILP Formulation for Cliques </h4>
+            <p>A clique is a collection of vertices in a graph so that every pair of vertices is connected by edge. </p>
+            <p> Can we represent the clique problem with an ILP? </p>
+            <p class=fragment> What are the decisions? What are the constraints? </p>
+          </section>
+          <section>
+            <h3>The Clique Problem</h3>
+            <h4> ILP Formulation for Cliques </h4>
+            <p class=fragment> Decisions are which vertices are in the graph. Make an indicator variable $x_i$ for each $i \in V$.</p>
+            <p class=fragment> Constraints require that if $x_i$ and $x_j$ are both 1, then they are joined by an edge.
+              For all $i,j \in V$ so that $\{i,j\} \not \in E$,
+              \[
+              x_i + x_j \le 1.
+              \]
+            </p>
+          </section>
+          <section>
+            <h3>The Clique Problem</h3>
+            <h4> ILP Formulation for Cliques </h4>
+            <p>Objective is the number of vertices in the clique: $\sum_{i \in V} x_i.$</p>
+            <p class=fragment>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{i \in V}x_i$ </td> </tr>
+                  <tr> <td> such that </td> <td> $x_i + x_j \le 1$ for any $\{i,j\} \not \in E$. </td> </tr>
+                  <tr> <td> </td> <td> $0 \le x_{i} \le 1$ </td> </tr>
+                  <tr> <td> </td> <td> $x_{ij} \in \Z$ </td> </tr>
+              </table>
+            </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>Food Preparation</h4>
+            <p> There are $N$ people at a party, and $N$ meals have been prepared. </p>
+            <p> Each person has some meals that they might want, and others they don't. </p>
+            <p class=fragment> Given the information about people's food preferences, how can we determine if there is a way of giving everyone a meal they want? </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <p> A <b>bipartite graph</b> is a graph whose vertex set can be divided into two disjoint parts $V = V_1 \cup V_2$ with $V_1 \cap V_2 = \varnothing$, and every edge $e \in E$ consists of one element from $V_1$ and one element from $V_2$.</p>
+            <img src="images/bipartite.svg">
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <p> A matching in a bipartite graph is a collection of edges in that graph so that no two edges in the collection share a vertex.</p>
+            <img src="images/bipartite_matching.svg">
+            <p class=fragment> A maximum matching is a matching with at least as many edges as any other matching in the graph. A perfect matching is a matching where every vertex has a matched vertex. </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>Food Preparation as a Graph</h4>
+            <div class=flexbox>
+              <div>
+                <p> Put the people on one side and the meals on the other. </p>
+                <p class=fragment> Join a person to a meal by an edge whenever that person would be happy with that meal. </p>
+                <p class=fragment> This is a <b>bipartite</b> graph: every edge goes from a person to a meal, never person-to-person or meal-to-meal. </p>
+              </div>
+              <img src="images/graph_meal_matching.svg" height=340px />
+            </div>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>A Matching</h4>
+            <div class=flexbox>
+              <div>
+                <p> A <b>matching</b> is a set of edges, no two of which share an endpoint: each person gets at most one meal, and each meal goes to at most one person. </p>
+                <p class=fragment> Giving everyone a meal they want means finding a matching that covers all $N$ people, called a <b>perfect matching</b>. </p>
+                <p class=fragment> The green edges are one perfect matching: Ava&ndash;Salad, Ben&ndash;Pizza, Cy&ndash;Ramen, Dana&ndash;Tacos. </p>
+              </div>
+              <img src="images/graph_meal_matching_solution.svg" height=340px />
+            </div>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>An ILP Formulation</h4>
+            <p> How can we model maximum bipartite matching as a integer program? </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>Decision variables</h4>
+            <p> What should the variables be?</p>
+            <p class="fragment"> For each edge, we need to decide whether it is <b> part of the matching</b> or not.</p>
+            <p class="fragment"> For each edge $\{i,j\}$, introduce a variable $x_{ij}$ that is 1 if that edge is in the matching and 0 otherwise.</p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>Constraints</h4>
+            <p> <b>Variables correspond to edges, constraints correspond to vertices.</b></p>
+            <p class=fragment> For every vertex, there can be at most one incident edge. For each $i \in V$,
+              \[
+                \sum_{j : \{i,j\} \in E}x_{ij} \le 1.
+              \]
+            </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>Objective</h4>
+            <p> We want as many edges in the matching as possible.</p>
+            <p class=fragment> To <b>count the number of edges in the matching, sum up the indicator variables.</b>
+              \[
+              \max \sum_{\{i,j\} \in E}x_{ij}
+              \]
+            </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>Assembling</h4>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{\{i,j\} \in E}x_{ij}$ </td><td></td> </tr>
+                  <tr> <td> such that </td> <td> $\sum_{j : \{i,j\} \in E}x_{ij} \le 1$ </td> <td>for each $i \in V$</td></tr>
+                  <tr> <td> </td> <td> $0 \le x_{ij} \le 1$ </td> </tr>
+                  <tr> <td> </td> <td> $x_{ij} \in \Z$ </td> </tr>
+              </table>
+              <p class="fragment">It turns out that the integrality constraints are not necessary! Matching can be solved with an LP.</p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4> Scheduling Chefs </h4>
+            <p> A restaurant needs to build next week's schedule for its chefs. </p>
+            <p class=fragment> There are $m$ chefs and $n$ shifts during the week. </p>
+            <p class=fragment> Each chef $i$ must be assigned to exactly $d_i$ shifts, and each shift must have exactly one chef working it. </p>
+            <p class=fragment> Each chef also has <b>time conflicts</b>: some shifts they simply cannot work. </p>
+            <p class=fragment class=centered> <b>How can we model this as a matching problem?</b> </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4> Handling the Conflicts </h4>
+            <div class=flexbox>
+              <div>
+                <p> Put the chefs on one side and the shifts on the other, forming a bipartite graph. </p>
+                <p class=fragment> Join chef $i$ to shift $j$ by an edge only when chef $i$ <b>can</b> work shift $j$. </p>
+                <p class=fragment> Does a matching in this graph correspond to a valid schedule? <span class=fragment><b>No!</b> Each chef must work multiple shifts.</span></b></span></p>
+              </div>
+              <img src="images/graph_chef_conflicts.svg" height=310px />
+            </div>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4> Making Copies </h4>
+            <p> A plain matching would give each chef only one shift. But chef $i$ works $d_i$ shifts. </p>
+            <p class=fragment> So make <b>$d_i$ copies</b> of each chef $i$. </p>
+            <p class=fragment> Join a copy of chef $i$ to shift $j$ exactly when chef $i$ can work shift $j$ (respecting the conflicts). </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4> Making Copies </h4>
+            <div class=flexbox>
+              <div>
+                <p> A <b>perfect matching</b> on this graph gives a valid schedule: each chef copy takes one shift, so chef $i$ works exactly $d_i$ shifts, and each shift is matched to exactly one chef. </p>
+              </div>
+              <img src="images/graph_chef_copies.svg" height=330px />
+            </div>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4> Making Copies </h4>
+            <div class=flexbox>
+              <div>
+                <p> A <b>perfect matching</b> on this graph gives a valid schedule: each chef copy takes one shift, so chef $i$ works exactly $d_i$ shifts, and each shift is matched to exactly one chef. </p>
+              </div>
+              <img src="images/graph_chef_copies2.svg" height=330px />
+            </div>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <p> <b>What if each shift requires multiple chefs? </b></p>
+            <p class=fragment> The duplicating trick does not work; 2 copies of the same chef might be assigned to the same shift, which would not be physical. </p>
+            <p class=fragment> If there are multiplicities in both the shift numbers, then we can model this as a <b>flow</b> problem. We'll see what those are later. </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>More Examples</h4>
+            <p> Let us look at a few small bipartite graphs and their maximum matchings. </p>
+            <p class=fragment> In each picture the green edges form a matching, and a grey vertex is one left <b>unmatched</b>. </p>
+          </section>
+          <section data-auto-animate>
+            <h3>Bipartite Matching</h3>
+            <h4>A Perfect Matching</h4>
+            <div class=flexbox>
+              <div>
+                <p> Here both sides have three vertices. Can we match all of them? </p>
+              </div>
+              <img data-id="perfect-graph" src="images/matching_example_perfect_plain.svg" height=320px />
+            </div>
+          </section>
+          <section data-auto-animate>
+            <h3>Bipartite Matching</h3>
+            <h4>A Perfect Matching</h4>
+            <div class=flexbox>
+              <div>
+                <p> Here both sides have three vertices, and we can match all of them. </p>
+                <p> Every vertex is covered, so this matching is <b>perfect</b>. A perfect matching is always a maximum matching. </p>
+              </div>
+              <img data-id="perfect-graph" src="images/matching_example_perfect.svg" height=320px />
+            </div>
+          </section>
+          <section data-auto-animate>
+            <h3>Bipartite Matching</h3>
+            <h4>Maximum but Not Perfect</h4>
+            <div class=flexbox>
+              <div>
+                <p> Now the left side has four vertices but the right side has only two. </p>
+                <p class=fragment> A matching can use at most two edges, since each of the two right vertices takes at most one. </p>
+              </div>
+              <img data-id="maximum-graph" src="images/matching_example_maximum_plain.svg" height=320px />
+            </div>
+          </section>
+          <section data-auto-animate>
+            <h3>Bipartite Matching</h3>
+            <h4>Maximum but Not Perfect</h4>
+            <div class=flexbox>
+              <div>
+                <p> Now the left side has four vertices but the right side has only two. </p>
+                <p> A matching can use at most two edges, since each of the two right vertices takes at most one. </p>
+                <p> So the matching shown is <b>maximum</b> (size $2$), but it cannot be perfect: two left vertices stay unmatched. </p>
+              </div>
+              <img data-id="maximum-graph" src="images/matching_example_maximum.svg" height=320px />
+            </div>
+          </section>
+          <section data-auto-animate>
+            <h3>Bipartite Matching</h3>
+            <h4>When No Perfect Matching Exists</h4>
+            <div class=flexbox>
+              <div>
+                <p> Here both $v_2$ and $v_3$ are only adjacent to $u_3$. </p>
+                <p class=fragment> A single vertex $u_3$ cannot be matched to two partners, so no matching can cover both $v_2$ and $v_3$. </p>
+              </div>
+              <img data-id="none-graph" src="images/matching_example_none_plain.svg" height=320px />
+            </div>
+          </section>
+          <section data-auto-animate>
+            <h3>Bipartite Matching</h3>
+            <h4>When No Perfect Matching Exists</h4>
+            <div class=flexbox>
+              <div>
+                <p> Here both $v_2$ and $v_3$ are only adjacent to $u_3$. </p>
+                <p> A single vertex $u_3$ cannot be matched to two partners, so no matching can cover both $v_2$ and $v_3$. </p>
+                <p> The best we can do has size $2$, leaving one right vertex unmatched: there is <b>no perfect matching</b>. </p>
+              </div>
+              <img data-id="none-graph" src="images/matching_example_none.svg" height=320px />
+            </div>
+          </section>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

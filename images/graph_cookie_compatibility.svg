@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 360" width="560" height="360" font-family="Georgia, serif">
+
+  <!-- ================= LEFT: the five candidate placements on a 3x3 tray ================= -->
+  <!-- Small tray previews, each 3x3, cell = 26px, drawn as mini icons -->
+
+  <!-- P1: A (2x2) top-left -->
+  <g transform="translate(20,20)">
+    <rect x="0" y="0" width="78" height="78" fill="#f4ecd4" stroke="#93a1a1" stroke-width="1.5"/>
+    <line x1="26" y1="0" x2="26" y2="78" stroke="#cabf9f"/>
+    <line x1="52" y1="0" x2="52" y2="78" stroke="#cabf9f"/>
+    <line x1="0" y1="26" x2="78" y2="26" stroke="#cabf9f"/>
+    <line x1="0" y1="52" x2="78" y2="52" stroke="#cabf9f"/>
+    <rect x="2" y="2" width="48" height="48" rx="5" fill="#268bd2"/>
+    <text x="39" y="97" text-anchor="middle" font-size="14" fill="#586e75" font-weight="bold">P1: A top-left</text>
+  </g>
+
+  <!-- P2: A (2x2) bottom-left -->
+  <g transform="translate(20,140)">
+    <rect x="0" y="0" width="78" height="78" fill="#f4ecd4" stroke="#93a1a1" stroke-width="1.5"/>
+    <line x1="26" y1="0" x2="26" y2="78" stroke="#cabf9f"/>
+    <line x1="52" y1="0" x2="52" y2="78" stroke="#cabf9f"/>
+    <line x1="0" y1="26" x2="78" y2="26" stroke="#cabf9f"/>
+    <line x1="0" y1="52" x2="78" y2="52" stroke="#cabf9f"/>
+    <rect x="2" y="28" width="48" height="48" rx="5" fill="#268bd2"/>
+    <text x="39" y="97" text-anchor="middle" font-size="14" fill="#586e75" font-weight="bold">P2: A bottom-left</text>
+  </g>
+
+  <!-- P5: B (1x2) left column -->
+  <g transform="translate(20,260)">
+    <rect x="0" y="0" width="78" height="78" fill="#f4ecd4" stroke="#93a1a1" stroke-width="1.5"/>
+    <line x1="26" y1="0" x2="26" y2="78" stroke="#cabf9f"/>
+    <line x1="52" y1="0" x2="52" y2="78" stroke="#cabf9f"/>
+    <line x1="0" y1="26" x2="78" y2="26" stroke="#cabf9f"/>
+    <line x1="0" y1="52" x2="78" y2="52" stroke="#cabf9f"/>
+    <rect x="2" y="2" width="22" height="48" rx="5" fill="#cb4b16"/>
+    <text x="39" y="97" text-anchor="middle" font-size="14" fill="#586e75" font-weight="bold">P5: B left</text>
+  </g>
+
+  <!-- P3: B (1x2) right column top -->
+  <g transform="translate(150,20)">
+    <rect x="0" y="0" width="78" height="78" fill="#f4ecd4" stroke="#93a1a1" stroke-width="1.5"/>
+    <line x1="26" y1="0" x2="26" y2="78" stroke="#cabf9f"/>
+    <line x1="52" y1="0" x2="52" y2="78" stroke="#cabf9f"/>
+    <line x1="0" y1="26" x2="78" y2="26" stroke="#cabf9f"/>
+    <line x1="0" y1="52" x2="78" y2="52" stroke="#cabf9f"/>
+    <rect x="54" y="2" width="22" height="48" rx="5" fill="#cb4b16"/>
+    <text x="39" y="97" text-anchor="middle" font-size="14" fill="#586e75" font-weight="bold">P3: B right-top</text>
+  </g>
+
+  <!-- P4: B (1x2) right column bottom -->
+  <g transform="translate(150,140)">
+    <rect x="0" y="0" width="78" height="78" fill="#f4ecd4" stroke="#93a1a1" stroke-width="1.5"/>
+    <line x1="26" y1="0" x2="26" y2="78" stroke="#cabf9f"/>
+    <line x1="52" y1="0" x2="52" y2="78" stroke="#cabf9f"/>
+    <line x1="0" y1="26" x2="78" y2="26" stroke="#cabf9f"/>
+    <line x1="0" y1="52" x2="78" y2="52" stroke="#cabf9f"/>
+    <rect x="54" y="28" width="22" height="48" rx="5" fill="#cb4b16"/>
+    <text x="39" y="97" text-anchor="middle" font-size="14" fill="#586e75" font-weight="bold">P4: B right-bot</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="270" y1="20" x2="270" y2="340" stroke="#d8d0bb" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+  <!-- ================= RIGHT: the compatibility graph (complement of conflict graph) ============ -->
+  <!-- Vertices: P1(360,70) P2(340,180) P5(360,290) P3(500,110) P4(500,250) -->
+  <!-- Edges (compatible = do NOT overlap): P1-P3, P1-P4, P2-P3, P2-P4, P3-P5, P4-P5 -->
+
+  <!-- non-clique compatibility edges -->
+  <g stroke="#586e75" stroke-width="2.5">
+    <line x1="360" y1="70"  x2="500" y2="250"/>  <!-- P1-P4 -->
+    <line x1="340" y1="180" x2="500" y2="110"/>  <!-- P2-P3 -->
+    <line x1="340" y1="180" x2="500" y2="250"/>  <!-- P2-P4 -->
+    <line x1="360" y1="290" x2="500" y2="110"/>  <!-- P5-P3 -->
+    <line x1="360" y1="290" x2="500" y2="250"/>  <!-- P5-P4 -->
+  </g>
+
+  <!-- clique edge {P1,P3} highlighted -->
+  <g stroke="#859900" stroke-width="4.5">
+    <line x1="360" y1="70"  x2="500" y2="110"/>  <!-- P1-P3 -->
+  </g>
+
+  <!-- clique {P1, P3} highlighted in green -->
+  <g fill="#859900" stroke="#556100" stroke-width="3">
+    <circle cx="360" cy="70"  r="24"/>
+    <circle cx="500" cy="110" r="24"/>
+  </g>
+  <!-- other placements muted -->
+  <g fill="#93a1a1" stroke="#657b83" stroke-width="2">
+    <circle cx="340" cy="180" r="24"/>
+    <circle cx="360" cy="290" r="24"/>
+    <circle cx="500" cy="250" r="24"/>
+  </g>
+
+  <g fill="white" font-size="17" text-anchor="middle" font-weight="bold">
+    <text x="360" y="76">P1</text>
+    <text x="340" y="186">P2</text>
+    <text x="360" y="296">P5</text>
+    <text x="500" y="116">P3</text>
+    <text x="500" y="256">P4</text>
+  </g>
+
+  <text x="410" y="336" text-anchor="middle" font-size="14" fill="#586e75">compatibility graph (edge = no overlap)</text>
+</svg>

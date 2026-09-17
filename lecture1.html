@@ -8,8 +8,8 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
 
-  <link rel="stylesheet" href="solarized.css" id="theme">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
 </head>
 
 <body>
@@ -102,7 +102,7 @@
           <section>
             <h3>Textbook</h3>
             <h4> A Gentle Introduction to Optimization </h4>
-            <img src="textbook.jpeg" alt="Cover of A Gentle Introduction to Optimization" />
+            <img src="images/textbook.jpeg" alt="Cover of A Gentle Introduction to Optimization" />
           </section>
           <section>
               <h2> Groupwork </h2>
@@ -134,7 +134,7 @@
         </section>
         <section>
           <h2>Mathematical Modelling</h2>
-          <img src="modelling.svg" alt="A real-world question is converted into a mathematical model with inputs and outputs"/> 
+          <img src="images/modelling.svg" alt="A real-world question is converted into a mathematical model with inputs and outputs"/> 
           <p> Optimization is about studying the purple box. </p>
         </section>
         <section>
@@ -272,7 +272,7 @@
               <table>
                   <tbody>
                       <tr><th scope="row">Rank </th> <td style="text-align:center"> 1 </td> <td style="text-align:center"> 2 </td> <td style="text-align:center"> 3 </td> </tr>
-                      <tr><th scope="row">Subspace </th> <td> <img src="subspace-dimension-2.svg" height=200px /> </td> <td> <img src="subspace-dimension-1.svg" height=200px/> </td> <td> <img src="subspace-dimension-0.svg" height=200px/> </td> </tr>
+                      <tr><th scope="row">Subspace </th> <td> <img src="images/subspace-dimension-2.svg" height=200px /> </td> <td> <img src="images/subspace-dimension-1.svg" height=200px/> </td> <td> <img src="images/subspace-dimension-0.svg" height=200px/> </td> </tr>
                   </tbody>
               </table>
           </section>
@@ -380,7 +380,7 @@
                 x_1 + 2 x_2 + 5 x_3 \le 1.
               \]
               </p>
-              <img src="halfspace.svg" style="flex:1" height=200px/>
+              <img src="images/halfspace.svg" style="flex:1" height=200px/>
               </div>
               <p class=fragment> Each $\le$ inequality is equivalent to a $\ge$ inequality.
                   \[
@@ -422,7 +422,7 @@
           <section>
               <h2>Linear Inequalities</h2>
               <p> Systems of linear inequalities define <b>polyhedra</b>. These can be much more complicated than linear subspaces. </p>
-              <img src="polyhedra-collection.svg" height=450px />
+              <img src="images/polyhedra-collection.svg" height=450px />
           </section>
           <section>
               <h2>Linear Inequalities</h2>
@@ -439,7 +439,7 @@
                   \]
                   The points satisfying these inequalities defines a subset of $\R^2$.
               </p>
-              <img src="lp_feasible_region.png" height=300px />
+              <img src="images/lp_feasible_region.png" height=300px />
               </div>
 
           </section>
@@ -451,7 +451,7 @@
                   <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
                   <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
               </table>
-              <img src="linear-programming-2d.svg" height=300px />
+              <img src="images/linear-programming-2d.svg" height=300px />
           </section>
 
           <section>
@@ -468,7 +468,7 @@
                   </table>
                   </p>
                   </div>
-                  <img src="lp_feasible_region.png" height=300px />
+                  <img src="images/lp_feasible_region.png" height=300px />
               </div>
 
           </section>
@@ -547,7 +547,7 @@
           </section>
           <section data-auto-animate>
               <h2> Diet Problem (Revisited) </h2>
-              <img src="diet-feasible-region-3d.svg" height=500px />
+              <img src="images/diet-feasible-region-3d.svg" height=500px />
           </section>
           <section>
               <h2> Linear Programs </h2>
@@ -690,7 +690,7 @@
             <p> A restaurant needs to buy ingredients every day in order to produce food that it then sells to customers. The restaurant also needs to storage costs.
             <div class=fragment style="display:flex">
                 <p> The restaurant will use <b> chicken, rice and vegetables </b> as ingredients to produce either <b>chicken bowls or vegetable bowls</b>. </p>
-                <img src="restaurant.jpg" height=200px />
+                <img src="images/restaurant.jpg" height=200px />
             </div>
             <p class=fragment> Every day, the restaurant purchases a certain amount of each ingredient, and sells a certain amount of each menu item. <p>
             <p class=fragment> If ingredients are left over at the end of the day, they can be stored, but at a cost. <p>

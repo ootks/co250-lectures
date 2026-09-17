@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 340" width="440" height="340" font-family="Georgia, serif">
+  <!-- Road network: cities are vertices, roads are edges with distances (weights) -->
+  <g stroke="#586e75" stroke-width="2.5">
+    <line x1="80"  y1="80"  x2="220" y2="60"/>
+    <line x1="220" y1="60"  x2="360" y2="110"/>
+    <line x1="80"  y1="80"  x2="130" y2="210"/>
+    <line x1="220" y1="60"  x2="240" y2="190"/>
+    <line x1="360" y1="110" x2="240" y2="190"/>
+    <line x1="130" y1="210" x2="240" y2="190"/>
+    <line x1="130" y1="210" x2="250" y2="290"/>
+    <line x1="240" y1="190" x2="250" y2="290"/>
+    <line x1="360" y1="110" x2="370" y2="260"/>
+    <line x1="240" y1="190" x2="370" y2="260"/>
+  </g>
+  <g fill="#cb4b16" stroke="#8a3210" stroke-width="2">
+    <circle cx="80"  cy="80"  r="22"/>
+    <circle cx="220" cy="60"  r="22"/>
+    <circle cx="360" cy="110" r="22"/>
+    <circle cx="130" cy="210" r="22"/>
+    <circle cx="240" cy="190" r="22"/>
+    <circle cx="250" cy="290" r="22"/>
+    <circle cx="370" cy="260" r="22"/>
+  </g>
+  <g fill="white" font-size="15" text-anchor="middle" font-weight="bold">
+    <text x="80"  y="85">Wat</text>
+    <text x="220" y="65">Gue</text>
+    <text x="360" y="115">Tor</text>
+    <text x="130" y="215">Str</text>
+    <text x="240" y="195">Mil</text>
+    <text x="250" y="295">Ham</text>
+    <text x="370" y="265">Osh</text>
+  </g>
+</svg>

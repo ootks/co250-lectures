@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 360" width="460" height="360" font-family="Georgia, serif">
+  <!-- Waiter scheduling turned into a perfect matching by making copies. -->
+  <!-- Instance: W1 (d=2), W2 (d=1) ; S1 (r=1), S2 (r=2) -->
+  <!-- Conflict: W2 cannot work S1, so no edge from W2a to S1a. -->
+  <!-- Left copies x=150: W1a(80) W1b(160) W2a(260) -->
+  <!-- Right copies x=310: S1a(80) S2a(180) S2b(260) -->
+
+  <text x="150" y="34" text-anchor="middle" font-size="15" fill="#073642" font-weight="bold">Waiter copies</text>
+  <text x="310" y="34" text-anchor="middle" font-size="15" fill="#073642" font-weight="bold">Shift copies</text>
+
+  <!-- allowed (compatible) edges, faint. W2a only reaches S2 copies (conflict with S1). -->
+  <g stroke="#d8d0bb" stroke-width="2">
+    <line x1="176" y1="80"  x2="284" y2="180"/>  <!-- W1a-S2a -->
+    <line x1="176" y1="80"  x2="284" y2="260"/>  <!-- W1a-S2b -->
+    <line x1="176" y1="160" x2="284" y2="80"/>   <!-- W1b-S1a -->
+    <line x1="176" y1="160" x2="284" y2="260"/>  <!-- W1b-S2b -->
+    <line x1="176" y1="260" x2="284" y2="180"/>  <!-- W2a-S2a -->
+  </g>
+
+  <!-- matching edges (bold green): W1a-S1a, W1b-S2a, W2a-S2b -->
+  <g stroke="#859900" stroke-width="4.5">
+    <line x1="176" y1="80"  x2="284" y2="80"/>
+    <line x1="176" y1="160" x2="284" y2="180"/>
+    <line x1="176" y1="260" x2="284" y2="260"/>
+  </g>
+
+  <!-- grouping labels: which copies belong to which waiter / shift -->
+  <text x="104" y="124" text-anchor="middle" font-size="13" fill="#586e75" font-style="italic">W1 (d=2)</text>
+  <text x="104" y="266" text-anchor="middle" font-size="13" fill="#586e75" font-style="italic">W2 (d=1)</text>
+  <text x="366" y="86"  text-anchor="middle" font-size="13" fill="#586e75" font-style="italic">S1 (r=1)</text>
+  <text x="366" y="224" text-anchor="middle" font-size="13" fill="#586e75" font-style="italic">S2 (r=2)</text>
+
+  <!-- waiter copies -->
+  <g fill="#268bd2" stroke="#0d5a8a" stroke-width="2">
+    <circle cx="150" cy="80"  r="22"/>
+    <circle cx="150" cy="160" r="22"/>
+    <circle cx="150" cy="260" r="22"/>
+  </g>
+  <g fill="white" font-size="13" text-anchor="middle" font-weight="bold">
+    <text x="150" y="85">W1a</text>
+    <text x="150" y="165">W1b</text>
+    <text x="150" y="265">W2a</text>
+  </g>
+
+  <!-- shift copies -->
+  <g fill="#b58900" stroke="#7a5c00" stroke-width="2">
+    <circle cx="310" cy="80"  r="22"/>
+    <circle cx="310" cy="180" r="22"/>
+    <circle cx="310" cy="260" r="22"/>
+  </g>
+  <g fill="white" font-size="13" text-anchor="middle" font-weight="bold">
+    <text x="310" y="85">S1a</text>
+    <text x="310" y="185">S2a</text>
+    <text x="310" y="265">S2b</text>
+  </g>
+
+  <text x="230" y="342" text-anchor="middle" font-size="13" fill="#586e75">W2 conflicts with S1, so W2a has no edge to S1a</text>
+</svg>

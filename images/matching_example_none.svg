@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 320" width="360" height="320" font-family="Georgia, serif">
+  <!-- 3+3 graph with no perfect matching: v2 and v3 both only reach u3 (bottleneck) -->
+  <!-- Left U x=100 rows 80,160,240 ; Right V x=260 rows 80,160,240 -->
+  <!-- Edges: u1-v1, u2-v1, u3-v1, u3-v2, u3-v3 -->
+
+  <!-- non-matching edges (faint) -->
+  <g stroke="#d8d0bb" stroke-width="2">
+    <line x1="128" y1="160" x2="232" y2="80"/>   <!-- u2-v1 -->
+    <line x1="128" y1="240" x2="232" y2="80"/>   <!-- u3-v1 -->
+    <line x1="128" y1="240" x2="232" y2="240"/>  <!-- u3-v3 -->
+  </g>
+
+  <!-- matching edges (bold green): u1-v1, u3-v2 -->
+  <g stroke="#859900" stroke-width="4.5">
+    <line x1="128" y1="80"  x2="232" y2="80"/>   <!-- u1-v1 -->
+    <line x1="128" y1="240" x2="232" y2="160"/>  <!-- u3-v2 -->
+  </g>
+
+  <!-- left part U -->
+  <g stroke-width="2">
+    <circle cx="100" cy="80"  r="20" fill="#268bd2" stroke="#0d5a8a"/>
+    <circle cx="100" cy="160" r="20" fill="#93a1a1" stroke="#657b83"/>
+    <circle cx="100" cy="240" r="20" fill="#268bd2" stroke="#0d5a8a"/>
+  </g>
+  <g fill="white" font-size="16" text-anchor="middle" font-weight="bold">
+    <text x="100" y="86">u1</text>
+    <text x="100" y="166">u2</text>
+    <text x="100" y="246">u3</text>
+  </g>
+
+  <!-- right part V (v3 unmatched, muted) -->
+  <g stroke-width="2">
+    <circle cx="260" cy="80"  r="20" fill="#b58900" stroke="#7a5c00"/>
+    <circle cx="260" cy="160" r="20" fill="#b58900" stroke="#7a5c00"/>
+    <circle cx="260" cy="240" r="20" fill="#93a1a1" stroke="#657b83"/>
+  </g>
+  <g fill="white" font-size="16" text-anchor="middle" font-weight="bold">
+    <text x="260" y="86">v1</text>
+    <text x="260" y="166">v2</text>
+    <text x="260" y="246">v3</text>
+  </g>
+
+  <text x="180" y="300" text-anchor="middle" font-size="14" fill="#586e75">no perfect matching: v2, v3 only reach u3</text>
+</svg>

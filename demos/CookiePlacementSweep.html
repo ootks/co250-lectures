@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Animation sweeping a cookie over every valid placement on a tray">
+  <title>Cookie Placement Sweep</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: #fdf6e3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    canvas {
+      display: block;
+      width: min(100vw, 100vh * 5 / 4);
+      max-width: 100%;
+      max-height: 100vh;
+      aspect-ratio: 5 / 4;
+      touch-action: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="board" width="600" height="480" aria-label="A tray grid with a cookie moving through every valid placement"></canvas>
+
+  <script>
+    const LOGICAL_WIDTH = 600;
+    const LOGICAL_HEIGHT = 480;
+
+    // Tray is an ell (rows) x w (cols) grid, matching the cookie assembly slides.
+    const GRID_ROWS = 4;   // ell
+    const GRID_COLS = 5;   // w
+
+    // Cookie size: a (height in rows) x b (width in cols).
+    const COOKIE = { a: 2, b: 2 };
+
+    const STEP_MS = 750;
+
+    const colors = {
+      background: "#fdf6e3",
+      empty: "#f4ecd4",
+      gridLine: "#cabf9f",
+      muted: "#93a1a1",
+      cookie: "#cb4b16",
+      corner: "#268bd2"
+    };
+
+    const canvas = document.getElementById("board");
+    const ctx = canvas.getContext("2d");
+
+    // Every valid top-left placement (r, c), 1-indexed, in row-major order.
+    // A cookie of size a x b fits with top-left at (r, c) when
+    // r <= ell - a + 1 and c <= w - b + 1.
+    const placements = [];
+    for (let r = 1; r <= GRID_ROWS - COOKIE.a + 1; r++) {
+      for (let c = 1; c <= GRID_COLS - COOKIE.b + 1; c++) {
+        placements.push({ r, c });
+      }
+    }
+    let index = 0;
+
+    // ---- geometry --------------------------------------------------------
+    const PAD = 40;
+
+    function cellSize() {
+      const maxByW = (LOGICAL_WIDTH - 2 * PAD) / GRID_COLS;
+      const maxByH = (LOGICAL_HEIGHT - 2 * PAD) / GRID_ROWS;
+      return Math.min(maxByW, maxByH);
+    }
+
+    function origin() {
+      const cs = cellSize();
+      return {
+        x: (LOGICAL_WIDTH - GRID_COLS * cs) / 2,
+        y: (LOGICAL_HEIGHT - GRID_ROWS * cs) / 2,
+        cs
+      };
+    }
+
+    function roundedRectPath(x, y, w, h, radius) {
+      const r = Math.min(radius, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      ctx.setTransform((rect.width / LOGICAL_WIDTH) * dpr, 0, 0,
+                       (rect.height / LOGICAL_HEIGHT) * dpr, 0, 0);
+      draw();
+    }
+
+    function draw() {
+      const o = origin();
+      const cs = o.cs;
+      const gridW = GRID_COLS * cs;
+      const gridH = GRID_ROWS * cs;
+
+      // background
+      ctx.fillStyle = colors.background;
+      ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+
+      // tray body
+      ctx.save();
+      ctx.shadowColor = "rgba(7,54,66,.14)";
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetY = 4;
+      roundedRectPath(o.x, o.y, gridW, gridH, 10);
+      ctx.fillStyle = colors.empty;
+      ctx.fill();
+      ctx.restore();
+
+      // grid lines
+      ctx.strokeStyle = colors.gridLine;
+      ctx.lineWidth = 1;
+      for (let c = 1; c < GRID_COLS; c++) {
+        ctx.beginPath(); ctx.moveTo(o.x + c * cs, o.y); ctx.lineTo(o.x + c * cs, o.y + gridH); ctx.stroke();
+      }
+      for (let r = 1; r < GRID_ROWS; r++) {
+        ctx.beginPath(); ctx.moveTo(o.x, o.y + r * cs); ctx.lineTo(o.x + gridW, o.y + r * cs); ctx.stroke();
+      }
+
+      const p = placements[index];
+      const x = o.x + (p.c - 1) * cs;
+      const y = o.y + (p.r - 1) * cs;
+      const w = COOKIE.b * cs;
+      const h = COOKIE.a * cs;
+
+      // the cookie at the current placement
+      roundedRectPath(x + 3, y + 3, w - 6, h - 6, 8);
+      ctx.fillStyle = colors.cookie;
+      ctx.fill();
+
+      // highlight the top-left corner cell
+      ctx.fillStyle = colors.corner;
+      roundedRectPath(x + 3, y + 3, cs - 6, cs - 6, 8);
+      ctx.fill();
+
+      // coordinates of the top-left corner, written in that cell
+      ctx.fillStyle = "#fdf6e3";
+      ctx.font = "700 20px Inter, system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(`(${p.r}, ${p.c})`, x + cs / 2, y + cs / 2);
+
+      // tray outline on top
+      roundedRectPath(o.x, o.y, gridW, gridH, 10);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = colors.muted;
+      ctx.stroke();
+    }
+
+    function tick() {
+      index = (index + 1) % placements.length;
+      draw();
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+
+    resizeCanvas();
+    setInterval(tick, STEP_MS);
+  </script>
+</body>
+</html>

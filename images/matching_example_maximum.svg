@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 340" width="360" height="340" font-family="Georgia, serif">
+  <!-- Unbalanced 4+2: maximum matching saturates the smaller side but not all of U -->
+  <!-- Left U x=100 rows 70,140,210,280 ; Right V x=260 rows 110,240 -->
+
+  <!-- non-matching edges (faint) -->
+  <g stroke="#d8d0bb" stroke-width="2">
+    <line x1="128" y1="70"  x2="232" y2="240"/>  <!-- u1-v2 -->
+    <line x1="128" y1="140" x2="232" y2="110"/>  <!-- u2-v1 -->
+    <line x1="128" y1="280" x2="232" y2="240"/>  <!-- u4-v2 -->
+  </g>
+
+  <!-- matching edges (bold green): u1-v1, u3-v2 -->
+  <g stroke="#859900" stroke-width="4.5">
+    <line x1="128" y1="70"  x2="232" y2="110"/>  <!-- u1-v1 -->
+    <line x1="128" y1="210" x2="232" y2="240"/>  <!-- u3-v2 -->
+  </g>
+
+  <!-- left part U (matched blue, unmatched muted) -->
+  <g stroke-width="2">
+    <circle cx="100" cy="70"  r="20" fill="#268bd2" stroke="#0d5a8a"/>
+    <circle cx="100" cy="140" r="20" fill="#93a1a1" stroke="#657b83"/>
+    <circle cx="100" cy="210" r="20" fill="#268bd2" stroke="#0d5a8a"/>
+    <circle cx="100" cy="280" r="20" fill="#93a1a1" stroke="#657b83"/>
+  </g>
+  <g fill="white" font-size="16" text-anchor="middle" font-weight="bold">
+    <text x="100" y="76">u1</text>
+    <text x="100" y="146">u2</text>
+    <text x="100" y="216">u3</text>
+    <text x="100" y="286">u4</text>
+  </g>
+
+  <!-- right part V -->
+  <g fill="#b58900" stroke="#7a5c00" stroke-width="2">
+    <circle cx="260" cy="110" r="20"/>
+    <circle cx="260" cy="240" r="20"/>
+  </g>
+  <g fill="white" font-size="16" text-anchor="middle" font-weight="bold">
+    <text x="260" y="116">v1</text>
+    <text x="260" y="246">v2</text>
+  </g>
+
+  <text x="180" y="320" text-anchor="middle" font-size="14" fill="#586e75">maximum matching (size 2), not perfect</text>
+</svg>
