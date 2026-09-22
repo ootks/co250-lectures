@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 620" width="820" height="620" font-family="Georgia, serif">
+  <!-- Four polytopes (two 2D, two 3D) each with an inequality (Ax <= b) description. -->
+
+  <style>
+    .title  { font-size: 18px; font-weight: bold; fill: #073642; }
+    .ineq   { font-size: 16px; fill: #586e75; font-family: ui-monospace, Menlo, monospace; }
+    .fillp  { fill: #268bd2; fill-opacity: 0.20; stroke: #268bd2; stroke-width: 2.5; stroke-linejoin: round; }
+    .fill3  { fill: #2aa198; fill-opacity: 0.22; stroke: #1a6b64; stroke-width: 2; stroke-linejoin: round; }
+    .hidden3{ fill: none; stroke: #1a6b64; stroke-width: 1.4; stroke-dasharray: 5 4; opacity: 0.7; }
+    .axis   { stroke: #93a1a1; stroke-width: 1.5; }
+    .axlab  { font-size: 12px; fill: #93a1a1; font-style: italic; }
+    .cap    { font-size: 13px; fill: #657b83; }
+  </style>
+
+  <!-- ============ Top-left: 2D triangle ============ -->
+  <g transform="translate(30,20)">
+    <text class="title" x="0" y="16">Triangle (2D)</text>
+    <!-- local axes: origin at (40,170), 30px per unit -->
+    <line class="axis" x1="40" y1="170" x2="200" y2="170"/>
+    <line class="axis" x1="40" y1="170" x2="40"  y2="40"/>
+    <text class="axlab" x="205" y="174">x</text>
+    <text class="axlab" x="34"  y="38">y</text>
+    <!-- triangle (0,0),(4,0),(0,3): 30px/unit -> (40,170),(160,170),(40,80) -->
+    <polygon class="fillp" points="40,170 160,170 40,80"/>
+    <g class="ineq">
+      <text x="0" y="205">x &#8805; 0</text>
+      <text x="0" y="227">y &#8805; 0</text>
+      <text x="0" y="249">3x + 4y &#8804; 12</text>
+    </g>
+  </g>
+
+  <!-- ============ Top-right: 2D square ============ -->
+  <g transform="translate(440,20)">
+    <text class="title" x="0" y="16">Square (2D)</text>
+    <line class="axis" x1="40" y1="170" x2="200" y2="170"/>
+    <line class="axis" x1="40" y1="170" x2="40"  y2="40"/>
+    <text class="axlab" x="205" y="174">x</text>
+    <text class="axlab" x="34"  y="38">y</text>
+    <!-- square 0<=x<=2, 0<=y<=2: 45px/unit -> (40,170)-(130,80) -->
+    <polygon class="fillp" points="40,170 130,170 130,80 40,80"/>
+    <g class="ineq">
+      <text x="0" y="205">x &#8805; 0,&#160;&#160; x &#8804; 2</text>
+      <text x="0" y="227">y &#8805; 0,&#160;&#160; y &#8804; 2</text>
+    </g>
+  </g>
+
+  <!-- ============ Bottom-left: 3D cube ============ -->
+  <g transform="translate(30,320)">
+    <text class="title" x="0" y="16">Cube (3D)</text>
+    <!-- simple isometric-ish cube -->
+    <!-- front face -->
+    <g transform="translate(30,40)">
+      <!-- back face (dashed) -->
+      <polyline class="hidden3" points="55,20 145,20 145,110 55,110 55,20"/>
+      <!-- connect edges -->
+      <line class="hidden3" x1="10" y1="55" x2="55" y2="20"/>
+      <!-- visible: front square -->
+      <polygon class="fill3" points="10,55 100,55 100,145 10,145"/>
+      <!-- top face -->
+      <polygon class="fill3" points="10,55 55,20 145,20 100,55"/>
+      <!-- right face -->
+      <polygon class="fill3" points="100,55 145,20 145,110 100,145"/>
+    </g>
+    <g class="ineq">
+      <text x="0" y="205">0 &#8804; x &#8804; 1</text>
+      <text x="0" y="227">0 &#8804; y &#8804; 1</text>
+      <text x="0" y="249">0 &#8804; z &#8804; 1</text>
+    </g>
+  </g>
+
+  <!-- ============ Bottom-right: 3D tetrahedron (standard simplex) ============ -->
+  <g transform="translate(440,320)">
+    <text class="title" x="0" y="16">Tetrahedron (3D)</text>
+    <g transform="translate(40,30)">
+      <!-- apex/top and three base corners for a simplex look -->
+      <!-- vertices: T(90,10) L(20,120) R(160,120) B(95,90 back) -->
+      <!-- back edges (dashed) to the hidden vertex B -->
+      <line class="hidden3" x1="90" y1="10"  x2="95" y2="80"/>
+      <line class="hidden3" x1="20" y1="120" x2="95" y2="80"/>
+      <line class="hidden3" x1="160" y1="120" x2="95" y2="80"/>
+      <!-- visible faces -->
+      <polygon class="fill3" points="90,10 20,120 160,120"/>
+    </g>
+    <g class="ineq">
+      <text x="0" y="205">x &#8805; 0,&#160; y &#8805; 0,&#160; z &#8805; 0</text>
+      <text x="0" y="227">x + y + z &#8804; 1</text>
+    </g>
+  </g>
+
+  <text class="cap" x="410" y="612" text-anchor="middle">Each polytope is the solution set of a system of linear inequalities Ax &#8804; b.</text>
+</svg>

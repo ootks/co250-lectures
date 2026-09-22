@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 320" width="360" height="320" font-family="Georgia, serif">
+  <!-- minimize x subject to xy >= 1, x,y >= 0. -->
+  <!-- Feasible region: first-quadrant points on/above the hyperbola xy = 1. -->
+  <!-- x in [0,5], y in [0,5]; origin (50,270), 44 px per unit. -->
+
+  <!-- axes -->
+  <line x1="50" y1="270" x2="340" y2="270" stroke="#586e75" stroke-width="2"/>
+  <line x1="50" y1="270" x2="50"  y2="30"  stroke="#586e75" stroke-width="2"/>
+  <polygon points="340,270 332,265 332,275" fill="#586e75"/>
+  <polygon points="50,30 45,38 55,38" fill="#586e75"/>
+  <text x="338" y="288" text-anchor="end" font-size="14" font-style="italic" fill="#586e75">x</text>
+  <text x="42" y="36" text-anchor="end" font-size="14" font-style="italic" fill="#586e75">y</text>
+
+  <!-- feasible region xy >= 1 (above the hyperbola), shaded.
+       Approximate the region between the hyperbola and the plot box.
+       hyperbola points (x, y=1/x) for x=0.25..5, pixel = (50+44x, 270-44y):
+       x=0.25,y=4 -> (61,94); 0.35,2.857->(65.4,144.3); 0.5,2->(72,182);
+       0.7,1.429->(80.8,207.1); 1,1->(94,226); 1.5,0.667->(116,240.7);
+       2,0.5->(138,248); 3,0.333->(182,255.3); 4,0.25->(226,259);
+       5,0.2->(270,261.2) -->
+  <path d="M 61,94 61,30 330,30 330,261.2 270,261.2
+           C 226,259 182,255.3 138,248
+           C 116,240.7 94,226 80.8,207.1
+           C 72,182 65.4,144.3 61,94 Z"
+        fill="#268bd2" fill-opacity="0.16" stroke="none"/>
+
+  <!-- hyperbola boundary xy = 1 -->
+  <path d="M 61,94 C 65.4,144.3 72,182 80.8,207.1
+           C 94,226 116,240.7 138,248
+           C 182,255.3 226,259 270,261.2"
+        fill="none" stroke="#268bd2" stroke-width="3"/>
+  <text x="150" y="200" font-size="14" fill="#0d5a8a" font-style="italic">xy = 1</text>
+  <text x="235" y="90" font-size="14" fill="#0d5a8a">feasible: xy &#8805; 1</text>
+
+  <!-- objective: minimize x. Points slide left toward x=0 as y grows, never reaching it. -->
+  <g fill="#cb4b16" stroke="#8a3210" stroke-width="1.5">
+    <circle cx="138" cy="248" r="4"/>   <!-- (2, 0.5) -->
+    <circle cx="94"  cy="226" r="4"/>   <!-- (1, 1) -->
+    <circle cx="72"  cy="182" r="4"/>   <!-- (0.5, 2) -->
+    <circle cx="65"  cy="144" r="4"/>   <!-- (0.35, ~2.86) -->
+  </g>
+  <!-- arrow following the boundary toward the y-axis -->
+  <path d="M 130 252 C 100 250 78 235 66 205" fill="none" stroke="#cb4b16" stroke-width="2" stroke-dasharray="5 4"/>
+  <polygon points="66,205 62,214 71,211" fill="#cb4b16"/>
+  <text x="86" y="120" font-size="13" fill="#8a3210">x &#8594; 0</text>
+
+  <text x="195" y="308" text-anchor="middle" font-size="12.5" fill="#657b83">x can get arbitrarily close to 0, but never equals it: no minimizer.</text>
+</svg>

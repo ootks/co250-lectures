@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>
+            Lecture 4
+        </h4>
+        <br>
+        <p class=centered>
+          Kevin Shu
+        </p>
+        <aside class="notes">
+          Add private speaker notes here. Press S during the presentation to open speaker view.
+        </aside>
+      </section>
+
+      <section>
+        <h2>Lecture Outline</h2>
+        <ul>
+          <li>Graph problems review</li>
+          <li>Nonlinear Programming</li>
+          <li>Return to Linear Programming</li>
+        </ul>
+      </section>
+
+      <section>
+          <section>
+            <h1>Graphs</h1>
+          </section>
+          <section>
+            <h3>Graphs</h3>
+            <p>
+              A <b>graph</b> $G = (V,E)$ consists of a set of `vertices' $V$ and a set of `edges' $E$.
+            </p>
+            <p> Formally, an edge is an unordered pair $\{i,j\}$, where $i$ and $j$ are in the vertex set.</p>
+            <p> Graphs can be visualized as a picture where the vertices are points, and the edges are lines. </p>
+            <img src="images/graph_example.svg">
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <p> A <b>bipartite graph</b> is a graph whose vertex set can be divided into two disjoint parts $V = V_1 \cup V_2$ with $V_1 \cap V_2 = \varnothing$, and every edge $e \in E$ consists of one element from $V_1$ and one element from $V_2$.</p>
+            <img src="images/bipartite.svg">
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <p> A matching in a graph is a collection of edges in that graph so that no two edges in the collection share a vertex.</p>
+            <div class="flexbox">
+              <img src="images/bipartite_matching.svg" />
+              <p class=fragment> A maximum matching is a matching with as many edges as any other matching. A perfect matching is a matching where every vertex has a matched vertex. </p>
+            </div>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>An ILP Formulation</h4>
+            <p> How can we model maximum bipartite matching as an integer program? </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>Decision variables</h4>
+            <p> What should the variables be?</p>
+            <p class="fragment"> For each edge, we need to decide whether it is <b> part of the matching</b> or not.</p>
+            <p class="fragment"> For each edge $\{i,j\}$, introduce a variable $x_{ij}$ that is 1 if that edge is in the matching and 0 otherwise.</p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>Constraints</h4>
+            <p> <b>Variables correspond to edges, constraints correspond to vertices.</b></p>
+            <p class=fragment> For every vertex, there can be at most one incident edge. For each $i \in V$,
+              \[
+                \sum_{j : \{i,j\} \in E}x_{ij} \le 1.
+              \]
+            </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>Objective</h4>
+            <p> We want as many edges in the matching as possible.</p>
+            <p class=fragment> To <b>count the number of edges in the matching, sum up the indicator variables.</b>
+              \[
+              \max \sum_{\{i,j\} \in E}x_{ij}
+              \]
+            </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>Assembling</h4>
+              <table> 
+                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{\{i,j\} \in E}x_{ij}$ </td><td></td> </tr>
+                  <tr> <td> such that </td> <td> $\sum_{j : \{i,j\} \in E}x_{ij} \le 1$ </td> <td>for each $i \in V$</td></tr>
+                  <tr> <td> </td> <td> $0 \le x_{ij} \le 1$ </td> </tr>
+                  <tr> <td> </td> <td> $x_{ij} \in \Z$ </td> </tr>
+              </table>
+              <p class="fragment">It turns out that the integrality constraints are not necessary! Matching can be solved with an LP.</p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>A Concrete Example</h4>
+            <div class=flexbox>
+              <div>
+                <p> Consider this bipartite graph with parts $\{u_1, u_2, u_3\}$ and $\{v_1, v_2, v_3\}$. </p>
+                <p> Its edges are
+                  \[
+                    E = \{\, u_1v_1,\ u_1v_2,\ u_2v_2,\ u_2v_3,\ u_3v_1,\ u_3v_3 \,\}.
+                  \]
+                </p>
+                <p class=fragment> We write $x_{ij}$ for the variable of edge $u_iv_j$, so there are six variables. </p>
+              </div>
+              <img src="images/bipartite_matching_example.svg" height=300px />
+            </div>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <h4>A Concrete Example</h4>
+            <p> One constraint per vertex says each vertex is used at most once: </p>
+              <table>
+                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_{11} + x_{12} + x_{22} + x_{23} + x_{31} + x_{33}$ </td> <td></td> </tr>
+                  <tr> <td> such that </td> <td> $x_{11} + x_{12} \le 1$ </td> <td> ($u_1$) </td> </tr>
+                  <tr> <td> </td> <td> $x_{22} + x_{23} \le 1$ </td> <td> ($u_2$) </td> </tr>
+                  <tr> <td> </td> <td> $x_{31} + x_{33} \le 1$ </td> <td> ($u_3$) </td> </tr>
+                  <tr> <td> </td> <td> $x_{11} + x_{31} \le 1$ </td> <td> ($v_1$) </td> </tr>
+                  <tr> <td> </td> <td> $x_{12} + x_{22} \le 1$ </td> <td> ($v_2$) </td> </tr>
+                  <tr> <td> </td> <td> $x_{23} + x_{33} \le 1$ </td> <td> ($v_3$) </td> </tr>
+                  <tr> <td> </td> <td> $0 \le x_{ij} \le 1, \quad x_{ij} \in \Z$ </td> <td></td> </tr>
+              </table>
+              <p class=fragment> An optimal solution is $x_{11} = x_{22} = x_{33} = 1$ (all others $0$), the perfect matching $\{u_1v_1, u_2v_2, u_3v_3\}$. </p>
+          </section>
+          <section>
+            <h3>Bipartite Matching</h3>
+            <embed src="demos/MatchingExplorer.html" style="width:1000px; height:520px;">
+          </section>
+      </section>
+      <section>
+          <section>
+            <h2> Nonlinear Programming </h2>
+          </section>
+          <section>
+            <h3> Nonlinear Programming </h3>
+            <p> We have covered <b>linear programming</b> and <b> integer programming </b>.</p>
+            <p class="fragment"> Nonlinear programming is everything else!</p>
+          </section>
+          <section>
+            <h3> Nonlinear Programming </h3>
+            <p> Arnold and Beth are in a circular room and they want to stand as far apart as possible.  </p>
+            <p class="fragment"> Each person gets to choose a location in the room $(x_A, y_A)$ and $(x_B, y_B)$. Their goal is to maximize the distance between these points:
+              \[
+              \sqrt{(x_A - x_B)^2 + (y_A - y_B)^2}
+              \]
+             </p>
+            <p class="fragment"> 
+              These choices need to stay in the disk $\{(x,y) : x^2+y^2\le 1\}$.
+             </p>
+          </section>
+          <section>
+            <h3> Nonlinear Programming </h3>
+            <div class=flexbox>
+              <table>
+                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sqrt{(x_A-x_B)^2 + (y_A - y_B)^2}$ </td> </tr>
+                  <tr> <td> such that </td> <td> $x_A^2+y_A^2 \le 1$ </td>  </tr>
+                  <tr> <td> </td> <td> $x_B^2+y_B^2 \le 1$ </td>  </tr>
+              </table>
+              <img src="images/circular_room.svg" height=300px />
+            </div>
+          </section>
+          <section>
+            <h3> Nonlinear Programming </h3>
+              <table>
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $f(x)$ </td> </tr>
+                  <tr> <td> such that </td> <td> $g_1(x) \le 0$ </td>  </tr>
+                  <tr> <td> </td> <td> $g_2(x) \le 0$ </td>  </tr>
+                  <tr> <td> </td> <td> $\dots$ </td>  </tr>
+                  <tr> <td> </td> <td> $g_k(x) \le 0$ </td>  </tr>
+                  <tr> <td> </td> <td> $x \in \R^n$ </td>  </tr>
+              </table>
+              <p> $f$ and each $g_i$ is some (possibly nonlinear) function.</p>
+              <p class=fragment> The $\le$ can also be $\ge$, min can be max, etc. Each change amounts to taking the negative of the objective/constraint function. </p>
+          </section>
+          <section>
+            <h3> Nonlinear Programs </h3>
+            <h4> Example: Restaurant Planning Revisited </h4>
+            <p> In an earlier lecture, we discussed the planning problem for a restaurant. Let's say that the restaurant also gets to decide their prices. </p>
+            <p class=fragment> Let's say that the restaurant needs to just sell one food item, and it wants to determine the price of the food item. </p>
+            <p class=fragment> To model this, we need to know the <b> demand function</b> that tells us how much food the restaurant sells if it sets the price of that item to $p$. </p>
+          </section>
+          <section>
+            <h3> Nonlinear Programs </h3>
+            <h4> Example: Restaurant Planning Revisited </h4>
+            <p>  Suppose that for each $p \in \R_{\ge 0}$, $D(p)$ is how many servings the restaurant can sell if it sets the price of the food to $p$. </p>
+            <img src="images/restaurant_demand.svg" height=300px />
+            <p class=fragment> What is the objective here? </p>
+          </section>
+          <section>
+            <h3> Nonlinear Programs </h3>
+            <h4> Example: Restaurant Planning Revisited </h4>
+            <p> If the food item costs $c$ to make, then the total profit from selling one food item at price $p$ is $p-c$. </p>
+            <p>Then the total amount that is sold is $D(p)$, so the total profit is</p>
+            <div  class=fragment>
+            <p> 
+              \[
+                (p-c)D(p).
+              \]
+            </p>
+            <img src="images/restaurant_demand_profit.svg" height=300px />
+            </div>
+          </section>
+          <section>
+            <h3> Nonlinear Programs </h3>
+            <h4> Example: Restaurant Planning Revisited </h4>
+            <p> Let us now return to the situation in which a restaurant has 2 food items that it can sell, and 3 ingredients with which to make those items.  </p>
+            <div class=fragment style="display:flex">
+                <p> The restaurant will use <b> chicken, rice and vegetables </b> as ingredients to produce either <b>chicken bowls or vegetable bowls</b>. </p>
+                <img src="images/restaurant.jpg" height=200px />
+            </div>
+            <p><small> In the earlier lecture, we talked about a multiday planning model, but for now, let's just focus on one day at a time.</small> </p>
+          </section>
+          <section>
+            <h3> Nonlinear Programs </h3>
+            <h4> Example: Restaurant Planning Revisited </h4>
+            <p> What are the variables for this model? </p>
+            <div class="boxed blue fragment">
+              \[
+              \begin{align}
+              r_{j}&=\text{kilograms of ingredient \(j\) purchased},\\
+              f_{i}&=\text{servings of food \(i\) produced},\\
+              p_{i}&=\text{price of food \(i\)}.
+              \end{align}
+              \]
+            </div>
+          </section>
+          <section>
+            <h3> Nonlinear Programs </h3>
+            <h4> Example: Restaurant Planning Revisited </h4>
+            <p> Objective: Maximize total profit:
+              \[
+                \sum_i p_if_i - \sum_j c_j r_j.
+              \]
+            </p>
+            <p> First term is the total profit from selling $f_i$ of food $i$ at price $p_i$, and second term is the cost of buying ingredients. </p>
+          </section>
+          <section>
+            <h3> Nonlinear Programs </h3>
+            <h4> Example: Restaurant Planning Revisited </h4>
+            <p> Constraints:
+              Need to buy enough of each ingredient
+              \[
+                \sum_{i} n_{ji} f_i \le r_j
+              \]
+            </p>
+            <p> Here $n_{ji}$ is how much of ingredient $j$ is needed to make food $i$. </p>
+            <p> Also sales limited by demand.
+              \[
+              f_i \le D_i(p_i).
+              \]
+            </p>
+            <p> Here, $D_i$ is the demand function of food $i$. </p>
+          </section>
+          <section>
+            <h3> Nonlinear Programs </h3>
+            <h4> Example: Restaurant Planning Revisited </h4>
+            Overall, the problem is 
+            <table>
+                <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_i p_if_i - \sum_j c_j r_j$ </td> <td></td></tr>
+                <tr> <td> such that </td> <td> $\sum_{i} n_{ji} f_i \le r_j$ </td>  <td> for each $j$ </td> </td></tr>
+                <tr> <td> </td> <td> $f_i \le D_i(p_i)$ </td>  <td> for each $i$</td> </tr>
+            </table>
+            <p class=fragment> This problem is nonlinear because the objective involves the term $p_i f_i$, which is quadratic in the decision variables. Also, the constraints involve the possibly nonlinear constraint that $f_i \le D(p_i)$. </p>
+            <p class=fragment> Note that if the $p_i$ are fixed instead of being decision variables, then this is a linear program. </p>
+          </section> 
+          <section>
+            <h3> Nonlinear Programs </h3>
+            <h4> Example: Restaurant Planning Revisited </h4>
+            <p> What if we don't know the demand function? </p>
+            <p> Need to use data; say that we look at similar restaurants that have different prices for their food, and how much demand those food items get.</p>
+            <div class="flexbox">
+              <p style="padding-top:80px; padding-left:80px"> \[\mathcal{D} = \{(p_i, D_i) : i = 1, \dots, k\}\] </p>
+              <img src="images/demand_regression.svg" height=250px />
+           </div>
+           <p> We want to know what the demand is when $p$ is an intermediate value. </p>
+          </section> 
+          <section>
+            <h3> Regression Analysis </h3>
+            <p> A basic problem in data science is to find a <b>function</b> which fits some data. </p>
+            <p> There are 3 components to such a regression problem: a function class for the model, the data, and a loss function that measures how well the function fits the dataset. </p>
+            <p class="fragment"> Classically, we study linear regression (least squares), but modern machine learning is primarily focused on fitting nonlinear functions. </p>
+          </section>
+          <section>
+            <h3> Linear Regression </h3>
+            <p> Given a dataset $\mathcal{D}$,
+              \[
+                \mathcal{D} = \{(x_i, y_i) : i = 1, \dots, D\} \subseteq \R^n \times \R,
+              \]
+            </p>
+            <p class="fragment"> the linear regression problem is to find a linear function of the form $\langle \theta, x\rangle$ that minimizes
+              \[
+                \sum_{i=1}^D (\langle \theta, x_i\rangle - y_i)^2
+              \]
+            Here, $\theta \in \R^n$.</p>
+          </section>
+          <section>
+            <h3> Linear Regression </h3>
+            <p> Geometric Interpretation </p>
+            <img src="images/regression_projection.svg" height=320px />
+          </section>
+          <section>
+            <h3> Sparse Linear Regression  </h3>
+            <p> A common issue with linear regression solutions is that they tend to make all of the weights nonzero. </p>
+            <img src="images/dense_weights.svg" height=260px />
+            <p> What if we want a good linear model, but one with very few weights being nonzero? </p>
+          </section>
+          <section>
+            <h3> Sparse Linear Regression </h3>
+            <p> Let $\|\theta\|_0$ be the <b>number of nonzero entries</b> of the vector. E.g. $\|(1,1,0)\|_0 = 2$.</p>
+            <p> The sparse linear regression problem is 
+              <table>
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{i=1}^D (\langle \theta, x_i\rangle - y_i)^2$ </td> <td></td></tr>
+                  <tr> <td> such that </td> <td> $\|\theta\|_0 \le k$ </td> </tr>
+              </table>
+            </p>
+            <p> This problem is hard! Requires combinatorial search.</p>
+          </section>
+          <section>
+            <h3> LASSO (constrained formulation) </h3>
+            <p> Let $\|\theta\|_1$ be $\sum_{i=1}^n |\theta_i|$. E.g. $\|(1,1,0)\|_1 = 2$.</p>
+            <p> The (constrained formulation of LASSO) is given by
+              <table>
+                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{i=1}^D (\langle \theta, x_i\rangle - y_i)^2$ </td> <td></td></tr>
+                  <tr> <td> such that </td> <td> $\|\theta\|_1 \le k$ </td> </tr>
+              </table>
+            </p>
+            <p class=fragment> LASSO is more often written in its `penalty formulation', which is just to minimize $\sum_{i=1}^D (\langle \theta, x_i\rangle - y_i)^2 + \lambda \|\theta\|_1$ for some $\lambda \in \R$. </p>
+            <p class=fragment> We will talk about how to solve this kind of (convex) problem later. </p>
+          </section>
+          <section>
+            <h3> LASSO (constrained formulation) </h3>
+            <p> Unlike least squares, LASSO tends to set most weights <b>exactly</b> to zero, recovering a sparse model. </p>
+            <img src="images/sparse_weights.svg" height=260px />
+            <p class=fragment> Only a few features (here $\theta_1, \theta_4, \theta_6$) are used; the rest are dropped. </p>
+          </section>
+      </section>
+      <section>
+        <section>
+          <h2> Linear Programming Again</h2>
+        </section>
+        <section>
+          <h3> Linear Programming Again</h3>
+          <p> A linear program (LP) is an optimization problem whose objective is a <b>linear function</b> and whose feasible set is the set of solutions to some linear inequality.</p>
+          <table> 
+              <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
+              <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+          </table>
+          <img src="images/linear-programming-2d.svg" height=300px />
+        </section>
+        <section>
+          <h3> Linear Programming Again</h3>
+          <p> Feasible regions for linear programs are polytopes. </p>
+          <img src="images/polytopes_inequalities.svg" height=440px />
+        </section>
+        <section>
+          <h3> Linear Programming Again</h3>
+          <p> Polytopes can come in various different shapes, and we can read off various features of the polytope from its linear inequality description. </p>
+          <div class="fragment">
+            <img src="images/polytope_matching.svg" height=220px />
+            <div class=flexbox style="font-size:0.7em; margin-top:-50px;">
+              <table>
+                <tr><td style="border-bottom: none;">(1)</td><td style="border-bottom: none;">$x \ge 0$</td></tr>
+                <tr><td></td><td>$y \ge x$</td></tr>
+                <tr><td></td><td>$y \le x + 2$</td></tr>
+              </table>
+              <table>
+                <tr><td style="border-bottom: none;">(2)</td><td style="border-bottom: none;">$x + y \le 1$</td></tr>
+                <tr><td></td><td>$x \ge 2$</td></tr>
+                <tr><td></td><td>$y \ge 0$</td></tr>
+              </table>
+              <table>
+                <tr><td style="border-bottom: none;">(3)</td><td style="border-bottom: none;">$x \ge 0$</td></tr>
+                <tr><td></td><td>$y \ge 0$</td></tr>
+                <tr><td></td><td>$x + y \le 3$</td></tr>
+              </table>
+            </div>
+            <p> Which polytope corresponds to which system of inequalities? </p>
+            <p class="fragment"> Answer: A &#8596; (3), B &#8596; (1), C &#8596; (2). </p>
+          </div>
+        </section>
+        <section>
+          <h3> A Coarse Classification of Polytopes</h3>
+          <p> Every polytope comes in one of three shapes: it can be <b>empty</b>, it can be <b>nonempty compact</b>, or it can be <b>unbounded</b>.</p>
+          <p class=fragment> A polytope is empty if there are no points in it, e.g. 
+            \[
+              \{(x,y) : x+y \le 1, x \ge 1, y \ge 1\}.
+            \]
+          </p>
+          <p class=fragment> A polytope is unbounded if there are vectors which are arbitrarily long in the set.
+            \[
+              \{(x,y) : x+y \ge 1, x \ge 1, y \ge 1\}.
+            \]
+            Note that every vector of the form $(x,0)$ with $x \ge 1$ is in this set.
+          </p>
+          <p class=fragment> A polytope is compact if it is neither empty or unbounded. </p>
+          <p class=fragment> We will discuss these different examples in greater detail next lecture. </p>
+        </section>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

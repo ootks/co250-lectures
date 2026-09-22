@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 340" width="420" height="340" font-family="Georgia, serif">
+  <!-- Concave demand function D(p) and its associated profit function (p - q) D(p). -->
+  <!-- Same demand as restaurant_demand.svg: D(p) = 100 - p^2, cost to make q = 3. -->
+  <!-- Profit(p) = (p - 3)(100 - p^2); zero at p=3 and p=10, peak near p=6.9. -->
+  <!-- price p in [0,10] -> x in [60,320] (26 px/unit). -->
+
+  <!-- axes -->
+  <line x1="60" y1="270" x2="350" y2="270" stroke="#586e75" stroke-width="2"/>
+  <line x1="60" y1="270" x2="60"  y2="45"  stroke="#586e75" stroke-width="2"/>
+  <polygon points="350,270 342,265 342,275" fill="#586e75"/>
+  <polygon points="60,45 55,53 65,53" fill="#586e75"/>
+  <text x="350" y="288" text-anchor="end" font-size="15" font-style="italic" fill="#586e75">price p</text>
+
+  <!-- concave demand curve D(p) = 100 - p^2 : D in [0,100] -> y = 270 - 2D -->
+  <polyline fill="none" stroke="#268bd2" stroke-width="3"
+    points="60,70 112,78 164,102 190,120 216,142 242,168 268,198 294,232 320,270"/>
+  <text x="150" y="108" font-size="14" fill="#0d5a8a">D(p)</text>
+
+  <!-- profit curve (p-3)(100-p^2), scaled 0.95 px per profit unit up from y=270 -->
+  <polyline fill="none" stroke="#859900" stroke-width="3.5"
+    points="138,270 164,190 190,128 216,88 242,76 268,99 294,162 320,270"/>
+  <text x="258" y="60" font-size="14" fill="#556100">(p &#8722; q) D(p)</text>
+
+  <!-- mark cost price p=q=3 (x=138) where profit starts -->
+  <line x1="138" y1="270" x2="138" y2="278" stroke="#586e75" stroke-width="1.5"/>
+  <text x="138" y="292" text-anchor="middle" font-size="13" fill="#586e75">q</text>
+
+  <!-- mark the profit-maximizing price (peak of the green curve) -->
+  <circle cx="242" cy="76" r="5" fill="#cb4b16"/>
+  <line x1="242" y1="76" x2="242" y2="270" stroke="#93a1a1" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <line x1="242" y1="270" x2="242" y2="278" stroke="#586e75" stroke-width="1.5"/>
+  <text x="242" y="292" text-anchor="middle" font-size="13" fill="#cb4b16">p*</text>
+
+  <text x="205" y="322" text-anchor="middle" font-size="13" fill="#657b83">Profit peaks at an interior price: too low earns little margin, too high sells too few.</text>
+</svg>

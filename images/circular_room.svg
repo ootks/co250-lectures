@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320" font-family="Georgia, serif">
+  <!-- Circular room (unit disk). Arnold and Beth at antipodal points maximize distance. -->
+  <!-- Center (160,160), radius 120. -->
+
+  <!-- disk -->
+  <circle cx="160" cy="160" r="120" fill="#eee8d5" fill-opacity="0.55" stroke="#93a1a1" stroke-width="2.5"/>
+
+  <!-- center + axes hint -->
+  <circle cx="160" cy="160" r="2.5" fill="#93a1a1"/>
+
+  <!-- distance segment between the two chosen points (a diameter) -->
+  <!-- A at angle 210deg, B at angle 30deg (opposite ends of a diameter) -->
+  <!-- A = (160 - 120*cos30, 160 + 120*sin30) ... use a tilted diameter for visual interest -->
+  <!-- A = (56.08, 220), B = (263.92, 100) -->
+  <line x1="56.08" y1="220" x2="263.92" y2="100" stroke="#cb4b16" stroke-width="2.5" stroke-dasharray="6 5"/>
+
+  <!-- points -->
+  <g stroke-width="2.5">
+    <circle cx="56.08"  cy="220" r="12" fill="#268bd2" stroke="#0d5a8a"/>
+    <circle cx="263.92" cy="100" r="12" fill="#859900" stroke="#556100"/>
+  </g>
+
+  <!-- labels -->
+  <g font-size="15" font-weight="bold">
+    <text x="34"  y="245" text-anchor="middle" fill="#0d5a8a">A</text>
+    <text x="286" y="95"  text-anchor="middle" fill="#556100">B</text>
+  </g>
+
+  <!-- distance annotation -->
+  <text x="150" y="150" text-anchor="middle" font-size="13" font-style="italic" fill="#cb4b16" transform="rotate(-30 150 150)">distance</text>
+
+  <!-- caption -->
+  <text x="160" y="308" text-anchor="middle" font-size="13" fill="#586e75">the two points sit at opposite ends of a diameter</text>
+</svg>

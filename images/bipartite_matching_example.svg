@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 300" width="340" height="300" font-family="Georgia, serif">
+  <!-- 3+3 bipartite graph for a concrete matching ILP -->
+  <!-- Left U x=90 rows 70,150,230 ; Right V x=250 rows 70,150,230 -->
+  <!-- Edges: u1-v1, u1-v2, u2-v2, u2-v3, u3-v1, u3-v3 -->
+
+  <g stroke="#586e75" stroke-width="2.5">
+    <line x1="114" y1="70"  x2="226" y2="70"/>   <!-- u1-v1 -->
+    <line x1="114" y1="70"  x2="226" y2="150"/>  <!-- u1-v2 -->
+    <line x1="114" y1="150" x2="226" y2="150"/>  <!-- u2-v2 -->
+    <line x1="114" y1="150" x2="226" y2="230"/>  <!-- u2-v3 -->
+    <line x1="114" y1="230" x2="226" y2="70"/>   <!-- u3-v1 -->
+    <line x1="114" y1="230" x2="226" y2="230"/>  <!-- u3-v3 -->
+  </g>
+
+  <!-- left part U -->
+  <g fill="#268bd2" stroke="#0d5a8a" stroke-width="2">
+    <circle cx="90" cy="70"  r="22"/>
+    <circle cx="90" cy="150" r="22"/>
+    <circle cx="90" cy="230" r="22"/>
+  </g>
+  <g fill="white" font-size="16" text-anchor="middle" font-weight="bold">
+    <text x="90" y="75">u1</text>
+    <text x="90" y="155">u2</text>
+    <text x="90" y="235">u3</text>
+  </g>
+
+  <!-- right part V -->
+  <g fill="#b58900" stroke="#7a5c00" stroke-width="2">
+    <circle cx="250" cy="70"  r="22"/>
+    <circle cx="250" cy="150" r="22"/>
+    <circle cx="250" cy="230" r="22"/>
+  </g>
+  <g fill="white" font-size="16" text-anchor="middle" font-weight="bold">
+    <text x="250" y="75">v1</text>
+    <text x="250" y="155">v2</text>
+    <text x="250" y="235">v3</text>
+  </g>
+</svg>

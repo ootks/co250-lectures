@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 300" width="360" height="300" font-family="Georgia, serif">
+  <!-- 3+3 bipartite graph with no perfect matching. -->
+  <!-- v2 and v3 are both adjacent only to u3, so {v2,v3} has neighborhood {u3}. -->
+  <!-- Left U x=100 rows 70,150,230 ; Right V x=260 rows 70,150,230. -->
+  <!-- Edges: u1-v1, u2-v1, u3-v1, u3-v2, u3-v3. -->
+
+  <text x="100" y="34" text-anchor="middle" font-size="15" fill="#073642" font-weight="bold">chefs</text>
+  <text x="260" y="34" text-anchor="middle" font-size="15" fill="#073642" font-weight="bold">shifts</text>
+
+  <g stroke="#586e75" stroke-width="2.5">
+    <line x1="124" y1="70"  x2="236" y2="70"/>   <!-- u1-v1 -->
+    <line x1="124" y1="150" x2="236" y2="70"/>   <!-- u2-v1 -->
+    <line x1="124" y1="230" x2="236" y2="70"/>   <!-- u3-v1 -->
+    <line x1="124" y1="230" x2="236" y2="150"/>  <!-- u3-v2 -->
+    <line x1="124" y1="230" x2="236" y2="230"/>  <!-- u3-v3 -->
+  </g>
+
+  <!-- left part U -->
+  <g fill="#268bd2" stroke="#0d5a8a" stroke-width="2">
+    <circle cx="100" cy="70"  r="22"/>
+    <circle cx="100" cy="150" r="22"/>
+    <circle cx="100" cy="230" r="22"/>
+  </g>
+  <g fill="white" font-size="16" text-anchor="middle" font-weight="bold">
+    <text x="100" y="75">u1</text>
+    <text x="100" y="155">u2</text>
+    <text x="100" y="235">u3</text>
+  </g>
+
+  <!-- right part V; v2, v3 are the bottleneck (highlighted) -->
+  <g stroke-width="2">
+    <circle cx="260" cy="70"  r="22" fill="#b58900" stroke="#7a5c00"/>
+    <circle cx="260" cy="150" r="22" fill="#dc322f" stroke="#a5201d"/>
+    <circle cx="260" cy="230" r="22" fill="#dc322f" stroke="#a5201d"/>
+  </g>
+  <g fill="white" font-size="16" text-anchor="middle" font-weight="bold">
+    <text x="260" y="75">v1</text>
+    <text x="260" y="155">v2</text>
+    <text x="260" y="235">v3</text>
+  </g>
+
+  <text x="180" y="285" text-anchor="middle" font-size="12.5" fill="#657b83">v&#8322; and v&#8323; are both adjacent only to u&#8323;: no perfect matching exists.</text>
+</svg>

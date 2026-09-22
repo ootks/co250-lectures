@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320" width="380" height="320" font-family="Georgia, serif">
+  <!-- Estimating the demand function from data: scatter of (price, demand) with a fitted curve. -->
+  <!-- price p in [0,10] -> x in [60,320] (26 px/unit); demand D in [0,100] -> y = 260 - 2D. -->
+
+  <!-- axes -->
+  <line x1="60" y1="260" x2="345" y2="260" stroke="#586e75" stroke-width="2"/>
+  <line x1="60" y1="260" x2="60"  y2="45"  stroke="#586e75" stroke-width="2"/>
+  <polygon points="345,260 337,255 337,265" fill="#586e75"/>
+  <polygon points="60,45 55,53 65,53" fill="#586e75"/>
+  <text x="345" y="278" text-anchor="end" font-size="15" font-style="italic" fill="#586e75">price p</text>
+  <text x="52" y="52" text-anchor="end" font-size="15" font-style="italic" fill="#586e75">demand</text>
+
+  <!-- fitted demand curve (the interpolant / regression) -->
+  <polyline fill="none" stroke="#268bd2" stroke-width="3" stroke-dasharray="7 5"
+    points="60,60 112,68 164,92 190,110 216,132 242,158 268,188 294,222 320,260"/>
+  <text x="150" y="96" font-size="14" fill="#0d5a8a">fitted D(p)</text>
+
+  <!-- observed data points (p_i, D_i) from similar restaurants -->
+  <g fill="#cb4b16" stroke="#8a3210" stroke-width="1.5">
+    <circle cx="86"  cy="72"  r="5"/>
+    <circle cx="112" cy="80"  r="5"/>
+    <circle cx="138" cy="68"  r="5"/>
+    <circle cx="164" cy="100" r="5"/>
+    <circle cx="190" cy="96"  r="5"/>
+    <circle cx="216" cy="144" r="5"/>
+    <circle cx="242" cy="148" r="5"/>
+    <circle cx="268" cy="200" r="5"/>
+    <circle cx="294" cy="212" r="5"/>
+  </g>
+  <text x="250" y="205" font-size="13" fill="#8a3210" font-style="italic">data (p&#8341;, D&#8341;)</text>
+
+  <text x="200" y="305" text-anchor="middle" font-size="13" fill="#657b83">Fit a curve to observed prices and demands to estimate demand at new prices.</text>
+</svg>

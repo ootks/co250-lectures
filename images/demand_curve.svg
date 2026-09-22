@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320" width="380" height="320" font-family="Georgia, serif">
+  <!-- Linear demand curve D(v) = a - b v : higher price, fewer servings sold. -->
+  <!-- Axes origin at (60,260); price on x, quantity sold on y. -->
+
+  <!-- axes -->
+  <line x1="60" y1="260" x2="350" y2="260" stroke="#586e75" stroke-width="2"/>
+  <line x1="60" y1="260" x2="60"  y2="30"  stroke="#586e75" stroke-width="2"/>
+  <polygon points="350,260 342,255 342,265" fill="#586e75"/>
+  <polygon points="60,30 55,38 65,38" fill="#586e75"/>
+
+  <!-- axis labels -->
+  <text x="352" y="278" text-anchor="end" font-size="15" font-style="italic" fill="#586e75">price v</text>
+  <text x="40"  y="34"  text-anchor="middle" font-size="15" font-style="italic" fill="#586e75">D(v)</text>
+
+  <!-- demand line: from (v=0, D=a) to (v=a/b, D=0). Draw (60,60) to (320,260). -->
+  <line x1="60" y1="60" x2="320" y2="260" stroke="#268bd2" stroke-width="3.5"/>
+
+  <!-- intercept markers -->
+  <circle cx="60"  cy="60"  r="4" fill="#268bd2"/>
+  <circle cx="320" cy="260" r="4" fill="#268bd2"/>
+  <text x="70"  y="56"  font-size="14" fill="#0d5a8a">a</text>
+  <text x="322" y="278" font-size="14" fill="#0d5a8a">a / b</text>
+
+  <!-- a sample operating point and the revenue rectangle v * D(v) -->
+  <!-- pick v at x=175 -> on line y = 60 + (175-60)/(320-60)*(260-60) = 60 + 115/260*200 = 60+88.46=148.46 -->
+  <g>
+    <rect x="60" y="148.46" width="115" height="111.54" fill="#859900" fill-opacity="0.18" stroke="#859900" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <line x1="175" y1="148.46" x2="175" y2="260" stroke="#93a1a1" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <line x1="60"  y1="148.46" x2="175" y2="148.46" stroke="#93a1a1" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <circle cx="175" cy="148.46" r="5" fill="#cb4b16"/>
+    <text x="182" y="144" font-size="13" fill="#cb4b16">D(v) = a &#8722; b v</text>
+    <text x="118" y="210" text-anchor="middle" font-size="13" fill="#556100" font-style="italic">revenue</text>
+    <text x="118" y="226" text-anchor="middle" font-size="13" fill="#556100" font-style="italic">v &#183; D(v)</text>
+  </g>
+
+  <text x="205" y="308" text-anchor="middle" font-size="13" fill="#657b83">Raising the price lowers the number of servings sold.</text>
+</svg>

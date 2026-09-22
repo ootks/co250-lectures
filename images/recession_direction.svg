@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 320" width="340" height="320" font-family="Georgia, serif">
+  <!-- LP: min -x2 s.t. x1 >= 0, x2 >= x1. Unbounded (x2 grows forever). -->
+  <!-- Feasible region: wedge with x1 >= 0 and x2 >= x1. -->
+  <!-- Recession direction d = (0,1): straight up keeps feasibility, decreases -x2. -->
+  <!-- axes: origin (60,260), 40 px per unit; x1 to the right, x2 up. -->
+
+  <defs>
+    <!-- fade the fill toward the top so the region reads as unbounded upward -->
+    <linearGradient id="wedgeFade" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0"    stop-color="#268bd2" stop-opacity="0.24"/>
+      <stop offset="0.65" stop-color="#268bd2" stop-opacity="0.10"/>
+      <stop offset="1"    stop-color="#268bd2" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- feasible wedge: bounded by x1=0 (the x2-axis) and x2 = x1 (line up-right). -->
+  <!-- corner (0,0)->(60,260); up the axis to (60,60); the line x2=x1 to (260,60). -->
+  <!-- Fill only (no top cap); the gradient fades out at the top to show it continues. -->
+  <polygon points="60,260 60,60 260,60" fill="url(#wedgeFade)" stroke="none"/>
+
+  <!-- only the two real constraint boundaries are drawn as lines (no top edge) -->
+  <line x1="60" y1="260" x2="60"  y2="55"  stroke="#268bd2" stroke-width="2"/>   <!-- x1 = 0 -->
+  <line x1="60" y1="260" x2="262" y2="58"  stroke="#268bd2" stroke-width="2"/>   <!-- x2 = x1 -->
+
+  <!-- axes -->
+  <line x1="60" y1="260" x2="320" y2="260" stroke="#586e75" stroke-width="2"/>
+  <line x1="60" y1="260" x2="60"  y2="40"  stroke="#586e75" stroke-width="2"/>
+  <polygon points="320,260 312,255 312,265" fill="#586e75"/>
+  <polygon points="60,40 55,48 65,48" fill="#586e75"/>
+  <text x="318" y="278" text-anchor="end" font-size="14" font-style="italic" fill="#586e75">x&#8321;</text>
+  <text x="46" y="46" text-anchor="end" font-size="14" font-style="italic" fill="#586e75">x&#8322;</text>
+
+  <!-- boundary line x2 = x1 -->
+  <text x="235" y="78" font-size="13" fill="#0d5a8a" font-style="italic">x&#8322; = x&#8321;</text>
+  <text x="120" y="150" font-size="13" fill="#0d5a8a">feasible</text>
+
+  <!-- a feasible starting point -->
+  <circle cx="120" cy="140" r="4.5" fill="#586e75"/>
+  <text x="128" y="150" font-size="12" fill="#586e75">x</text>
+
+  <!-- recession direction arrow d = (0,1): straight up from x -->
+  <line x1="120" y1="140" x2="120" y2="70" stroke="#cb4b16" stroke-width="3"/>
+  <polygon points="120,62 114,74 126,74" fill="#cb4b16"/>
+  <text x="128" y="100" font-size="13" fill="#8a3210" font-style="italic">d = (0,1)</text>
+
+  <text x="170" y="305" text-anchor="middle" font-size="12.5" fill="#657b83">Moving along d stays feasible and drives &#8722;x&#8322; arbitrarily small.</text>
+</svg>

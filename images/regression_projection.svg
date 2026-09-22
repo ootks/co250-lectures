@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 340" width="420" height="340" font-family="Georgia, serif">
+  <!-- Projection interpretation of least squares: y projected onto the column space (subspace). -->
+  <!-- The subspace (span of the data columns) is drawn as a tilted plane; the fitted values
+       X-theta are the orthogonal projection of y onto it, and the residual y - X-theta is
+       perpendicular to the subspace. -->
+
+  <!-- the subspace / column space, drawn as a parallelogram (a plane) -->
+  <polygon points="60,250 250,290 360,220 170,180"
+           fill="#268bd2" fill-opacity="0.14" stroke="#268bd2" stroke-width="2"/>
+  <text x="330" y="250" font-size="14" fill="#0d5a8a" font-style="italic">col(X)</text>
+
+  <!-- origin -->
+  <circle cx="120" cy="238" r="3.5" fill="#586e75"/>
+  <text x="104" y="252" font-size="13" fill="#586e75">0</text>
+
+  <!-- y vector (points up out of the subspace) -->
+  <line x1="120" y1="238" x2="250" y2="70" stroke="#586e75" stroke-width="2.5"/>
+  <polygon points="250,70 244,82 256,80" fill="#586e75"/>
+  <text x="256" y="66" font-size="16" fill="#073642" font-weight="bold">y</text>
+
+  <!-- projection point (foot of the perpendicular) inside the subspace -->
+  <circle cx="250" cy="196" r="4" fill="#cb4b16"/>
+  <!-- projection vector X-theta, from origin to the foot -->
+  <line x1="120" y1="238" x2="250" y2="196" stroke="#cb4b16" stroke-width="2.5"/>
+  <text x="176" y="232" font-size="15" fill="#8a3210" font-style="italic">X&#952;&#770;</text>
+
+  <!-- residual: from foot up to y, perpendicular to the subspace -->
+  <line x1="250" y1="196" x2="250" y2="70" stroke="#859900" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <text x="258" y="140" font-size="14" fill="#556100" font-style="italic">y &#8722; X&#952;&#770;</text>
+
+  <!-- right-angle marker at the foot (perpendicularity of residual to subspace) -->
+  <path d="M 236 196 L 236 182 L 250 182" fill="none" stroke="#556100" stroke-width="1.6"/>
+
+  <text x="210" y="322" text-anchor="middle" font-size="13" fill="#657b83">Least squares projects y orthogonally onto the span of the data.</text>
+</svg>

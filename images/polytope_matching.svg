@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760" height="300" font-family="Georgia, serif">
+  <!-- Three 2D polytopes for a matching exercise: A compact, B unbounded, C empty. -->
+  <!-- Each panel is 240 wide; local axes with ~30px per unit. -->
+
+  <style>
+    .fillp  { fill: #268bd2; fill-opacity: 0.20; stroke: #268bd2; stroke-width: 2.5; stroke-linejoin: round; }
+    .axis   { stroke: #93a1a1; stroke-width: 1.5; }
+    .cline  { stroke: #cb4b16; stroke-width: 1.6; stroke-dasharray: 5 4; opacity: 0.8; }
+    .plabel { font-size: 20px; font-weight: bold; fill: #073642; }
+    .axlab  { font-size: 12px; fill: #93a1a1; font-style: italic; }
+  </style>
+
+  <!-- ================= Panel A: compact triangle ================= -->
+  <g transform="translate(20,20)">
+    <text class="plabel" x="0" y="12">A</text>
+    <!-- axes: origin (30,200), 45px/unit -->
+    <line class="axis" x1="30" y1="200" x2="210" y2="200"/>
+    <line class="axis" x1="30" y1="200" x2="30"  y2="30"/>
+    <text class="axlab" x="214" y="204">x</text>
+    <text class="axlab" x="24"  y="30">y</text>
+    <!-- triangle (0,0),(3,0),(0,3): 45px/unit -> (30,200),(165,200),(30,65) -->
+    <polygon class="fillp" points="30,200 165,200 30,65"/>
+  </g>
+
+  <!-- ================= Panel B: unbounded band ================= -->
+  <g transform="translate(280,20)">
+    <text class="plabel" x="0" y="12">B</text>
+    <!-- gradient that fades toward the top-right so the region reads as unbounded -->
+    <defs>
+      <linearGradient id="bandFade" x1="0" y1="1" x2="1" y2="0" gradientUnits="objectBoundingBox">
+        <stop offset="0"    stop-color="#268bd2" stop-opacity="0.28"/>
+        <stop offset="0.55" stop-color="#268bd2" stop-opacity="0.12"/>
+        <stop offset="1"    stop-color="#268bd2" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <line class="axis" x1="30" y1="200" x2="210" y2="200"/>
+    <line class="axis" x1="30" y1="200" x2="30"  y2="30"/>
+    <text class="axlab" x="214" y="204">x</text>
+    <text class="axlab" x="24"  y="30">y</text>
+    <!-- band between y=x and y=x+2 for x>=0, 30px/unit, origin (30,200). -->
+    <!-- Fill only (no stroked outline); the fade shows it continues to the top-right. -->
+    <!-- (0,0)->(30,200); (0,2)->(30,140); y=x+2 to top edge (4,6)->(150,20); -->
+    <!-- across top to y=x meeting top edge (6,6)->(210,20); back down y=x. -->
+    <polygon points="30,200 30,140 150,20 210,20" fill="url(#bandFade)" stroke="none"/>
+    <!-- only the two real constraint boundaries are drawn (no artificial top edge) -->
+    <line x1="30" y1="200" x2="210" y2="20" stroke="#268bd2" stroke-width="2.2"/>  <!-- y = x -->
+    <line x1="30" y1="140" x2="150" y2="20" stroke="#268bd2" stroke-width="2.2"/>  <!-- y = x + 2 -->
+    <!-- arrow hinting the region continues up-right -->
+    <text x="150" y="66" font-size="22" fill="#268bd2">&#8599;</text>
+  </g>
+
+  <!-- ================= Panel C: empty ================= -->
+  <g transform="translate(540,20)">
+    <text class="plabel" x="0" y="12">C</text>
+    <line class="axis" x1="30" y1="200" x2="210" y2="200"/>
+    <line class="axis" x1="30" y1="200" x2="30"  y2="30"/>
+    <text class="axlab" x="214" y="204">x</text>
+    <text class="axlab" x="24"  y="30">y</text>
+    <!-- constraint lines that do not enclose any common region -->
+    <!-- x + y <= 1 line: (1,0)->(75,200),(0,1)->(30,155) -->
+    <line class="cline" x1="75" y1="200" x2="30" y2="155"/>
+    <!-- x >= 2 line: x=2 -> vertical at 30+2*45=120 -->
+    <line class="cline" x1="120" y1="200" x2="120" y2="30"/>
+    <!-- no shaded region; label empty -->
+    <text x="120" y="120" text-anchor="middle" font-size="34" fill="#dc322f">&#8709;</text>
+  </g>
+</svg>

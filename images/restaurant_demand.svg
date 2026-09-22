@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320" width="380" height="320" font-family="Georgia, serif">
+  <!-- Demand function D(p): servings sold as a function of price p. Decreasing and concave. -->
+  <!-- Model drawn: D(p) = 100 - p^2 on p in [0,10]. -->
+  <!-- price p in [0,10] -> x in [60,320] (26 px/unit); D in [0,100] -> y = 260 - 2D. -->
+
+  <!-- axes -->
+  <line x1="60" y1="260" x2="345" y2="260" stroke="#586e75" stroke-width="2"/>
+  <line x1="60" y1="260" x2="60"  y2="45"  stroke="#586e75" stroke-width="2"/>
+  <polygon points="345,260 337,255 337,265" fill="#586e75"/>
+  <polygon points="60,45 55,53 65,53" fill="#586e75"/>
+
+  <!-- axis labels -->
+  <text x="345" y="278" text-anchor="end" font-size="15" font-style="italic" fill="#586e75">price p</text>
+  <text x="52" y="52" text-anchor="end" font-size="15" font-style="italic" fill="#586e75">D(p)</text>
+
+  <!-- concave decreasing demand curve D(p) = 100 - p^2 -->
+  <polyline fill="none" stroke="#268bd2" stroke-width="3.5"
+    points="60,60 112,68 164,92 190,110 216,132 242,158 268,188 294,222 320,260"/>
+
+  <!-- endpoints -->
+  <circle cx="60"  cy="60"  r="4" fill="#268bd2"/>
+  <circle cx="320" cy="260" r="4" fill="#268bd2"/>
+
+  <!-- curve label -->
+  <text x="150" y="98" font-size="15" fill="#0d5a8a">D(p)</text>
+
+  <text x="200" y="305" text-anchor="middle" font-size="13" fill="#657b83">Fewer servings are sold as the price rises.</text>
+</svg>
