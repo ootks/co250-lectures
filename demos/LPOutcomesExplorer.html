@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive demonstration of the possible outcomes of a linear program">
+  <title>LP Outcomes Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --base3: #fdf6e3;
+      --base2: #eee8d5;
+      --base1: #93a1a1;
+      --base00: #657b83;
+      --base01: #586e75;
+      --base02: #073642;
+      --blue: #268bd2;
+      --green: #859900;
+      --red: #dc322f;
+      --orange: #cb4b16;
+      --shadow: 0 18px 48px rgba(7, 54, 66, 0.09);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--base3);
+      color: var(--base01);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    .wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr);
+      gap: 18px;
+      padding: 16px;
+      height: 100%;
+      align-items: stretch;
+    }
+    .card {
+      border: 1px solid #d8d0bb;
+      border-radius: 16px;
+      background: rgba(255,255,255,.30);
+      box-shadow: var(--shadow);
+    }
+    .canvas-card { padding: 8px; display: flex; align-items: center; justify-content: center; }
+    canvas { display: block; width: 100%; height: 100%; }
+
+    .panel { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+    .panel h2 { margin: 0; color: var(--base02); font-size: 1rem; }
+
+    .ineqs { display: grid; gap: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .ineq {
+      border: 1px solid #d8d0bb;
+      border-radius: 9px;
+      padding: 7px 10px;
+      background: rgba(253,246,227,.55);
+    }
+    .ineq.fixed { color: var(--blue); border-color: rgba(38,139,210,.5); }
+    .ineq.tunable { color: var(--red); border-color: rgba(220,50,47,.5); }
+    .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 8px; vertical-align: middle; }
+
+    .objective {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--base02);
+    }
+
+    .control { display: flex; flex-direction: column; gap: 6px; }
+    .control label { font-size: .85rem; color: var(--base00); }
+    input[type=range] { width: 100%; accent-color: var(--red); }
+
+    .outcome {
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+    }
+    .outcome small { display: block; font-weight: 500; opacity: .95; margin-top: 3px; }
+    .outcome.optimal { background: #14786f; }
+    .outcome.unbounded { background: var(--orange); }
+    .outcome.infeasible { background: var(--red); }
+
+    @media (max-width: 780px) { .wrap { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card canvas-card">
+      <canvas id="board" width="560" height="520" aria-label="Feasible region of the linear program"></canvas>
+    </div>
+    <aside class="card panel">
+      <h2>Possible outcomes of an LP</h2>
+      <p class="objective">maximize &nbsp; x&#8322;</p>
+      <div class="ineqs" id="ineqs"></div>
+      <div class="control">
+        <label for="slider">Tunable constraint (slider): <span id="tval">0.00</span></label>
+        <input type="range" id="slider" min="0" max="100" value="50" step="1">
+      </div>
+      <div class="outcome" id="outcome"></div>
+    </aside>
+  </div>
+
+  <script>
+    const LOGICAL_W = 560, LOGICAL_H = 520;
+    const canvas = document.getElementById("board");
+    const ctx = canvas.getContext("2d");
+
+    // World window in (x1, x2) coordinates.
+    const XMIN = -0.3, XMAX = 2, YMIN = -0.3, YMAX = 2;
+    // Plot margins (pixels).
+    const ML = 52, MR = 20, MT = 20, MB = 46;
+
+    const colors = {
+      bg: "#fdf6e3", axis: "#586e75", grid: "#e4dcc4",
+      blue: "#268bd2", blueFill: "rgba(38,139,210,0.18)",
+      red: "#dc322f", opt: "#cb4b16", text: "#586e75", dark: "#073642"
+    };
+
+    // Tunable third constraint, as a function of slider t in [0,1]:
+    //   a1 * x1 + x2 <= c,  with a1 = 2t - 0.8,  c = 2 - 2.5t.
+    // Equivalently x2 <= m x1 + c with slope m = -a1 = 0.8 - 2t.
+    // Outcome (objective: maximize x2, with x1,x2 >= 0):
+    //   m > 0                -> UNBOUNDED
+    //   m <= 0 and c >= 0     -> OPTIMAL at (0, c), value c
+    //   m <= 0 and c < 0      -> INFEASIBLE
+    function params(t) {
+      const a1 = 2 * t - 0.8;
+      const c  = 2 - 2.5 * t;
+      const m  = -a1;                 // slope of x2 = m x1 + c
+      return { a1, c, m };
+    }
+
+    function classify(p) {
+      if (p.m > 1e-9) return "unbounded";
+      if (p.c < -1e-9) return "infeasible";
+      return "optimal";
+    }
+
+    // ---- coordinate maps ----
+    function sx(x1) { return ML + (x1 - XMIN) / (XMAX - XMIN) * (LOGICAL_W - ML - MR); }
+    function sy(x2) { return LOGICAL_H - MB - (x2 - YMIN) / (YMAX - YMIN) * (LOGICAL_H - MT - MB); }
+
+    // ---- half-plane clipping (Sutherland-Hodgman) ----
+    // Each constraint: n . x <= d  (n = [n1,n2]).
+    function clip(poly, n1, n2, d) {
+      const out = [];
+      const inside = pt => n1 * pt[0] + n2 * pt[1] <= d + 1e-9;
+      for (let i = 0; i < poly.length; i++) {
+        const A = poly[i], B = poly[(i + 1) % poly.length];
+        const Ain = inside(A), Bin = inside(B);
+        if (Ain) out.push(A);
+        if (Ain !== Bin) {
+          // intersection of segment AB with line n.x = d
+          const denom = n1 * (B[0] - A[0]) + n2 * (B[1] - A[1]);
+          const tt = (d - (n1 * A[0] + n2 * A[1])) / denom;
+          out.push([A[0] + tt * (B[0] - A[0]), A[1] + tt * (B[1] - A[1])]);
+        }
+      }
+      return out;
+    }
+
+    function feasiblePolygon(p) {
+      // start from the visible window rectangle (a bit beyond, so unbounded regions
+      // reach the plotted edges), then clip by each constraint.
+      let poly = [
+        [XMIN, YMIN], [XMAX, YMIN], [XMAX, YMAX], [XMIN, YMAX]
+      ];
+      poly = clip(poly, -1, 0, 0);      // x1 >= 0  ->  -x1 <= 0
+      poly = clip(poly, 0, -1, 0);      // x2 >= 0  ->  -x2 <= 0
+      poly = clip(poly, p.a1, 1, p.c);  // a1 x1 + x2 <= c
+      return poly;
+    }
+
+    function draw() {
+      const t = 0.2 + Number(slider.value) / 100 * 0.8;
+      const p = params(t);
+      const outcome = classify(p);
+
+      ctx.setTransform(canvas.width / LOGICAL_W, 0, 0, canvas.height / LOGICAL_H, 0, 0);
+      ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
+      ctx.fillStyle = colors.bg;
+      ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+      // gridlines at integer coordinates
+      ctx.strokeStyle = colors.grid; ctx.lineWidth = 1;
+      for (let x = 0; x <= XMAX; x++) { ctx.beginPath(); ctx.moveTo(sx(x), sy(YMIN)); ctx.lineTo(sx(x), sy(YMAX)); ctx.stroke(); }
+      for (let y = 0; y <= YMAX; y++) { ctx.beginPath(); ctx.moveTo(sx(XMIN), sy(y)); ctx.lineTo(sx(XMAX), sy(y)); ctx.stroke(); }
+
+      // feasible region (blue) unless infeasible
+      const poly = feasiblePolygon(p);
+      if (outcome !== "infeasible" && poly.length >= 3) {
+        ctx.beginPath();
+        poly.forEach((pt, i) => { const X = sx(pt[0]), Y = sy(pt[1]); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); });
+        ctx.closePath();
+        ctx.fillStyle = colors.blueFill;
+        ctx.fill();
+      }
+
+      // axes
+      ctx.strokeStyle = colors.axis; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(sx(XMIN), sy(0)); ctx.lineTo(sx(XMAX), sy(0)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sx(0), sy(YMIN)); ctx.lineTo(sx(0), sy(YMAX)); ctx.stroke();
+
+      // the two fixed constraint boundaries x1=0 and x2=0 (blue, thicker)
+      ctx.strokeStyle = colors.blue; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(0), sy(YMAX)); ctx.stroke();   // x1 = 0
+      ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(XMAX), sy(0)); ctx.stroke();   // x2 = 0
+
+      // tunable line a1 x1 + x2 = c  (red).  Solve for two points across the window.
+      ctx.strokeStyle = colors.red; ctx.lineWidth = 3;
+      drawLine(p.a1, 1, p.c);
+
+      // axis labels
+      ctx.fillStyle = colors.text; ctx.font = "italic 15px Georgia, serif";
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText("x\u2081", sx(XMAX) - 6, sy(0) + 8);
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      ctx.fillText("x\u2082", sx(0) - 8, sy(YMAX) + 6);
+
+      // optimal point
+      if (outcome === "optimal") {
+        const ox = 0, oy = p.c;
+        ctx.fillStyle = colors.opt;
+        ctx.beginPath(); ctx.arc(sx(ox), sy(oy), 6, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
+      }
+
+      updatePanel(t, p, outcome);
+    }
+
+    // draw line n1 x + n2 y = d across the current window
+    function drawLine(n1, n2, d) {
+      const pts = [];
+      // intersections with the four window edges
+      if (Math.abs(n2) > 1e-9) {
+        pts.push([XMIN, (d - n1 * XMIN) / n2]);
+        pts.push([XMAX, (d - n1 * XMAX) / n2]);
+      }
+      if (Math.abs(n1) > 1e-9) {
+        pts.push([(d - n2 * YMIN) / n1, YMIN]);
+        pts.push([(d - n2 * YMAX) / n1, YMAX]);
+      }
+      // keep points within window bounds
+      const inside = pts.filter(pt => pt[0] >= XMIN - 1e-6 && pt[0] <= XMAX + 1e-6 && pt[1] >= YMIN - 1e-6 && pt[1] <= YMAX + 1e-6);
+      if (inside.length >= 2) {
+        ctx.beginPath();
+        ctx.moveTo(sx(inside[0][0]), sy(inside[0][1]));
+        ctx.lineTo(sx(inside[1][0]), sy(inside[1][1]));
+        ctx.stroke();
+      }
+    }
+
+    const ineqsBox = document.getElementById("ineqs");
+    const outcomeBox = document.getElementById("outcome");
+    const tval = document.getElementById("tval");
+
+    function fmt(v) {
+      const r = Math.round(v * 10) / 10;
+      return (r === 0 ? 0 : r).toFixed(1);
+    }
+
+    function updatePanel(t, p, outcome) {
+      tval.textContent = t.toFixed(2);
+
+      // tunable inequality string:  a1 x1 + x2 <= c  (one digit precision)
+      const a1 = fmt(p.a1), c = fmt(p.c);
+      const sign = (a1[0] === "-") ? "\u2212" : "+";
+      const a1abs = a1.replace("-", "");
+      const tunable = `${sign} ${a1abs} x\u2081 + x\u2082 \u2264 ${c}`;
+
+      ineqsBox.innerHTML =
+        `<div class="ineq fixed"><span class="swatch" style="background:#268bd2"></span> x\u2081 \u2265 0</div>` +
+        `<div class="ineq fixed"><span class="swatch" style="background:#268bd2"></span> x\u2082 \u2265 0</div>` +
+        `<div class="ineq tunable"><span class="swatch" style="background:#dc322f"></span> ${tunable}</div>`;
+
+      if (outcome === "optimal") {
+        outcomeBox.className = "outcome optimal";
+        outcomeBox.innerHTML = `Optimal<small>Optimum at (x\u2081, x\u2082) = (0.0, ${fmt(p.c)}), value x\u2082 = ${fmt(p.c)}</small>`;
+      } else if (outcome === "unbounded") {
+        outcomeBox.className = "outcome unbounded";
+        outcomeBox.innerHTML = `Unbounded<small>x\u2082 can be made arbitrarily large, so there is no optimal value.</small>`;
+      } else {
+        outcomeBox.className = "outcome infeasible";
+        outcomeBox.innerHTML = `Infeasible<small>No point satisfies all three constraints.</small>`;
+      }
+    }
+
+    const slider = document.getElementById("slider");
+    slider.addEventListener("input", draw);
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      draw();
+    }
+    window.addEventListener("resize", resize);
+    resize();
+  </script>
+</body>
+</html>
