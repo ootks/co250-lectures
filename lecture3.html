@@ -49,7 +49,7 @@
             <h3>Integer Linear Programming Review</h3>
             <p> An integer linear program is an optimization problem of the form
               <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal}x$ </td> </tr>
+                  <tr> <td> min </td> <td> $c^{\intercal}x$ </td> </tr>
                   <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
                   <tr> <td> </td> <td> $x \in \Z^n$ </td> </tr>
               </table>
@@ -63,7 +63,7 @@
             <h4>ILP Examples </h4>
             <div class=flexbox>
               <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                  <tr> <td> min </td> <td> $x_1$ </td> </tr>
                   <tr> <td> such that </td> <td> $2x_1 + 3x_2 \le 3$ </td> </tr>
                   <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
                   <tr> <td> </td> <td> $x \in \Z^2$ </td> </tr>
@@ -137,7 +137,7 @@
             <div class="fragment">
             <p> Assembling </p>
               <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{k=1}^K y_k$ </td> <td></td></tr>
+                  <tr> <td> min </td> <td> $\sum_{k=1}^K y_k$ </td> <td></td></tr>
                   <tr> <td> such that </td> <td> $ \sum_{k=1}^K \sum_{r = 1}^{\ell - a_i + 1}\sum_{c = 1}^{w - b_i + 1} x_{ikrc} = 1  $ </td><td>for $i=1,\dots,B$</td> </tr>
                   <tr> <td> </td> <td> $ \sum_{i=1}^B \sum_{r' = r-a_i+1}^{r}\sum_{c' = c-b_i+1}^{c} x_{ikr'c'} \le y_k $ </td><td> for each $k =1,\dots,K$</td> </tr>
                   <tr> <td> </td> <td>  </td><td> for each $r =1,\dots,\ell$ and $c = 1,\dots,w$</td> </tr>
@@ -322,7 +322,7 @@
             <p>Objective is the number of vertices in the clique: $\sum_{i \in V} x_i.$</p>
             <p class=fragment>
               <table> 
-                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{i \in V}x_i$ </td> </tr>
+                  <tr> <td> max </td> <td> $\sum_{i \in V}x_i$ </td> </tr>
                   <tr> <td> such that </td> <td> $x_i + x_j \le 1$ for any $\{i,j\} \not \in E$. </td> </tr>
                   <tr> <td> </td> <td> $0 \le x_{i} \le 1$ </td> </tr>
                   <tr> <td> </td> <td> $x_{i} \in \Z$ </td> </tr>
@@ -410,7 +410,7 @@
             <h3>Bipartite Matching</h3>
             <h4>Assembling</h4>
               <table> 
-                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{\{i,j\} \in E}x_{ij}$ </td><td></td> </tr>
+                  <tr> <td> max </td> <td> $\sum_{\{i,j\} \in E}x_{ij}$ </td><td></td> </tr>
                   <tr> <td> such that </td> <td> $\sum_{j : \{i,j\} \in E}x_{ij} \le 1$ </td> <td>for each $i \in V$</td></tr>
                   <tr> <td> </td> <td> $0 \le x_{ij} \le 1$ </td> </tr>
                   <tr> <td> </td> <td> $x_{ij} \in \Z$ </td> </tr>

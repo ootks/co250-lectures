@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 170" width="200" height="170" font-family="Georgia, serif">
+  <!-- Unbounded: feasible region is a band (two parallel boundaries, slope -2/3) -->
+  <!-- fading up-right, with a recession direction v parallel to the boundaries. -->
+  <defs>
+    <linearGradient id="unbFade" x1="0" y1="1" x2="1" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0"   stop-color="#0cb4b9" stop-opacity="0.22"/>
+      <stop offset="0.6" stop-color="#0cb4b9" stop-opacity="0.08"/>
+      <stop offset="1"   stop-color="#0cb4b9" stop-opacity="0"/>
+    </linearGradient>
+    <marker id="arrUnb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#3316d2"/>
+    </marker>
+  </defs>
+
+  <!-- axes -->
+  <line x1="20" y1="150" x2="185" y2="150" stroke="#93a1a1" stroke-width="1.4"/>
+  <line x1="20" y1="150" x2="20"  y2="20"  stroke="#93a1a1" stroke-width="1.4"/>
+
+  <!-- band region between two parallel lines of slope -2/3, fading up-right -->
+  <!-- left edge (20,150)-(20,90); upper line (20,90)->(125,20); across top; -->
+  <!-- down right edge to (185,40); lower line (185,40)->(20,150). -->
+  <polygon points="20,150 20,90 125,20 185,20 185,40" fill="url(#unbFade)" stroke="none"/>
+
+  <!-- the two parallel boundary lines (same direction (3,-2)) -->
+  <line x1="20" y1="150" x2="185" y2="40" stroke="#0cb4b9" stroke-width="2"/>   <!-- lower -->
+  <line x1="20" y1="90"  x2="125" y2="20" stroke="#0cb4b9" stroke-width="2"/>   <!-- upper -->
+
+  <!-- recession direction v, parallel to the boundaries: direction (3,-2) -->
+  <line x1="55" y1="112" x2="115" y2="72" stroke="#3316d2" stroke-width="2.4" marker-end="url(#arrUnb)"/>
+  <text x="120" y="70" font-size="13" fill="#3316d2" font-style="italic">v</text>
+</svg>

@@ -19,6 +19,14 @@ p, li, td {
     color: #e8f4ea;
 }
 
+.darkGreenText {
+    color: #07a221;
+}
+
+.darkBlueText {
+    color: #1f6fd6;
+}
+
 .reveal table td {
   font-size: 30px;
 }
@@ -83,3 +91,44 @@ p, li, td {
 .optimizer {
     color:var(--pastel-blue);
 }
+
+
+/* Row of outcome cards (e.g. LP outcomes and their certificates) */
+.outcome-row {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    margin-top: 0.4em;
+    font-size: 0.62em;
+}
+
+/* A single bordered outcome card. Color is set by a variant class below. */
+.outcome-card {
+    flex: 1 1 0;
+    min-width: 0;
+    border: 2px solid var(--outcome-color, #93a1a1);
+    border-radius: 12px;
+    padding: 8px 10px;
+}
+
+/* Color variants, matching the trichotomy theorem colors */
+.outcome-card.infeasible { --outcome-color: #dc322f; }
+.outcome-card.optimal    { --outcome-color: #859900; }
+.outcome-card.unbounded  { --outcome-color: #0cb4b9; }
+
+/* Card heading, colored to match its card */
+.outcome-title {
+    color: var(--outcome-color, #93a1a1);
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+/* Figure inside an outcome card */
+.outcome-figure {
+    width: 88%;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Tight paragraphs used inside outcome cards / certificate text */
+.tight { margin: 2px 0; }

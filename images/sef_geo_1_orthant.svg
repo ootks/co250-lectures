@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" font-family="Georgia, serif">
+  <!-- Three equal panels: inequality form | SEF in 2D | SEF in 3D. Stage: orthant. -->
+
+  <line x1="320" y1="30" x2="320" y2="270" stroke="#d8d0bb" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="640" y1="30" x2="640" y2="270" stroke="#d8d0bb" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+  <!-- ===== Panel 1: inequality-form triangle ===== -->
+  <g>
+    <text x="170" y="30" text-anchor="middle" font-size="15" fill="#586e75">inequality form</text>
+    <line x1="50" y1="250" x2="290" y2="250" stroke="#93a1a1" stroke-width="1.5"/>
+    <line x1="50" y1="250" x2="50"  y2="50"  stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="294" y="254" font-size="13" font-style="italic" fill="#93a1a1">x&#8321;</text>
+    <text x="42"  y="52"  font-size="13" font-style="italic" fill="#93a1a1">x&#8322;</text>
+    <polygon points="80,230 260,230 130,80"
+             fill="#859900" fill-opacity="0.25" stroke="#556100" stroke-width="2.5" stroke-linejoin="round"/>
+    <text x="160" y="190" text-anchor="middle" font-size="14" fill="#556100">feasible</text>
+  </g>
+
+  <!-- ===== Panel 2: SEF in 2D (orthant) ===== -->
+  <g>
+    <text x="490" y="30" text-anchor="middle" font-size="15" fill="#586e75">SEF in 2D</text>
+    <rect x="370" y="60" width="220" height="190" fill="#268bd2" fill-opacity="0.16"/>
+    <line x1="370" y1="250" x2="610" y2="250" stroke="#93a1a1" stroke-width="1.5"/>
+    <line x1="370" y1="250" x2="370" y2="50"  stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="614" y="254" font-size="13" font-style="italic" fill="#93a1a1">x&#8321;</text>
+    <text x="362" y="52"  font-size="13" font-style="italic" fill="#93a1a1">x&#8322;</text>
+    <text x="480" y="160" text-anchor="middle" font-size="14" fill="#0d5a8a">x &#8805; 0</text>
+  </g>
+
+  <!-- ===== Panel 3: SEF in 3D (octant) ===== -->
+  <g>
+    <text x="800" y="30" text-anchor="middle" font-size="15" fill="#586e75">SEF in 3D</text>
+    <!-- octant faces around origin (800,200); x1 down-left, x2 down-right, x3 up -->
+    <polygon points="800,200 710,235 800,270 890,235" fill="#268bd2" fill-opacity="0.14" stroke="#3a7fb5" stroke-width="1.2"/>
+    <polygon points="800,200 890,235 890,105 800,70"  fill="#268bd2" fill-opacity="0.22" stroke="#3a7fb5" stroke-width="1.2"/>
+    <polygon points="800,200 710,235 710,105 800,70"  fill="#268bd2" fill-opacity="0.09" stroke="#3a7fb5" stroke-width="1.2"/>
+    <line x1="800" y1="200" x2="700" y2="240" stroke="#93a1a1" stroke-width="1.5"/>
+    <line x1="800" y1="200" x2="900" y2="240" stroke="#93a1a1" stroke-width="1.5"/>
+    <line x1="800" y1="200" x2="800" y2="55"  stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="694" y="252" font-size="13" font-style="italic" fill="#93a1a1">x&#8321;</text>
+    <text x="906" y="252" font-size="13" font-style="italic" fill="#93a1a1">x&#8322;</text>
+    <text x="800" y="48"  text-anchor="middle" font-size="13" font-style="italic" fill="#93a1a1">x&#8323;</text>
+  </g>
+</svg>

@@ -47,7 +47,7 @@
               <h2>Linear Programming</h2>
               <p> A linear program (LP) is an optimization problem whose objective is a <b>linear function</b> and whose feasible set is the set of solutions to some linear inequality.</p>
               <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
+                  <tr> <td> min </td> <td> $c^{\intercal} x$ </td> </tr>
                   <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
               </table>
               <img src="images/linear-programming-2d.svg" height=300px />
@@ -59,7 +59,7 @@
                   <div>
                   <p> The following is an LP
                   <table> 
-                      <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_2$ </td> </tr>
+                      <tr> <td> max </td> <td> $x_2$ </td> </tr>
                       <tr> <td> such that </td> <td> $ x_1 + x_2 \le 1$
      </td> </tr>
                       <tr> <td> </td> <td> $x_1 - x_2 \ge 0$ </td></tr>
@@ -82,7 +82,7 @@
               <div class=fragment>
               <p> Some linear programs are <b>infeasible</b>: for example,
                 <table>
-                    <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                    <tr> <td> min </td> <td> $x_1$ </td> </tr>
                     <tr> <td> such that </td> <td> $x_1 \le 1$ </td> </tr>
                     <tr> <td> </td> <td> $x_1 \ge 2$ </td> </tr>
                 </table>
@@ -105,7 +105,7 @@
               <div class=fragment>
               <p> For example,
                 <table>
-                    <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                    <tr> <td> min </td> <td> $x_1$ </td> </tr>
                     <tr> <td> such that </td> <td> $x_1 \le 0$ </td> </tr>
                 </table>
               </p>
@@ -118,7 +118,7 @@
               <div class=fragment>
               <p> The example from the previous slide is unbounded:
                 <table>
-                    <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                    <tr> <td> min </td> <td> $x_1$ </td> </tr>
                     <tr> <td> such that </td> <td> $x_1 \le 0$ </td> </tr>
                 </table>
               </p>
@@ -131,7 +131,7 @@
               <div class=flexbox>
                 <div style="padding-top:80px">
                   <table>
-                      <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x$ </td> </tr>
+                      <tr> <td> min </td> <td> $x$ </td> </tr>
                       <tr> <td> such that </td> <td> $xy \ge 1$ </td> </tr>
                       <tr> <td> </td> <td> $x, y \ge 0$ </td> </tr>
                   </table>
@@ -161,27 +161,27 @@
               <h4>Examples of each case.</h4>
               <table>
                 <tr>
-                  <td style="border-bottom: none; vertical-align: top;">
+                  <td style="vertical-align: top;">
                     <p style="color:#dc322f;"><b>An infeasible problem</b></p>
                     <table>
-                        <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                        <tr> <td> min </td> <td> $x_1$ </td> </tr>
                         <tr> <td> such that </td> <td> $x_1 \le 1$ </td> </tr>
                         <tr> <td> </td> <td> $x_1 \ge 2$ </td> </tr>
                     </table>
                     <p> No point satisfies both bounds. </p>
                   </td>
-                  <td style="border-bottom: none; vertical-align: top;">
+                  <td style="vertical-align: top;">
                     <p style="color:#859900;"><b>A problem with an optimal point</b></p>
                     <table>
-                        <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                        <tr> <td> min </td> <td> $x_1$ </td> </tr>
                         <tr> <td> such that </td> <td> $x_1 \ge 0$ </td> </tr>
                     </table>
                     <p> The optimum is $x_1 = 0$. </p>
                   </td>
-                  <td style="border-bottom: none; vertical-align: top;">
+                  <td style="vertical-align: top;">
                     <p style="color:#cb4b16;"><b>An unbounded problem</b></p>
                     <table>
-                        <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $x_1$ </td> </tr>
+                        <tr> <td> min </td> <td> $x_1$ </td> </tr>
                         <tr> <td> such that </td> <td> $x_1 \le 0$ </td> </tr>
                     </table>
                     <p> The objective can be made arbitrarily small. </p>
@@ -200,7 +200,7 @@
               A <b> recession direction</b> (also, a certificate of unboundedness) for the LP 
               </p>
               <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
+                  <tr> <td> min </td> <td> $c^{\intercal} x$ </td> </tr>
                   <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
               </table>
               <p> is a vector $v$ so that \[Av \le 0 \text{ and }\] \[c^{\intercal} v = -1.\]</p>
@@ -215,7 +215,7 @@
               <div class=flexbox>
                 <div>
                   <table>
-                      <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $-x_2$ </td> </tr>
+                      <tr> <td> min </td> <td> $-x_2$ </td> </tr>
                       <tr> <td> such that </td> <td> $-x_1 \le 0$ </td> </tr>
                       <tr> <td> </td> <td> $x_1 - x_2 \le 0$ </td> </tr>
                   </table>
@@ -262,7 +262,7 @@
                 <img src="images/no_perfect_matching_lp.svg" height=280px />
                 <div style="font-size:0.7em;">
                   <table>
-                      <tr> <td style="border-bottom: none;"> $x_{11}$ </td> <td style="border-bottom: none;"> $= 1$ </td> <td style="border-bottom: none;"> ($u_1$) </td> </tr>
+                      <tr> <td> $x_{11}$ </td> <td> $= 1$ </td> <td> ($u_1$) </td> </tr>
                       <tr> <td> $x_{21}$ </td> <td> $= 1$ </td> <td> ($u_2$) </td> </tr>
                       <tr> <td> $x_{31} + x_{32} + x_{33}$ </td> <td> $= 1$ </td> <td> ($u_3$) </td> </tr>
                       <tr> <td> $x_{11} + x_{21} + x_{31}$ </td> <td> $= 1$ </td> <td> ($v_1$) </td> </tr>
@@ -328,7 +328,7 @@
                 A <b> certificate of infeasibility</b> for the LP
             </p>
                 <table> 
-                    <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
+                    <tr> <td> min </td> <td> $c^{\intercal} x$ </td> </tr>
                     <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
                 </table>
             <p>
@@ -337,7 +337,7 @@
                     A^{\intercal}y = 0
                 \]
                 \[
-                    b^{\intercal}y > 0.
+                    b^{\intercal}y < 0.
                 \]
               </p>
               <div class=fragment style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45); display:inline-block;">
@@ -363,7 +363,7 @@
               <h3>Proving Optimality</h3>
               <p> Given LP</p>
               <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
+                  <tr> <td> min </td> <td> $c^{\intercal} x$ </td> </tr>
                   <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
               </table>
               <p> and a feasible point $x^*$, how can we show that this is optimal? </p>
@@ -418,7 +418,7 @@
               <h4> Example of a Certificate </h4>
               <p> Consider the LP</p>
                 <table>
-                    <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $-x_1 - x_2$ </td> </tr>
+                    <tr> <td> min </td> <td> $-x_1 - x_2$ </td> </tr>
                     <tr> <td> such that </td> <td> $x_1 \le 1$ </td> </tr>
                     <tr> <td> </td> <td> $x_2 \le 1$ </td> </tr>
                 </table>

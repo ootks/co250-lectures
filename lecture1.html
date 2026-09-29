@@ -151,7 +151,7 @@
           <h2>Mathematical Optimization Problems</h2>
           <p> In notation, we often write </p>
           <table> 
-              <tr> <td style="border-bottom: none;"> max/min </td> <td style="border-bottom: none;"> $f(x)$ </td> </tr>
+              <tr> <td> max/min </td> <td> $f(x)$ </td> </tr>
               <tr> <td> such that </td> <td> $x \in F$ </td> </tr>
           </table>
           <p> Here, $f(x)$ is the objective function, and $F$ is the feasible set. We can choose the sense of the optimization to be max or min. </p>
@@ -160,7 +160,7 @@
           <h2>Mathematical Optimization Problems</h2>
           <p> E.g. what is the rectangle with perimeter 1 that has the largest area? </p>
           <table class=fragment> 
-              <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $ab$ </td> </tr>
+              <tr> <td> max </td> <td> $ab$ </td> </tr>
               <tr> <td> such that </td> <td> $2(a+b) = 1, a,b \ge 0.$ </td> </tr>
           </table>
         </section>
@@ -448,7 +448,7 @@
               <h2>Linear Programming</h2>
               <p> A linear program (LP) is an optimization problem whose objective is a <b>linear function</b> and whose feasible set is the set of solutions to some linear inequality.</p>
               <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
+                  <tr> <td> min </td> <td> $c^{\intercal} x$ </td> </tr>
                   <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
               </table>
               <img src="images/linear-programming-2d.svg" height=300px />
@@ -460,7 +460,7 @@
                   <div>
                   <p> The following is an LP
                   <table> 
-                      <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_2$ </td> </tr>
+                      <tr> <td> max </td> <td> $x_2$ </td> </tr>
                       <tr> <td> such that </td> <td> $ x_1 + x_2 \le 1$
      </td> </tr>
                       <tr> <td> </td> <td> $x_1 - x_2 \ge 0$ </td></tr>
@@ -539,8 +539,8 @@
               <p> How can we model the diet problem as a linear program? </p>
               <p class=fragment> 
               <table> 
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
-                  <tr> <td style="border-bottom: none;"> such that  </td> <td style="border-bottom: none;"> $Ax \ge b$ </td> </tr>
+                  <tr> <td> min </td> <td> $c^{\intercal} x$ </td> </tr>
+                  <tr> <td> such that  </td> <td> $Ax \ge b$ </td> </tr>
                   <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
               </table>
               </p>
@@ -840,7 +840,7 @@
             <p> Bringing things together, we need to maximize profit, while meeting all of the relevant constraints. </p>
             
           <table> 
-              <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{t=1}^T \left(\sum_{i=1}^2v_{it} q_{it} - \sum_{i=1}^3 (c_{it} p_{it} + r_{it} s_{it})  \right)$ </td> <td>(Profit)</td></tr>
+              <tr> <td> max </td> <td> $\sum_{t=1}^T \left(\sum_{i=1}^2v_{it} q_{it} - \sum_{i=1}^3 (c_{it} p_{it} + r_{it} s_{it})  \right)$ </td> <td>(Profit)</td></tr>
               <tr> <td> such that </td> <td> $\\sum_{j=1}^2n_{ij} q_{jt} \le p_{it} + s_{it} \text{ for }i=1,2,3;t=1,\dots,T$ </td><td>(Ingredients required) </td> </tr>
               <tr> <td> </td> <td> $q_{it} \le D_{it}\text{ for }j=1,2;T=1,\dots,T$ </td><td> (Demand constraint)</td> </tr>
               <tr> <td> </td> <td> $s_{i\;t+1} \le p_{it} + s_{it} - \sum_{j=1}^2 n_{ij} q_{jt}\text{ for }i=1,2,3;T=1,\dots,T$ </td><td>(Storage conservation)</td> </tr>

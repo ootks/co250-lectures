@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 170" width="200" height="170" font-family="Georgia, serif">
+  <!-- Infeasible: two conflicting half-planes, empty intersection. -->
+  <line x1="20" y1="150" x2="185" y2="150" stroke="#93a1a1" stroke-width="1.4"/>
+  <line x1="20" y1="150" x2="20"  y2="20"  stroke="#93a1a1" stroke-width="1.4"/>
+  <line x1="20" y1="110" x2="95" y2="150" stroke="#dc322f" stroke-width="2" stroke-dasharray="5 4"/>
+  <line x1="125" y1="150" x2="125" y2="20" stroke="#dc322f" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="95" y="95" text-anchor="middle" font-size="34" fill="#dc322f">&#8709;</text>
+</svg>

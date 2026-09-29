@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>
+            Lecture 6
+        </h4>
+        <br>
+        <p class=centered>
+          Kevin Shu
+        </p>
+        <aside class="notes">
+          Add private speaker notes here. Press S during the presentation to open speaker view.
+        </aside>
+      </section>
+
+      <section>
+        <h2>Lecture Outline</h2>
+        <ul>
+          <li>Outcomes of Linear Programming Review</li>
+          <li>Standard Equality Form</li>
+          <li>Bases of Systems of Linear Equations</li>
+        </ul>
+      </section>
+
+      <!-- Standard content slide -->
+      <section>
+        <section>
+            <h2>Outcomes of Linear Programming Review</h2>
+        </section>
+        <section>
+            <h3>Unboundedness Review</h3>
+            <p>We say a linear program with a minimization objective is <n>unbounded</n> if there are feasible points whose objective value can be made arbitrarily small.</p>
+            <p>If it has a maximization objective, then we would want the objective to be made arbitrarily large.</p>
+            <p class=fragment>That is to say that for any number $t$, there is a feasible point with objective value less than $t$.</p>
+            <div class=fragment>
+                <p><b>Example: </b></p>
+              <table> 
+                  <tr> <td> min </td> <td> $x_1$ </td> </tr>
+                  <tr> <td> such that </td> <td> $x \le 1$ </td> </tr>
+              </table>
+              <p> This <b>is unbounded</b> because for any $t$, $\min(t-1,0)$ is feasible, and the objective value will be less than $t$.  </p>
+            </div>
+        </section>
+        <section>
+            <h3>Unboundedness Review</h3>
+            <div class=fragment>
+                <p><b>Not An Example: </b></p>
+              <table> 
+                  <tr> <td> min </td> <td> $x_1$ </td> </tr>
+                  <tr> <td> such that </td> <td> $x \ge 1$ </td> </tr>
+              </table>
+              <p> This is <b>not</b> unbounded; if $t < 1$, then there is no feasible point with objective less than $t$.</p>
+            </div>
+            <p class=fragment> Boundedness is a property of the whole linear program, not just the constraints.</p>
+        </section>
+        <section>
+            <h3>Outcomes of Linear Programs</h3>
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45); display:inline-block;">
+            <p><b>Trichotomy theorem</b></p>
+            Every linear program satisfies exactly one of the following:
+            <ul style="list-style:none; padding-left:0;">
+                <li style="color:#dc322f; font-weight:700;"> It is infeasible. </li>
+                <li style="color:#859900; font-weight:700;"> It has an optimal point. </li>
+                <li style="color:#cb4b16; font-weight:700;"> It is unbounded. </li>
+            </ul>
+            </div>
+        </section>
+        <section>
+            <h3>Outcomes of Linear Programs</h3>
+            <p style="margin:0.2em 0;"> For LP <span class=darkGreenText>$\min c^{\intercal} x$ s.t. $Ax \le b$</span>, each outcome has a <b>certificate</b>. </p>
+            <div class="outcome-row">
+              <div class="outcome-card infeasible">
+                <p class="outcome-title">Infeasible</p>
+                <img class="outcome-figure" src="images/outcome_infeasible.svg" />
+                <p class="tight">Certificate:</p>
+                <p class="tight">\[\begin{aligned}y &\ge 0\\A^{\intercal} y &= 0\\b^{\intercal} y &< 0\end{aligned}\]</p>
+              </div>
+              <div class="outcome-card optimal">
+                <p class="outcome-title">Has an optimal point</p>
+                <img class="outcome-figure" src="images/outcome_optimal.svg" />
+                <p class="tight">Certificate:</p>
+                <p class="tight">A feasible $x^*$ and </p>
+                <p class="tight">\[\begin{aligned}y &\ge 0\\A^{\intercal} y &= -c^{\intercal}\\b^{\intercal} y &= -c^{\intercal} x^*\end{aligned}\]</p>
+              </div>
+              <div class="outcome-card unbounded">
+                <p class="outcome-title">Unbounded</p>
+                <img class="outcome-figure" src="images/outcome_unbounded.svg" />
+                <p class="tight">Certificate:</p>
+                <p class="tight">A feasible $x$, and </p>
+                <p class="tight">\[\begin{aligned}Av &\le 0\\c^{\intercal} v &< 0\end{aligned}\]</p>
+              </div>
+            </div>
+        </section>
+        <section>
+            <h3>An Unbounded LP</h3>
+            <table>
+                <tr> <td> min </td> <td> $-x_1 - x_2 - x_3$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_2 \le 1$ </td> </tr>
+                <tr> <td> </td> <td> $x_2 - x_3 \le 1$ </td> </tr>
+                <tr> <td> </td> <td> $-x_1 \le 0$ </td> </tr>
+            </table>
+            <p class=fragment> Imagine adding one to every $x_i$. This keeps all of the constraints valid, and decreases the objective.</p>
+            <p class=fragment> Therefore, this LP is <b>unbounded</b>. I can make the objective as small as I want while staying feasible. </p>
+        </section>
+        <section>
+            <h3>An Unbounded LP</h3>
+            <p> In matrix form, with $c = (-1,-1,-1)$,
+              \[
+                A = \begin{pmatrix} 1 & -1 & 0 \\ 0 & 1 & -1 \\ -1 & 0 & 0\end{pmatrix}, \qquad b = \begin{pmatrix} 1 \\ 1 \\ 0\end{pmatrix}.
+              \]
+            </p>
+            <div class="outcome-card unbounded">
+            <p> The feasible point $x = (0,0,0)$ together with $v = (1,1,1)$ is a certificate of unboundedness:
+              \[
+                Av = \begin{pmatrix} 0 \\ 0 \\ -1\end{pmatrix} \le 0, \qquad c^{\intercal} v = -3 < 0.
+              \]
+            </p>
+            </div>
+        </section>
+        <section>
+            <h3>An Infeasible LP</h3>
+            <table>
+                <tr> <td> min </td> <td> $x_1 + x_2 + x_3$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 + x_2 + x_3 \le -1$ </td> </tr>
+                <tr> <td> </td> <td> $-x_1 \le 0$ </td> </tr>
+                <tr> <td> </td> <td> $-x_2 \le 0$ </td> </tr>
+                <tr> <td> </td> <td> $-x_3 \le 0$ </td> </tr>
+            </table>
+            <p class=fragment> The last three constraints say $x_1, x_2, x_3 \ge 0$, so $x_1 + x_2 + x_3 \ge 0$. </p>
+            <p class=fragment> But the first constraint asks for $x_1 + x_2 + x_3 \le -1$. No point can satisfy both, so the LP is <b>infeasible</b>. </p>
+        </section>
+        <section>
+            <h3>An Infeasible LP</h3>
+            <table>
+                <tr> <td> min </td> <td> $x_1 + x_2 + x_3$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 + x_2 + x_3 \le -1$ </td> </tr>
+                <tr> <td> </td> <td> $-x_1 \le 0$ </td> </tr>
+                <tr> <td> </td> <td> $-x_2 \le 0$ </td> </tr>
+                <tr> <td> </td> <td> $-x_3 \le 0$ </td> </tr>
+            </table>
+            <p class=fragment> Another perspective: If we add together all of the constraints, we get 
+                \[
+                    (x_1+x_2+x_3) - x_1 - x_2 - x_3 \le -1 + 0 + 0 + 0.
+                \]
+                or $0 \le -1$, which is an invalid result. 
+            </p>
+        </section>
+        <section>
+            <h3>An Infeasible LP</h3>
+            <p> In matrix form,
+              \[
+                A = \begin{pmatrix} 1 & 1 & 1 \\ -1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & -1\end{pmatrix}, \qquad b = \begin{pmatrix} -1 \\ 0 \\ 0 \\ 0\end{pmatrix}.
+              \]
+            </p>
+            <div class="outcome-card infeasible">
+            <p> Adding all four constraints (weights $y = (1,1,1,1)$) gives $0 \le -1$, a contradiction. This $y \ge 0$ is a certificate of infeasibility:
+              \[
+                A^{\intercal} y = \begin{pmatrix} 0 \\ 0 \\ 0\end{pmatrix}, \qquad b^{\intercal} y = -1 < 0.
+              \]
+            </p>
+            </div>
+        </section>
+        <section>
+            <h3>An LP with an Optimal Point</h3>
+            <table>
+                <tr> <td> min </td> <td> $-x_1 - x_2 - x_3$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 \le 1$ </td> </tr>
+                <tr> <td> </td> <td> $x_2 \le 1$ </td> </tr>
+                <tr> <td> </td> <td> $x_3 \le 1$ </td> </tr>
+            </table>
+            <p class=fragment> Minimizing $-x_1-x_2-x_3$ is the same as maximizing $x_1 + x_2 + x_3$. </p>
+            <p class=fragment> Each constraint caps a variable at $1$, so $x_1 + x_2 + x_3 \le 3$, with equality at $x^* = (1,1,1)$. So $x^*$ is <b>optimal</b>, with value $-3$. </p>
+        </section>
+        <section>
+            <h3>An LP with an Optimal Point</h3>
+            <p> In matrix form, with $c = (-1,-1,-1)$,
+              \[
+                A = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1\end{pmatrix}, \qquad b = \begin{pmatrix} 1 \\ 1 \\ 1\end{pmatrix}.
+              \]
+            </p>
+            <div class="outcome-card optimal">
+            <p> The optimal $x^* = (1,1,1)$ together with $y = (1,1,1)$ is a certificate of optimality:
+              \[
+                y \ge 0, \qquad A^{\intercal} y = \begin{pmatrix} 1 \\ 1 \\ 1\end{pmatrix} = -c^{\intercal}, \qquad b^{\intercal} y = 3 = -c^{\intercal} x^*.
+              \]
+            </p>
+            </div>
+        </section>
+    </section>
+    <section>
+        <section>
+            <h2>Standard Equality Form</h2>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> In the textbook, LPs are written in <b>standard equality form</b>.</p>
+            <p class=fragment> Different forms of LPs are like different ways of writing fractions; they look different but are essentially the same. </p>
+            <div class=fragment>
+                <p data-id="seform-intro"> The standard equality form for an LP is</p>
+                <table class="darkBlueText" data-id="seform-table"> 
+                    <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+                <p> The only inequality constraints allowed are setting all variables to be nonnegative; everything else is an equality constraint.</p>
+            </div>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <div>
+                <p data-id="seform-intro"> The standard equality form for an LP is</p>
+                <table class="darkBlueText" data-id="seform-table"> 
+                    <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+            </div>
+            <div class="fragment">
+                <p> Contrast with the form we have been using so far</p>
+                <table class="darkGreenText"> 
+                    <tr> <td> min </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+                </table>
+            </div>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="geo-title">Geometric Perspective on SEF</h3>
+            <img data-id="geo-fig" src="images/sef_geo_1_orthant.svg" style="width:92%;" />
+            <p class=centered> SEF starts from the nonnegative orthant $x \ge 0$. </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="geo-title">Geometric Perspective on SEF</h3>
+            <img data-id="geo-fig" src="images/sef_geo_2_subspace.svg" style="width:92%;" />
+            <p class=centered> Overlay the affine subspace given by $Ax = b$. </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="geo-title">Geometric Perspective on SEF</h3>
+            <img data-id="geo-fig" src="images/sef_geo_3_feasible.svg" style="width:92%;" />
+            <p class=centered> The feasible region is the part of $Ax = b$ lying in the orthant $x \ge 0$. </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <div>
+                <p data-id="seform-intro"> The standard equality form for an LP is</p>
+                <table class="darkBlueText" data-id="seform-table"> 
+                    <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+            </div>
+            <p> Contrast with the form we have been using so far</p>
+            <table class="darkGreenText"> 
+                <tr> <td> min </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+            </table>
+            <div class="fragment">
+                <p> We want to get from one form to the other. There are a few steps to doing this. </p>
+            </div>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="sef-obj-min"> <td> min </td> <td> $x_1+x_2+x_3$ </td> </tr>
+                <tr data-id="sef-c1"> <td> such that </td> <td> $x_1+x_2+x_3 \le 1$ </td> </tr>
+                <tr data-id="sef-c2"> <td> </td> <td> $x_1-x_2+x_3 \le 2$ </td> </tr>
+                <tr data-id="sef-c3-ge"> <td> </td> <td> $x_1+2x_2 \ge 3$ </td> </tr>
+                <tr data-id="sef-c4-ge"> <td> </td> <td> $x_1-3x_2 \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment>How to put this in SEF?</p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="sef-obj-min"> <td> min </td> <td> $x_1+x_2+x_3$ </td> </tr>
+                <tr data-id="sef-c1"> <td> such that </td> <td> $x_1+x_2+x_3 \le 1$ </td> </tr>
+                <tr data-id="sef-c2"> <td> </td> <td> $x_1-x_2+x_3 \le 2$ </td> </tr>
+                <tr data-id="sef-c3-ge"> <td> </td> <td> $x_1+2x_2 \ge 3$ </td> </tr>
+                <tr data-id="sef-c4-ge"> <td> </td> <td> $x_1-3x_2 \ge 0$ </td> </tr>
+            </table>
+            <p><b>Step 1:</b> Use negation if necessary to replace make all of the inequalities less than or equal to, and also make the objective maximization.  </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="sef-obj-maxneg"> <td> max </td> <td> $-(x_1+x_2+x_3)$ </td> </tr>
+                <tr data-id="sef-c1"> <td> such that </td> <td> $x_1+x_2+x_3 \le 1$ </td> </tr>
+                <tr data-id="sef-c2"> <td> </td> <td> $x_1-x_2+x_3 \le 2$ </td> </tr>
+                <tr data-id="sef-c3-negparen"> <td> </td> <td> $-(x_1+2x_2) \le -3$ </td> </tr>
+                <tr data-id="sef-c4-negparen"> <td> </td> <td> $-(x_1-3x_2) \le 0$ </td> </tr>
+            </table>
+            <p><b>Step 1:</b> Use negation if necessary to replace make all of the inequalities less than or equal to, and also make the objective maximization.  </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1+x_2+x_3$ </td> </tr>
+                <tr data-id="sef-c1"> <td> such that </td> <td> $x_1+x_2+x_3 \le 1$ </td> </tr>
+                <tr data-id="sef-c2"> <td> </td> <td> $x_1-x_2+x_3 \le 2$ </td> </tr>
+                <tr data-id="sef-c3-dist"> <td> </td> <td> $-x_1-2x_2 \le -3$ </td> </tr>
+                <tr data-id="sef-c4-dist"> <td> </td> <td> $-x_1+3x_2 \le 0$ </td> </tr>
+            </table>
+            <p><b>Step 1:</b> Use negation if necessary to replace make all of the inequalities less than or equal to, and also make the objective maximization.  </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1+x_2+x_3$ </td> </tr>
+                <tr data-id="sef-c1-le"> <td> such that </td> <td> $x_1+x_2+x_3 \le 1$ </td> </tr>
+                <tr data-id="sef-c2-le"> <td> </td> <td> $x_1-x_2+x_3 \le 2$ </td> </tr>
+                <tr data-id="sef-c3-dist"> <td> </td> <td> $-x_1-2x_2 \le -3$ </td> </tr>
+                <tr data-id="sef-c4-dist"> <td> </td> <td> $-x_1+3x_2 \le 0$ </td> </tr>
+            </table>
+            <p><b>Step 2:</b> Introduce nonnegative slack variables (one for each inequality) to take out the slack.  </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1+x_2+x_3$ </td> </tr>
+                <tr> <td> such that </td> <td> <span data-id="lhs-c1">$x_1+x_2+x_3$</span> <span data-id="rel-c1-le">$\le 1$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="lhs-c2">$x_1-x_2+x_3$</span> <span data-id="rel-c2-le">$\le 2$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="lhs-c3">$-x_1-2x_2$</span> <span data-id="rel-c3-le">$\le -3$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="lhs-c4">$-x_1+3x_2$</span> <span data-id="rel-c4-le">$\le 0$</span> </td> </tr>
+                <tr data-id="sef-slack"> <td> </td> <td> $s_1, s_2, s_3, s_4 \ge 0$ </td> </tr>
+            </table>
+            <p><b>Step 2:</b> Introduce nonnegative slack variables (one for each inequality) to take out the slack.  </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1+x_2+x_3$ </td> </tr>
+                <tr> <td> such that </td> <td> <span data-id="lhs-c1">$x_1+x_2+x_3$</span> <span data-id="slk-c1">$+\, s_1$</span> <span data-id="rel-c1-eq">$= 1$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="lhs-c2">$x_1-x_2+x_3$</span> <span data-id="slk-c2">$+\, s_2$</span> <span data-id="rel-c2-eq">$= 2$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="lhs-c3">$-x_1-2x_2$</span> <span data-id="slk-c3">$+\, s_3$</span> <span data-id="rel-c3-eq">$= -3$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="lhs-c4">$-x_1+3x_2$</span> <span data-id="slk-c4">$+\, s_4$</span> <span data-id="rel-c4-eq">$= 0$</span> </td> </tr>
+                <tr data-id="sef-slack"> <td> </td> <td> $s_1, s_2, s_3, s_4 \ge 0$ </td> </tr>
+            </table>
+            <p><b>Step 2:</b> Introduce nonnegative slack variables (one for each inequality) to take out the slack.  </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1+x_2+x_3$ </td> </tr>
+                <tr data-id="sef-c1-eq"> <td> such that </td> <td> $x_1+x_2+x_3 + s_1 = 1$ </td> </tr>
+                <tr data-id="sef-c2-eq"> <td> </td> <td> $x_1-x_2+x_3 +s_2= 2$ </td> </tr>
+                <tr data-id="sef-c3-eq"> <td> </td> <td> $-x_1-2x_2 +s_3 = -3$ </td> </tr>
+                <tr data-id="sef-c4-eq"> <td> </td> <td> $-x_1+3x_2 +s_4 = 0$ </td> </tr>
+                <tr data-id="sef-slack"> <td> </td> <td> $s_1, s_2, s_3, s_4 \ge 0$ </td> </tr>
+            </table>
+            <p><b>Step 3:</b> Replace each $x_i$ which does not need to be nonnegative with the difference of two new variables $x_{i}^+$ and $x_i^-$.  </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
+            <table class="darkGreenText"> 
+                <tr> <td> max </td> <td> <span data-id="o-x1p">$-(x_1^+-x_1^-)$</span><span data-id="o-x2p">$+(x_2^+-x_2^-)$</span><span data-id="o-x3p">$+(x_3^+-x_3^-)$</span> </td> </tr>
+                <tr> <td> such that </td> <td> <span data-id="c1-x1p">$(x_1^+-x_1^-)$</span><span data-id="c1-x2p">$+(x_2^+-x_2^-)$</span><span data-id="c1-x3p">$+(x_3^+-x_3^-)$</span> <span data-id="slk-c1">$+\, s_1$</span> <span data-id="rel-c1-eq">$= 1$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="c2-x1p">$(x_1^+-x_1^-)$</span><span data-id="c2-x2p">$-(x_2^+-x_2^-)$</span><span data-id="c2-x3p">$+(x_3^+-x_3^-)$</span> <span data-id="slk-c2">$+\, s_2$</span> <span data-id="rel-c2-eq">$= 2$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="c3-x1p">$-(x_1^+-x_1^-)$</span><span data-id="c3-x2p">$-2(x_2^+-x_2^-)$</span> <span data-id="slk-c3">$+\, s_3$</span> <span data-id="rel-c3-eq">$= -3$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="c4-x1p">$-(x_1^+-x_1^-)$</span><span data-id="c4-x2p">$+3(x_2^+-x_2^-)$</span> <span data-id="slk-c4">$+\, s_4$</span> <span data-id="rel-c4-eq">$= 0$</span> </td> </tr>
+                <tr data-id="sef-nn-split"> <td> </td> <td> $x_i^+, x_i^-, s_j \ge 0$ </td> </tr>
+            </table>
+            <p><b>Step 3:</b> Replace each $x_i$ which does not need to be nonnegative with the difference of two new variables $x_{i}^+$ and $x_i^-$.  </p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> <b>Example:</b> This LP is now in SEF (and equivalent to the original)</p>
+            <table class="darkBlueText"> 
+                <tr> <td> max </td> <td> <span data-id="o-x1p">$-x_1^+-x_1^-$</span><span data-id="o-x2p">$+x_2^+-x_2^-$</span><span data-id="o-x3p">$+x_3^+-x_3^-$</span> </td> </tr>
+                <tr> <td> such that </td> <td> <span data-id="c1-x1p">$x_1^+-x_1^-$</span><span data-id="c1-x2p">$+x_2^+-x_2^-$</span><span data-id="c1-x3p">$+x_3^+-x_3^-$</span> <span data-id="slk-c1">$+\, s_1$</span> <span data-id="rel-c1-eq">$= 1$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="c2-x1p">$x_1^+-x_1^-$</span><span data-id="c2-x2p">$-x_2^+-x_2^-$</span><span data-id="c2-x3p">$+x_3^+-x_3^-$</span> <span data-id="slk-c2">$+\, s_2$</span> <span data-id="rel-c2-eq">$= 2$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="c3-x1p">$-x_1^+-x_1^-$</span><span data-id="c3-x2p">$-2x_2^+-x_2^-$</span> <span data-id="slk-c3">$+\, s_3$</span> <span data-id="rel-c3-eq">$= -3$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="c4-x1p">$-x_1^+-x_1^-$</span><span data-id="c4-x2p">$+3x_2^+-x_2^-$</span> <span data-id="slk-c4">$+\, s_4$</span> <span data-id="rel-c4-eq">$= 0$</span> </td> </tr>
+                <tr data-id="sef-nn-split"> <td> </td> <td> $x_i^+, x_i^-, s_j \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> More general schematic: </p>
+            <p> First apply step 1 of negating inequalities/objective to bring the LP in the following form:</p>
+            <table class="darkGreenText"> 
+                <tr data-id="sef-obj-expand"> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr> <td> such that </td> <td> <span data-id="mx-lhs">$Ax$</span> <span data-id="mx-rel-le">$\le b$</span> </td> </tr>
+            </table>
+            <p>for an $m\times n$ matrix $A$.</p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> More general schematic: </p>
+            <p> Step 2 is to introduce $s \in \R^m$ nonnegative slack variables to absorb the slack. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="sef-obj-expand"> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr> <td> such that </td> <td> <span data-id="mx-lhs">$Ax$</span> <span data-id="mx-slk">$+\, s$</span> <span data-id="mx-rel-eq">$= b$</span> </td> </tr>
+                <tr data-id="sef-nn-expand"> <td> </td> <td> $s \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title">Standard Equality Form</h3>
+            <p> More general schematic: </p>
+            <p> Step 3 is to replace all of the $x_i$'s with differences of nonnegative variables: </p>
+            <table class="darkBlueText"> 
+                <tr data-id="sef-obj-expand"> <td> max </td> <td> $c^{\intercal}(x^+-x^-)$ </td> </tr>
+                <tr> <td> such that </td> <td> <span data-id="mx-lhs-split">$A(x^+-x^-)$</span> <span data-id="mx-slk">$+\, s$</span> <span data-id="mx-rel-eq">$= b$</span> </td> </tr>
+                <tr data-id="sef-nn-expand-split"> <td> </td> <td> $x^+, x^-, s \ge 0$ </td> </tr>
+            </table>
+            <p> At this point, the LP is in SEF, though we can do one more step to make it a little clearer:</p>
+        </section>
+        <section>
+            <h3>Standard Equality Form</h3>
+            <table class="darkBlueText"> 
+                <tr data-id="sef-obj-expand"> <td> max </td> <td> $c^{\intercal}(x^+-x^-)$ </td> </tr>
+                <tr> <td> such that </td> <td> <span data-id="mx-lhs-split">$A(x^+-x^-)$</span> <span data-id="mx-slk">$+\, s$</span> <span data-id="mx-rel-eq">$= b$</span> </td> </tr>
+                <tr data-id="sef-nn-expand-split"> <td> </td> <td> $x^+, x^-, s \ge 0$ </td> </tr>
+            </table>
+            <p>is equivalent to</p>
+            <table class="darkBlueText"> 
+                <tr> <td> max </td> <td> $c'^{\intercal}z$ </td> </tr>
+                <tr> <td> such that </td> <td> $A'z= b$ </td> </tr>
+                <tr> <td> </td> <td> $z \ge 0$ </td> </tr>
+            </table>
+            <p> where we think of $z = \begin{pmatrix}x^+\\x^-\\s\end{pmatrix}$, $c' = \begin{pmatrix}c \\ -c \\ 0\end{pmatrix}$ and $A' = \begin{pmatrix}A \\ - A \\ I\end{pmatrix}$.</p>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title2">Standard Equality Form</h3>
+            <p> <b>Another example.</b> Here $x_2 \ge 0$ but $x_1$ is free. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="ex2-obj-min"> <td> min </td> <td> $2x_1 + 3x_2$ </td> </tr>
+                <tr data-id="ex2-c1-ge"> <td> such that </td> <td> $x_1 + x_2 \ge 4$ </td> </tr>
+                <tr data-id="ex2-c2-le"> <td> </td> <td> $x_1 - x_2 \le 6$ </td> </tr>
+                <tr data-id="ex2-c3-eq"> <td> </td> <td> $x_1 + 2x_2 = 5$ </td> </tr>
+                <tr data-id="ex2-nn"> <td> </td> <td> $x_2 \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title2">Standard Equality Form</h3>
+            <p> <b>Step 1:</b> make the objective a max and every inequality a $\le$ (negating where needed). The equality stays as is. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="ex2-obj-max"> <td> max </td> <td> $-(2x_1 + 3x_2)$ </td> </tr>
+                <tr data-id="ex2-c1-negle"> <td> such that </td> <td> $-x_1 - x_2 \le -4$ </td> </tr>
+                <tr data-id="ex2-c2-le"> <td> </td> <td> $x_1 - x_2 \le 6$ </td> </tr>
+                <tr data-id="ex2-c3-eq"> <td> </td> <td> $x_1 + 2x_2 = 5$ </td> </tr>
+                <tr data-id="ex2-nn"> <td> </td> <td> $x_2 \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title2">Standard Equality Form</h3>
+            <p> <b>Step 2:</b> add a slack variable to each <em>inequality</em>. The equality $x_1 + 2x_2 = 5$ needs no slack. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="ex2-obj-max"> <td> max </td> <td> $-(2x_1 + 3x_2)$ </td> </tr>
+                <tr data-id="ex2-c1-eq"> <td> such that </td> <td> $-x_1 - x_2 + s_1 = -4$ </td> </tr>
+                <tr data-id="ex2-c2-eq"> <td> </td> <td> $x_1 - x_2 + s_2 = 6$ </td> </tr>
+                <tr data-id="ex2-c3-eq"> <td> </td> <td> $x_1 + 2x_2 = 5$ </td> </tr>
+                <tr data-id="ex2-nn-slack"> <td> </td> <td> $x_2, s_1, s_2 \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title2">Standard Equality Form</h3>
+            <p> <b>Step 3:</b> replace only the <em>free</em> variable $x_1$ with $x_1^+ - x_1^-$. Since $x_2 \ge 0$ already, it is left alone. </p>
+            <table class="darkGreenText"> 
+                <tr data-id="ex2-obj-split"> <td> max </td> <td> $-(2(x_1^+-x_1^-) + 3x_2)$ </td> </tr>
+                <tr data-id="ex2-c1-split"> <td> such that </td> <td> $-(x_1^+-x_1^-) - x_2 + s_1 = -4$ </td> </tr>
+                <tr data-id="ex2-c2-split"> <td> </td> <td> $(x_1^+-x_1^-) - x_2 + s_2 = 6$ </td> </tr>
+                <tr data-id="ex2-c3-split"> <td> </td> <td> $(x_1^+-x_1^-) + 2x_2 = 5$ </td> </tr>
+                <tr data-id="ex2-nn-final"> <td> </td> <td> $x_1^+, x_1^-, x_2, s_1, s_2 \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section data-auto-animate>
+            <h3 data-id="seform-title2">Standard Equality Form</h3>
+            <p> This LP is now in SEF. </p>
+            <table class="darkBlueText"> 
+                <tr data-id="ex2-obj-split"> <td> max </td> <td> $-2x_1^+-x_1^- + 3x_2$ </td> </tr>
+                <tr data-id="ex2-c1-split"> <td> such that </td> <td> $-x_1^+-x_1^- - x_2 + s_1 = -4$ </td> </tr>
+                <tr data-id="ex2-c2-split"> <td> </td> <td> $x_1^+-x_1^- - x_2 + s_2 = 6$ </td> </tr>
+                <tr data-id="ex2-c3-split"> <td> </td> <td> $x_1^+-x_1^- + 2x_2 = 5$ </td> </tr>
+                <tr data-id="ex2-nn-final"> <td> </td> <td> $x_1^+, x_1^-, x_2, s_1, s_2 \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h2> Certificates for SEF LPs</h2>
+        </section>
+        <section>
+            <h3>Outcomes of Linear Programs</h3>
+            <p style="margin:0.2em 0;"> For LP <span class=darkBlueText>$\max c^{\intercal} x$ s.t. $Ax = b, x\ge 0$</span>, each outcome has a <b>certificate</b>. </p>
+            <div style="display:flex; align-items:stretch; gap:14px; font-size:0.62em; margin-top:0.4em;">
+              <div style="flex:1 1 0; min-width:0; border:2px solid #dc322f; border-radius:12px; padding:8px 10px;">
+                <p style="color:#dc322f; font-weight:700; margin:0 0 4px;">Infeasible</p>
+                <img src="images/outcome_infeasible.svg" style="width:88%; display:block; margin:0 auto;" />
+                <p style="margin:2px 0;">Certificate: a free $y$ with</p>
+                <p style="margin:2px 0;">\[\begin{aligned}A^{\intercal} y &\ge 0\\b^{\intercal} y &< 0\end{aligned}\]</p>
+              </div>
+              <div style="flex:1 1 0; min-width:0; border:2px solid #859900; border-radius:12px; padding:8px 10px;">
+                <p style="color:#859900; font-weight:700; margin:0 0 4px;">Has an optimal point</p>
+                <img src="images/outcome_optimal.svg" style="width:88%; display:block; margin:0 auto;" />
+                <p style="margin:2px 0;">Certificate:</p>
+                <p style="margin:6px 0 2px;">A feasible $x^*$ and a free $y$ with </p>
+                <p style="margin:2px 0;">\[\begin{aligned}A^{\intercal} y &\ge c\\b^{\intercal} y &= c^{\intercal} x^*\end{aligned}\]</p>
+              </div>
+              <div style="flex:1 1 0; min-width:0; border:2px solid #cb4b16; border-radius:12px; padding:8px 10px;">
+                <p style="color:#cb4b16; font-weight:700; margin:0 0 4px;">Unbounded</p>
+                <img src="images/outcome_unbounded.svg" style="width:88%; display:block; margin:0 auto;" />
+                <p style="margin:2px 0;">Certificate:</p>
+                <p style="margin:6px 0 2px;">A feasible $x$, and a $v$ with </p>
+                <p style="margin:2px 0;">\[\begin{aligned}Av &= 0\\v &\ge 0\\c^{\intercal} v &> 0\end{aligned}\]</p>
+              </div>
+            </div>
+        </section>
+        <section>
+            <h3>Outcomes of Linear Programs</h3>
+            <p> <b>Study Strategy</b>: Space/Time tradeoff</p>
+            <p> One approach to learning about these certificates is just to remember all of the different definitions. </p>
+            <p class=fragment> Another approach is to not memorize any of these definitions, but be able to derive each notion from scratch. </p>
+            <p class=fragment> <b> My suggestion:</b> Remember the different certificates for the <span class=darkBlueText>LPs in SEF</span>, and then remember the different transformations that get you from any LP to that form. </p>
+        </section>
+      </section>
+      <section>
+        <section>
+            <h2> Bases and Canonical Forms</h2>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> Given a LP in SEF, some symmetries become visible that might not have been obvious before.</p>
+            <div class=fragment>
+                <p>For an LP</p>
+                <table class="darkBlueText"> 
+                    <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+                <p> The most interesting part is the linear equations $Ax = b$.</p>
+                <p class="fragment"> There are many different ways of writing essentially the same system of linear equations.</p>
+            </div>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+            \[
+                \begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 0\end{pmatrix}
+            \]
+            </p>
+            <p class=fragment>We can apply <b>row operations</b> to change the form of these linear equations. </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+            \[
+                \begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 0\end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_2 - 4 \rho_1}\]
+            \[
+                \begin{pmatrix} 1 & 2 & 3 \\ 0 & -3 & -6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ -4 \end{pmatrix}
+            \]
+            </p>
+            <p class=fragment>Note that even though we change the form of the linear system, <b>the solutions stay the same</b>. In particular, any nonnegative solution to the first system is a nonnegative solution to the second (and vice versa).</p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+                <p> Further row operations reduce the problem to <b>Row Reduced Echelon Form (RREF) </b></p>
+                <p>
+            \[
+                \begin{pmatrix} 1 & 2 & 3 \\ 0 & -3 & -6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ -4 \end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_2 / -3}\]
+            \[
+                \begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 4/3 \end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+                <p> Further row operations reduce the problem to <b>Row Reduced Echelon Form (RREF) </b></p>
+                <p>
+            \[
+                \begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 4/3 \end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_1 - 2 \rho 2}\]
+            \[
+                \begin{pmatrix} 1 & 0 & -1 \\ 0 & 1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -5/3 \\ 4/3 \end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p>
+            \[
+                \begin{pmatrix} 1 & 0 & -1 \\ 0 & 1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -5/3 \\ 4/3 \end{pmatrix}
+            \]
+            </p>
+            <p> This system of equations tells us that $x_1 = -\frac{5}{3} + x_3$ and $x_2 = \frac{4}{3} - 2x_3.$</p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: An alternative perspective: </b> 
+            If $Ax = b$, then for any invertible matrix $R$, we have that $RAx = Rb$ is an equivalent linear system.
+            </p>
+            <p>
+            \[
+                \begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 0\end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: An alternative perspective: </b> 
+            If $Ax = b$, then for any invertible matrix $R$, we have that $RAx = Rb$ is an equivalent linear system.
+            </p>
+            <p>
+            \[
+                \begin{pmatrix}1 & 2 \\ 4 & 5 \end{pmatrix}^{-1}\begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix}1 & 2 \\ 4 & 5 \end{pmatrix}^{-1}\begin{pmatrix} 1 \\ 0\end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: An alternative perspective: </b> 
+            If $Ax = b$, then for any invertible matrix $R$, we have that $RAx = Rb$ is an equivalent linear system.
+            </p>
+            <p>
+            \[
+                -\frac{1}{3}\begin{pmatrix}5 & -2 \\ -4 & 1 \end{pmatrix}\begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = -\frac{1}{3}\begin{pmatrix}5 & -2 \\ -4 & 1 \end{pmatrix}\begin{pmatrix} 1 \\ 0\end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: An alternative perspective: </b> 
+            If $Ax = b$, then for any invertible matrix $R$, we have that $RAx = Rb$ is an equivalent linear system.
+            </p>
+            <p>
+            \[
+                \begin{pmatrix} 1 & 0 & -1 \\ 0 & 1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -5/3 \\ 4/3 \end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> Row reduction seems to make the first few coordinates seem more important than the other ones.  </p>
+            <p> We can row reduce with respect to a different set of columns.  </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> Let us instead reduce with respect to <span style="color:#dc322f;">columns $1$ and $3$</span>. 
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}4 & 5 & \color{red}6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 0\end{pmatrix}
+            \]
+            </p>
+            <p class=fragment>We apply <b>row operations</b> to reduce the highlighted columns. </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}4 & 5 & \color{red}6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 0\end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_2 - 4 \rho_1}\]
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}0 & -3 & \color{red}{-6}\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ -4 \end{pmatrix}
+            \]
+            </p>
+            <p class=fragment>As before, the solution set is unchanged by row operations. </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+                <p> We reduce with respect to <span style="color:#dc322f;">columns $1$ and $3$</span>. </p>
+                <p>
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}0 & -3 & \color{red}{-6}\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ -4 \end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_2 / -6}\]
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}0 & 1/2 & \color{red}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 2/3 \end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+                <p> We reduce with respect to <span style="color:#dc322f;">columns $1$ and $3$</span>. </p>
+                <p>
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}0 & 1/2 & \color{red}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 2/3 \end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_1 - 3 \rho_2}\]
+            \[
+                \begin{pmatrix} \color{red}1 & 1/2 & \color{red}0 \\ \color{red}0 & 1/2 & \color{red}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -1 \\ 2/3 \end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p>
+            \[
+                \begin{pmatrix} \color{red}1 & 1/2 & \color{red}0 \\ \color{red}0 & 1/2 & \color{red}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -1 \\ 2/3 \end{pmatrix}
+            \]
+            </p>
+            <p> Now $x_2$ is the free coordinate: $x_1 = -1 - \frac{1}{2}x_2$ and $x_3 = \frac{2}{3} - \frac{1}{2}x_2.$</p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> Can we row reduce with respect to any set of columns? </p>
+            <p>A <b>basis</b> (plural bases) of a linear system is a square set of columns of the matrix which are linearly independent.</p>
+            <p class=fragment> For example, consider $A = \begin{pmatrix} 1 & 1 & 2 & 0 \\ 2 & 0 & 4 & 1\end{pmatrix}$. A basis is a set of two columns that are linearly independent. </p>
+            <p class=fragment> Most pairs of columns form a basis, for instance
+              \[
+                \{1,2\},\qquad \{2,3\},\qquad \{3,4\}.
+              \]
+            </p>
+            <p class=fragment> But <span style="color:#dc322f;">$\{1,3\}$ is <b>not</b> a basis</span>: column $3$ is twice column $1$, so those columns are linearly dependent. </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> Can we row reduce with respect to any set of columns? </p>
+            <p>A <b>basis</b> (plural bases) of a linear system is a set of columns of the matrix which are linearly independent.</p>
+            <p> A <b>canonical form</b> of a linear system with respect to a basis is the result of row reducing system with respect to that basis.</p>
+            <div class="flexbox">
+                <div style="margin-left:-20px; margin-right:20px; width:500px;">
+                <p>
+                \[
+                    \begin{pmatrix} \color{blue}1 &\color{blue} 0 & -1 \\\color{blue} 0 &\color{blue} 1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -5/3 \\ 4/3 \end{pmatrix}
+                \]
+                </p>
+                <p> This is a canonical form with respect to the basis $\{1,2\}$ </p>
+                </div>
+                <div style="margin-left:20px; width:500px;">
+                <p>
+                \[
+                    \begin{pmatrix} \color{red}1 & 1/2 & \color{red}0 \\ \color{red}0 & 1/2 & \color{red}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -1 \\ 2/3 \end{pmatrix}
+                \]
+                </p>
+                <p> This is a canonical form with respect to the basis $\{1,3\}$ </p>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p>A linear program in SEF is in canonical form with respect to a basis if the linear system $Ax = b$ is in canonical form with respect to that basis. </p>
+            <table class="darkBlueText"> 
+                <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p>A linear program in SEF is in canonical form with respect to a basis if the linear system $Ax = b$ is in canonical form with respect to that basis. </p>
+            <table class="darkBlueText"> 
+                <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> Consider the system $Ax = b$ with
+              \[
+                A = \begin{pmatrix} 1 & 2 & 3 & 1 \\ 1 & 2 & 3 & 0\end{pmatrix}, \qquad b = \begin{pmatrix} 4 \\ 1 \end{pmatrix}.
+              \]
+            </p>
+            <p class=fragment> Columns $1, 2, 3$ are all parallel, so the only bases are $\{1,4\}$, $\{2,4\}$, and $\{3,4\}$: three canonical forms. </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> The three canonical forms of $Ax = b$: </p>
+            <div class="flexbox" style="font-size:0.72em;">
+                <div style="margin:0 10px;">
+                    <p>
+                    \[
+                        \begin{pmatrix} \color{blue}1 & 2 & 3 & \color{blue}0 \\ \color{blue}0 & 0 & 0 & \color{blue}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\\x_4\end{pmatrix} = \begin{pmatrix} 1 \\ 3 \end{pmatrix}
+                    \]
+                    </p>
+                    <p class="centered"> basis $\{1, 4\}$ </p>
+                </div>
+                <div style="margin:0 10px;">
+                    <p>
+                    \[
+                        \begin{pmatrix} 1/2 & \color{blue}1 & 3/2 & \color{blue}0 \\ 0 & \color{blue}0 & 0 & \color{blue}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\\x_4\end{pmatrix} = \begin{pmatrix} 1/2 \\ 3 \end{pmatrix}
+                    \]
+                    </p>
+                    <p class="centered"> basis $\{2, 4\}$ </p>
+                </div>
+            </div>
+            <div style="margin:0 10px;">
+                <p>
+                \[
+                    \begin{pmatrix} 1/3 & 2/3 & \color{blue}1 & \color{blue}0 \\ 0 & 0 & \color{blue}0 & \color{blue}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\\x_4\end{pmatrix} = \begin{pmatrix} 1/3 \\ 3 \end{pmatrix}
+                \]
+                </p>
+                <p class="centered"> basis $\{3, 4\}$ </p>
+            </div>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> A basis for a LP corresponds to a set of variables (which also correspond to a column of $A$). A variable is said to be basic if it is part of the basis, and nonbasic otherwise. </p>
+                <div style="margin:0 10px;">
+                    <p>
+                    \[
+                        \begin{pmatrix} 1/3 & 2/3 & \color{blue}1 & \color{blue}0 \\ 0 & 0 & \color{blue}0 & \color{blue}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\ \color{blue}{x_3}\\ \color{blue}{x_4}\end{pmatrix} = \begin{pmatrix} 1/3 \\ 3 \end{pmatrix}
+                    \]
+                    </p>
+                    <p class="centered"> basis $\{3, 4\}$ </p>
+                </div>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> A basic solution to a linear system is a solution where every nonbasic variable is equal to 0. </p>
+            <div style="margin:0 10px;">
+                <p>
+                \[
+                    \begin{pmatrix} 1/3 & 2/3 & \color{blue}1 & \color{blue}0 \\ 0 & 0 & \color{blue}0 & \color{blue}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\ \color{blue}{x_3}\\ \color{blue}{x_4}\end{pmatrix} = \begin{pmatrix} 1/3 \\ 3 \end{pmatrix}
+                \]
+                </p>
+                <p class="centered"> basis $\{3, 4\}$ </p>
+            </div>
+            <p class="fragment"> A basic solution which is feasible for an LP corresponds geometrically to a <b>vertex</b> of the feasible region! </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> Consider the SEF LP with the single constraint $x_1 + x_2 + x_3 = 1$ and $x \ge 0$. Its feasible region is a triangle, and each <b>vertex</b> is a basic feasible solution. </p>
+            <img src="images/sef_vertices_bases.svg" height=300px />
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Theorem</b></p>
+                If a linear program in SEF has an optimal solution, then it has an optimal solution which is basic with respect to some basis (i.e. there is a basis where all of the nonbasic variables are 0).
+            </div>
+            <p class=fragment>Equivalently, any linear function that is bounded on a polytope will have a minimum which is a vertex of the polytope. </p>
+        </section>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

@@ -107,7 +107,7 @@
             <h3>Bipartite Matching</h3>
             <h4>Assembling</h4>
               <table> 
-                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_{\{i,j\} \in E}x_{ij}$ </td><td></td> </tr>
+                  <tr> <td> max </td> <td> $\sum_{\{i,j\} \in E}x_{ij}$ </td><td></td> </tr>
                   <tr> <td> such that </td> <td> $\sum_{j : \{i,j\} \in E}x_{ij} \le 1$ </td> <td>for each $i \in V$</td></tr>
                   <tr> <td> </td> <td> $0 \le x_{ij} \le 1$ </td> </tr>
                   <tr> <td> </td> <td> $x_{ij} \in \Z$ </td> </tr>
@@ -135,7 +135,7 @@
             <h4>A Concrete Example</h4>
             <p> One constraint per vertex says each vertex is used at most once: </p>
               <table>
-                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $x_{11} + x_{12} + x_{22} + x_{23} + x_{31} + x_{33}$ </td> <td></td> </tr>
+                  <tr> <td> max </td> <td> $x_{11} + x_{12} + x_{22} + x_{23} + x_{31} + x_{33}$ </td> <td></td> </tr>
                   <tr> <td> such that </td> <td> $x_{11} + x_{12} \le 1$ </td> <td> ($u_1$) </td> </tr>
                   <tr> <td> </td> <td> $x_{22} + x_{23} \le 1$ </td> <td> ($u_2$) </td> </tr>
                   <tr> <td> </td> <td> $x_{31} + x_{33} \le 1$ </td> <td> ($u_3$) </td> </tr>
@@ -176,7 +176,7 @@
             <h3> Nonlinear Programming </h3>
             <div class=flexbox>
               <table>
-                  <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sqrt{(x_A-x_B)^2 + (y_A - y_B)^2}$ </td> </tr>
+                  <tr> <td> max </td> <td> $\sqrt{(x_A-x_B)^2 + (y_A - y_B)^2}$ </td> </tr>
                   <tr> <td> such that </td> <td> $x_A^2+y_A^2 \le 1$ </td>  </tr>
                   <tr> <td> </td> <td> $x_B^2+y_B^2 \le 1$ </td>  </tr>
               </table>
@@ -186,7 +186,7 @@
           <section>
             <h3> Nonlinear Programming </h3>
               <table>
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $f(x)$ </td> </tr>
+                  <tr> <td> min </td> <td> $f(x)$ </td> </tr>
                   <tr> <td> such that </td> <td> $g_1(x) \le 0$ </td>  </tr>
                   <tr> <td> </td> <td> $g_2(x) \le 0$ </td>  </tr>
                   <tr> <td> </td> <td> $\dots$ </td>  </tr>
@@ -280,7 +280,7 @@
             <h4> Example: Restaurant Planning Revisited </h4>
             Overall, the problem is 
             <table>
-                <tr> <td style="border-bottom: none;"> max </td> <td style="border-bottom: none;"> $\sum_i p_if_i - \sum_j c_j r_j$ </td> <td></td></tr>
+                <tr> <td> max </td> <td> $\sum_i p_if_i - \sum_j c_j r_j$ </td> <td></td></tr>
                 <tr> <td> such that </td> <td> $\sum_{i} n_{ji} f_i \le r_j$ </td>  <td> for each $j$ </td> </td></tr>
                 <tr> <td> </td> <td> $f_i \le D_i(p_i)$ </td>  <td> for each $i$</td> </tr>
             </table>
@@ -333,7 +333,7 @@
             <p> Let $\|\theta\|_0$ be the <b>number of nonzero entries</b> of the vector. E.g. $\|(1,1,0)\|_0 = 2$.</p>
             <p> The sparse linear regression problem is 
               <table>
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{i=1}^D (\langle \theta, x_i\rangle - y_i)^2$ </td> <td></td></tr>
+                  <tr> <td> min </td> <td> $\sum_{i=1}^D (\langle \theta, x_i\rangle - y_i)^2$ </td> <td></td></tr>
                   <tr> <td> such that </td> <td> $\|\theta\|_0 \le k$ </td> </tr>
               </table>
             </p>
@@ -344,7 +344,7 @@
             <p> Let $\|\theta\|_1$ be $\sum_{i=1}^n |\theta_i|$. E.g. $\|(1,1,0)\|_1 = 2$.</p>
             <p> The (constrained formulation of LASSO) is given by
               <table>
-                  <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $\sum_{i=1}^D (\langle \theta, x_i\rangle - y_i)^2$ </td> <td></td></tr>
+                  <tr> <td> min </td> <td> $\sum_{i=1}^D (\langle \theta, x_i\rangle - y_i)^2$ </td> <td></td></tr>
                   <tr> <td> such that </td> <td> $\|\theta\|_1 \le k$ </td> </tr>
               </table>
             </p>
@@ -366,7 +366,7 @@
           <h3> Linear Programming Again</h3>
           <p> A linear program (LP) is an optimization problem whose objective is a <b>linear function</b> and whose feasible set is the set of solutions to some linear inequality.</p>
           <table> 
-              <tr> <td style="border-bottom: none;"> min </td> <td style="border-bottom: none;"> $c^{\intercal} x$ </td> </tr>
+              <tr> <td> min </td> <td> $c^{\intercal} x$ </td> </tr>
               <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
           </table>
           <img src="images/linear-programming-2d.svg" height=300px />
@@ -383,17 +383,17 @@
             <img src="images/polytope_matching.svg" height=220px />
             <div class=flexbox style="font-size:0.7em; margin-top:-50px;">
               <table>
-                <tr><td style="border-bottom: none;">(1)</td><td style="border-bottom: none;">$x \ge 0$</td></tr>
+                <tr><td>(1)</td><td>$x \ge 0$</td></tr>
                 <tr><td></td><td>$y \ge x$</td></tr>
                 <tr><td></td><td>$y \le x + 2$</td></tr>
               </table>
               <table>
-                <tr><td style="border-bottom: none;">(2)</td><td style="border-bottom: none;">$x + y \le 1$</td></tr>
+                <tr><td>(2)</td><td>$x + y \le 1$</td></tr>
                 <tr><td></td><td>$x \ge 2$</td></tr>
                 <tr><td></td><td>$y \ge 0$</td></tr>
               </table>
               <table>
-                <tr><td style="border-bottom: none;">(3)</td><td style="border-bottom: none;">$x \ge 0$</td></tr>
+                <tr><td>(3)</td><td>$x \ge 0$</td></tr>
                 <tr><td></td><td>$y \ge 0$</td></tr>
                 <tr><td></td><td>$x + y \le 3$</td></tr>
               </table>
