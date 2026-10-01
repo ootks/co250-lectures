@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 320" width="420" height="320" font-family="Georgia, serif">
+  <!-- Proof by picture, step 2: improving feasible direction from x* (correlated with c). -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc322f"/>
+    </marker>
+    <marker id="arrowg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#859900"/>
+    </marker>
+  </defs>
+
+  <g stroke="#93a1a1" stroke-width="1.6">
+    <line x1="160" y1="200" x2="40"  y2="260"/>
+    <line x1="160" y1="200" x2="300" y2="253"/>
+    <line x1="160" y1="200" x2="160" y2="30"/>
+  </g>
+  <g fill="#93a1a1" font-size="13" font-style="italic">
+    <text x="34"  y="272">x&#8321;</text>
+    <text x="305" y="257">x&#8322;</text>
+    <text x="150" y="26">x&#8323;</text>
+  </g>
+  <circle cx="160" cy="200" r="2.5" fill="#93a1a1"/>
+
+  <polygon points="70,245 270,240 160,50"
+           fill="#268bd2" fill-opacity="0.16" stroke="#268bd2" stroke-width="2" stroke-linejoin="round"/>
+
+  <g fill="#cb4b16" stroke="#8a3210" stroke-width="2">
+    <circle cx="70"  cy="245" r="6"/>
+    <circle cx="270" cy="240" r="6"/>
+    <circle cx="160" cy="50"  r="6"/>
+  </g>
+
+  <!-- objective direction c -->
+  <line x1="300" y1="150" x2="300" y2="80" stroke="#dc322f" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="308" y="115" font-size="14" fill="#dc322f" font-style="italic">c</text>
+
+  <!-- improving feasible direction d from x* (up-right, positively correlated with c) -->
+  <line x1="165" y1="180" x2="200" y2="164" stroke="#859900" stroke-width="2.5" marker-end="url(#arrowg)"/>
+  <text x="196" y="152" font-size="14" fill="#556100" font-style="italic">d</text>
+
+  <!-- interior point x* -->
+  <circle cx="165" cy="180" r="5" fill="#073642"/>
+  <text x="150" y="184" font-size="14" fill="#073642" font-style="italic" text-anchor="end">x*</text>
+</svg>

@@ -56,7 +56,7 @@
                 <p><b>Example: </b></p>
               <table> 
                   <tr> <td> min </td> <td> $x_1$ </td> </tr>
-                  <tr> <td> such that </td> <td> $x \le 1$ </td> </tr>
+                  <tr> <td> such that </td> <td> $x_1 \le 1$ </td> </tr>
               </table>
               <p> This <b>is unbounded</b> because for any $t$, $\min(t-1,0)$ is feasible, and the objective value will be less than $t$.  </p>
             </div>
@@ -67,7 +67,7 @@
                 <p><b>Not An Example: </b></p>
               <table> 
                   <tr> <td> min </td> <td> $x_1$ </td> </tr>
-                  <tr> <td> such that </td> <td> $x \ge 1$ </td> </tr>
+                  <tr> <td> such that </td> <td> $x_1 \ge 1$ </td> </tr>
               </table>
               <p> This is <b>not</b> unbounded; if $t < 1$, then there is no feasible point with objective less than $t$.</p>
             </div>
@@ -317,7 +317,7 @@
             <h3 data-id="seform-title">Standard Equality Form</h3>
             <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
             <table class="darkGreenText"> 
-                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1+x_2+x_3$ </td> </tr>
+                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1-x_2-x_3$ </td> </tr>
                 <tr data-id="sef-c1"> <td> such that </td> <td> $x_1+x_2+x_3 \le 1$ </td> </tr>
                 <tr data-id="sef-c2"> <td> </td> <td> $x_1-x_2+x_3 \le 2$ </td> </tr>
                 <tr data-id="sef-c3-dist"> <td> </td> <td> $-x_1-2x_2 \le -3$ </td> </tr>
@@ -341,7 +341,7 @@
             <h3 data-id="seform-title">Standard Equality Form</h3>
             <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
             <table class="darkGreenText"> 
-                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1+x_2+x_3$ </td> </tr>
+                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1-x_2-x_3$ </td> </tr>
                 <tr> <td> such that </td> <td> <span data-id="lhs-c1">$x_1+x_2+x_3$</span> <span data-id="rel-c1-le">$\le 1$</span> </td> </tr>
                 <tr> <td> </td> <td> <span data-id="lhs-c2">$x_1-x_2+x_3$</span> <span data-id="rel-c2-le">$\le 2$</span> </td> </tr>
                 <tr> <td> </td> <td> <span data-id="lhs-c3">$-x_1-2x_2$</span> <span data-id="rel-c3-le">$\le -3$</span> </td> </tr>
@@ -354,7 +354,7 @@
             <h3 data-id="seform-title">Standard Equality Form</h3>
             <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
             <table class="darkGreenText"> 
-                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1+x_2+x_3$ </td> </tr>
+                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1-x_2-x_3$ </td> </tr>
                 <tr> <td> such that </td> <td> <span data-id="lhs-c1">$x_1+x_2+x_3$</span> <span data-id="slk-c1">$+\, s_1$</span> <span data-id="rel-c1-eq">$= 1$</span> </td> </tr>
                 <tr> <td> </td> <td> <span data-id="lhs-c2">$x_1-x_2+x_3$</span> <span data-id="slk-c2">$+\, s_2$</span> <span data-id="rel-c2-eq">$= 2$</span> </td> </tr>
                 <tr> <td> </td> <td> <span data-id="lhs-c3">$-x_1-2x_2$</span> <span data-id="slk-c3">$+\, s_3$</span> <span data-id="rel-c3-eq">$= -3$</span> </td> </tr>
@@ -367,7 +367,7 @@
             <h3 data-id="seform-title">Standard Equality Form</h3>
             <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
             <table class="darkGreenText"> 
-                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1+x_2+x_3$ </td> </tr>
+                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1-x_2-x_3$ </td> </tr>
                 <tr data-id="sef-c1-eq"> <td> such that </td> <td> $x_1+x_2+x_3 + s_1 = 1$ </td> </tr>
                 <tr data-id="sef-c2-eq"> <td> </td> <td> $x_1-x_2+x_3 +s_2= 2$ </td> </tr>
                 <tr data-id="sef-c3-eq"> <td> </td> <td> $-x_1-2x_2 +s_3 = -3$ </td> </tr>
@@ -380,7 +380,7 @@
             <h3 data-id="seform-title">Standard Equality Form</h3>
             <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
             <table class="darkGreenText"> 
-                <tr> <td> max </td> <td> <span data-id="o-x1p">$-(x_1^+-x_1^-)$</span><span data-id="o-x2p">$+(x_2^+-x_2^-)$</span><span data-id="o-x3p">$+(x_3^+-x_3^-)$</span> </td> </tr>
+                <tr> <td> max </td> <td> <span data-id="o-x1p">$-(x_1^+-x_1^-)$</span><span data-id="o-x2p">$-(x_2^+-x_2^-)$</span><span data-id="o-x3p">$-(x_3^+-x_3^-)$</span> </td> </tr>
                 <tr> <td> such that </td> <td> <span data-id="c1-x1p">$(x_1^+-x_1^-)$</span><span data-id="c1-x2p">$+(x_2^+-x_2^-)$</span><span data-id="c1-x3p">$+(x_3^+-x_3^-)$</span> <span data-id="slk-c1">$+\, s_1$</span> <span data-id="rel-c1-eq">$= 1$</span> </td> </tr>
                 <tr> <td> </td> <td> <span data-id="c2-x1p">$(x_1^+-x_1^-)$</span><span data-id="c2-x2p">$-(x_2^+-x_2^-)$</span><span data-id="c2-x3p">$+(x_3^+-x_3^-)$</span> <span data-id="slk-c2">$+\, s_2$</span> <span data-id="rel-c2-eq">$= 2$</span> </td> </tr>
                 <tr> <td> </td> <td> <span data-id="c3-x1p">$-(x_1^+-x_1^-)$</span><span data-id="c3-x2p">$-2(x_2^+-x_2^-)$</span> <span data-id="slk-c3">$+\, s_3$</span> <span data-id="rel-c3-eq">$= -3$</span> </td> </tr>
@@ -445,7 +445,7 @@
                 <tr> <td> such that </td> <td> $A'z= b$ </td> </tr>
                 <tr> <td> </td> <td> $z \ge 0$ </td> </tr>
             </table>
-            <p> where we think of $z = \begin{pmatrix}x^+\\x^-\\s\end{pmatrix}$, $c' = \begin{pmatrix}c \\ -c \\ 0\end{pmatrix}$ and $A' = \begin{pmatrix}A \\ - A \\ I\end{pmatrix}$.</p>
+            <p> where we think of $z = \begin{pmatrix}x^+\\x^-\\s\end{pmatrix}$, $c' = \begin{pmatrix}c \\ -c \\ 0\end{pmatrix}$ and $A' = \begin{pmatrix}A & - A & I\end{pmatrix}$.</p>
         </section>
         <section data-auto-animate>
             <h3 data-id="seform-title2">Standard Equality Form</h3>
@@ -727,7 +727,7 @@
         <section>
             <h3> Bases and Canonical Forms</h3>
             <p> Can we row reduce with respect to any set of columns? </p>
-            <p>A <b>basis</b> (plural bases) of a linear system is a square set of columns of the matrix which are linearly independent.</p>
+            <p>A <b>basis</b> (plural bases) of a linear system is a set of columns of the matrix which are linearly independent, and where no larger set of columns is linearly independent.</p>
             <p class=fragment> For example, consider $A = \begin{pmatrix} 1 & 1 & 2 & 0 \\ 2 & 0 & 4 & 1\end{pmatrix}$. A basis is a set of two columns that are linearly independent. </p>
             <p class=fragment> Most pairs of columns form a basis, for instance
               \[
@@ -739,8 +739,9 @@
         <section>
             <h3> Bases and Canonical Forms</h3>
             <p> Can we row reduce with respect to any set of columns? </p>
-            <p>A <b>basis</b> (plural bases) of a linear system is a set of columns of the matrix which are linearly independent.</p>
-            <p> A <b>canonical form</b> of a linear system with respect to a basis is the result of row reducing system with respect to that basis.</p>
+            <p>A <b>basis</b> (plural bases) of a linear system is a set of columns of the matrix which are linearly independent with as many columns as possible.</p>
+            <p> A variable is <b>basic</b> if it is part of the basis, and nonbasic if it is not.</p>
+            <p> The row reduced echelon form <b>(RREF)</b> of a linear system with respect to a basis is the result of row reducing system with respect to that basis.</p>
             <div class="flexbox">
                 <div style="margin-left:-20px; margin-right:20px; width:500px;">
                 <p>
@@ -748,7 +749,7 @@
                     \begin{pmatrix} \color{blue}1 &\color{blue} 0 & -1 \\\color{blue} 0 &\color{blue} 1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -5/3 \\ 4/3 \end{pmatrix}
                 \]
                 </p>
-                <p> This is a canonical form with respect to the basis $\{1,2\}$ </p>
+                <p> This is a RREF with respect to the basis $\{1,2\}$ </p>
                 </div>
                 <div style="margin-left:20px; width:500px;">
                 <p>
@@ -756,27 +757,9 @@
                     \begin{pmatrix} \color{red}1 & 1/2 & \color{red}0 \\ \color{red}0 & 1/2 & \color{red}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -1 \\ 2/3 \end{pmatrix}
                 \]
                 </p>
-                <p> This is a canonical form with respect to the basis $\{1,3\}$ </p>
+                <p> This is a RREF with respect to the basis $\{1,3\}$ </p>
                 </div>
             </div>
-        </section>
-        <section>
-            <h3> Bases and Canonical Forms</h3>
-            <p>A linear program in SEF is in canonical form with respect to a basis if the linear system $Ax = b$ is in canonical form with respect to that basis. </p>
-            <table class="darkBlueText"> 
-                <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
-                <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
-                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
-            </table>
-        </section>
-        <section>
-            <h3> Bases and Canonical Forms</h3>
-            <p>A linear program in SEF is in canonical form with respect to a basis if the linear system $Ax = b$ is in canonical form with respect to that basis. </p>
-            <table class="darkBlueText"> 
-                <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
-                <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
-                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
-            </table>
         </section>
         <section>
             <h3> Bases and Canonical Forms</h3>
@@ -789,7 +772,7 @@
         </section>
         <section>
             <h3> Bases and Canonical Forms</h3>
-            <p> The three canonical forms of $Ax = b$: </p>
+            <p> The three RREFs of $Ax = b$: </p>
             <div class="flexbox" style="font-size:0.72em;">
                 <div style="margin:0 10px;">
                     <p>
@@ -828,6 +811,111 @@
                     </p>
                     <p class="centered"> basis $\{3, 4\}$ </p>
                 </div>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> For a linear program in SEF </p>
+            <table class="darkBlueText"> 
+                <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p> We can replace the linear system with a RREF without changing the LP. </p>
+            <p class=fragment> We can also change the objective! </p>
+        </section>
+        <section data-auto-animate>
+            <h3>Bases and Canonical Forms</h3>
+            <p><b> Rewriting the objective</b></p>
+            <p> Consider </p>
+            <table>
+                <tr> <td> max </td> <td> $x_1 + x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_2 = 2$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
+            </table>
+            <div class="fragment">
+            <p> If $x_1 - x_2 = 2$, then $x_1 = 2 + x_2$ and the objective could also be written. </p>
+            <table>
+                <tr> <td> max </td> <td> $(2+x_2)$ $+x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_2 = 2$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
+            </table>
+            </div>
+        </section>
+        <section data-auto-animate>
+            <h3>Bases and Canonical Forms</h3>
+            <p><b> Rewriting the objective</b></p>
+            <p> Consider </p>
+            <table>
+                <tr> <td> max </td> <td> $x_1 + x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_2 = 2$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
+            </table>
+            <div class="fragment">
+            <p> If $x_1 - x_2 = 2$, then $x_1 = 2 + x_2$ and the objective could also be written. </p>
+            <table>
+                <tr> <td> max </td> <td> $2+2x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_2 = 2$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
+            </table>
+            <p> Note that we are adding a constant to the objective. That's fine; it doesn't affect the optimization problem. </p>
+            </div>
+        </section>
+        <section>
+            <h3>Bases and Canonical Forms</h3>
+            <p> If a linear system is in RREF, then we have essentially solved for the basic variables in terms of the nonbasic variables. </p>
+            <p> So we can backsubstitute for the basic variables in terms of the nonbasic variables in the objective. </p>
+            <div class=fragment>
+            <table>
+                <tr> <td> max </td> <td> $x_1 + x_2$ $+ x_3 + x_4$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 $ $- x_3 + x_4 = 2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_2 $ $+ 2x_3 + x_4 = 3$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2, x_3, x_4 \ge 0$ </td> </tr>
+            </table>
+            </div>
+        </section>
+        <section>
+            <h3>Bases and Canonical Forms</h3>
+            <p> If a linear system is in RREF, then we have essentially solved for the basic variables in terms of the nonbasic variables. </p>
+            <p> So we can backsubstitute for the basic variables in terms of the nonbasic variables. </p>
+            <div class=fragment>
+            <table>
+                <tr> <td> max </td> <td> $(2 + x_3 - x_4) + (3 - 2x_3 - x_4) $ $+ x_3 + x_4$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_3 + x_4 = 2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_2 + 2x_3 + x_4 = 3$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2, x_3, x_4 \ge 0$ </td> </tr>
+            </table>
+            </div>
+        </section>
+        <section>
+            <h3>Bases and Canonical Forms</h3>
+            <p> If a linear system is in RREF, then we have essentially solved for the basic variables in terms of the nonbasic variables. </p>
+            <p> So we can backsubstitute for the basic variables in terms of the nonbasic variables. </p>
+            <div class=fragment>
+            <table>
+                <tr> <td> max </td> <td> $(5 - x_4)$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_3 + x_4 = 2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_2 + 2x_3 + x_4 = 3$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2, x_3, x_4 \ge 0$ </td> </tr>
+            </table>
+            </div>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p>A linear program in SEF is in canonical form with respect to a basis if the linear system $Ax = b$ is in RREF with respect to that basis, and the objective does not depend on the basic variables. </p>
+            <table class="darkBlueText"> 
+                <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p>A linear program in SEF is in canonical form with respect to a basis if the linear system $Ax = b$ is in canonical form with respect to that basis. </p>
+            <table class="darkBlueText"> 
+                <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
         </section>
         <section>
             <h3> Bases and Canonical Forms</h3>

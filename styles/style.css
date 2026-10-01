@@ -7,6 +7,62 @@ p, li, td {
     display: flex;
 }
 
+/* Grid for displaying several canonical forms in equal-width cells. */
+.canonical-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    justify-items: center;
+    column-gap: 24px;
+    row-gap: 12px;
+    font-size: 0.6em;
+}
+
+/* Two equal-width columns (e.g. six forms shown as 3 rows of 2). */
+.canonical-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* Shrink the LP tables and labels inside the canonical-forms grid. */
+.reveal .canonical-grid {
+    font-size: 0.5em;
+}
+
+.reveal .canonical-grid table td {
+    font-size: 18px;
+}
+
+.canonical-grid .basis-label {
+    font-size: 18px;
+}
+
+.canonical-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top:20px;
+}
+
+/* Cell variant: basis label to the LEFT of the program (objective + constraints). */
+.canonical-cell.label-left {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.canonical-cell.label-left .basis-label {
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+
+.canonical-cell.label-left .program {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
 .redText {
     color: #FF6961;
 }

@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>
+            Lecture 7
+        </h4>
+        <br>
+        <p class=centered>
+          Kevin Shu
+        </p>
+        <aside class="notes">
+          Add private speaker notes here. Press S during the presentation to open speaker view.
+        </aside>
+      </section>
+
+      <section>
+        <h2>Lecture Outline</h2>
+        <ul>
+          <li>Standard Equality Forms and Bases Review</li>
+          <li>Examples of standard equality form and canonical forms </li>
+          <li>Basic Solutions</li>
+        </ul>
+      </section>
+
+      <!-- ===================== Standard Equality Form ===================== -->
+      <section>
+        <section data-auto-animate>
+            <h2> Review from Last Lecture </h2>
+        </section>
+        <section data-auto-animate>
+            <h2> Review from Last Lecture </h2>
+            <h2>Standard Equality Form</h2>
+        </section>
+        <section data-auto-animate>
+            <h3>Standard Equality Form</h3>
+            <div>
+                <p> The standard equality form for an LP is</p>
+                <table class="darkBlueText"> 
+                    <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+                <p> The only inequality constraints are that all variables are nonnegative; everything else is an equality constraint.</p>
+            </div>
+        </section>
+        <section>
+            <h3>Standard Equality Form</h3>
+            <p> Contrast SEF with the inequality form we have used so far: </p>
+            <div>
+              <div style="margin:0 20px;">
+                <table class="darkBlueText"> 
+                    <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+                <p class=centered> Standard equality form </p>
+              </div>
+              <br>
+              <div style="margin:0 20px;">
+                <table class="darkGreenText"> 
+                    <tr> <td> min </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax \le b$ </td> </tr>
+                </table>
+                <p class=centered> Inequality form </p>
+              </div>
+            </div>
+            <p class=fragment> Any LP can be converted into an equivalent LP in SEF. </p>
+        </section>
+        <section>
+            <h3>Outcomes of Linear Programs</h3>
+            <p style="margin:0.2em 0;"> For LP <span class=darkBlueText>$\max c^{\intercal} x$ s.t. $Ax = b, x\ge 0$</span>, each outcome has a <b>certificate</b>. </p>
+            <div style="display:flex; align-items:stretch; gap:14px; font-size:0.62em; margin-top:0.4em;">
+              <div style="flex:1 1 0; min-width:0; border:2px solid #dc322f; border-radius:12px; padding:8px 10px;">
+                <p style="color:#dc322f; font-weight:700; margin:0 0 4px;">Infeasible</p>
+                <img src="images/outcome_infeasible.svg" style="width:88%; display:block; margin:0 auto;" />
+                <p style="margin:2px 0;">Certificate: a free $y$ with</p>
+                <p style="margin:2px 0;">\[\begin{aligned}A^{\intercal} y &\ge 0\\b^{\intercal} y &< 0\end{aligned}\]</p>
+              </div>
+              <div style="flex:1 1 0; min-width:0; border:2px solid #859900; border-radius:12px; padding:8px 10px;">
+                <p style="color:#859900; font-weight:700; margin:0 0 4px;">Has an optimal point</p>
+                <img src="images/outcome_optimal.svg" style="width:88%; display:block; margin:0 auto;" />
+                <p style="margin:2px 0;">Certificate:</p>
+                <p style="margin:6px 0 2px;">A feasible $x^*$ and a free $y$ with </p>
+                <p style="margin:2px 0;">\[\begin{aligned}A^{\intercal} y &\ge c\\b^{\intercal} y &= c^{\intercal} x^*\end{aligned}\]</p>
+              </div>
+              <div style="flex:1 1 0; min-width:0; border:2px solid #cb4b16; border-radius:12px; padding:8px 10px;">
+                <p style="color:#cb4b16; font-weight:700; margin:0 0 4px;">Unbounded</p>
+                <img src="images/outcome_unbounded.svg" style="width:88%; display:block; margin:0 auto;" />
+                <p style="margin:2px 0;">Certificate:</p>
+                <p style="margin:6px 0 2px;">A feasible $x$, and a $v$ with </p>
+                <p style="margin:2px 0;">\[\begin{aligned}Av &= 0\\v &\ge 0\\c^{\intercal} v &> 0\end{aligned}\]</p>
+              </div>
+            </div>
+        </section>
+        <section>
+            <h3>Transforming LPs into SEF</h3>
+            <p> The recipe has three steps: </p>
+            <ol>
+              <li class=fragment> <b>Step 1.</b> Negate where needed so the objective is a <b>max</b> and every inequality is $\le$. </li>
+              <li class=fragment> <b>Step 2.</b> Add a nonnegative <b>slack variable</b> to each inequality to turn it into an equality. (Existing equalities need no slack.) </li>
+              <li class=fragment> <b>Step 3.</b> Replace each <b>free</b> variable $x_i$ with $x_i^+ - x_i^-$ where $x_i^+, x_i^- \ge 0$. (Variables already $\ge 0$ are left alone.) </li>
+            </ol>
+        </section>
+
+        <!-- Example 1 -->
+        <section>
+            <h3>Transforming LPs into SEF</h3>
+            <h4>Example 1</h4>
+            <p> Start with this LP (here $x_1, x_2, x_3$ are all free): </p>
+            <table class="darkGreenText"> 
+                <tr> <td> min </td> <td> $x_1 + x_2 + x_3$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 + x_2 + x_3 \le 1$ </td> </tr>
+                <tr> <td> </td> <td> $x_1 + 2x_2 \ge 3$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h3>Transforming LPs into SEF</h3>
+            <h4>Example 1 &mdash; Step 1</h4>
+            <p> Make the objective a max and all inequalities $\le$ by negating: </p>
+            <table class="darkGreenText"> 
+                <tr> <td> max </td> <td> $-x_1 - x_2 - x_3$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 + x_2 + x_3 \le 1$ </td> </tr>
+                <tr> <td> </td> <td> $-x_1 - 2x_2 \le -3$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h3>Transforming LPs into SEF</h3>
+            <h4>Example 1 &mdash; Step 2</h4>
+            <p> Add a nonnegative slack variable to each inequality: </p>
+            <table class="darkGreenText"> 
+                <tr> <td> max </td> <td> $-x_1 - x_2 - x_3$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 + x_2 + x_3 + s_1 = 1$ </td> </tr>
+                <tr> <td> </td> <td> $-x_1 - 2x_2 + s_2 = -3$ </td> </tr>
+                <tr> <td> </td> <td> $s_1, s_2 \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h3>Transforming LPs into SEF</h3>
+            <h4>Example 1 &mdash; Step 3</h4>
+            <p> Replace each free variable $x_i$ with $x_i^+ - x_i^-$: </p>
+            <table class="darkGreenText"> 
+                <tr> <td> max </td> <td> $-(x_1^+-x_1^-) - (x_2^+-x_2^-) - (x_3^+-x_3^-)$ </td> </tr>
+                <tr> <td> such that </td> <td> $(x_1^+-x_1^-) + (x_2^+-x_2^-) + (x_3^+-x_3^-) + s_1 = 1$ </td> </tr>
+                <tr> <td> </td> <td> $-(x_1^+-x_1^-) - 2(x_2^+-x_2^-) + s_2 = -3$ </td> </tr>
+                <tr> <td> </td> <td> $x_i^+, x_i^-, s_1, s_2 \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> This LP is now in standard equality form. </p>
+        </section>
+
+        <!-- Example 2 -->
+        <section>
+            <h3>Transforming LPs into SEF</h3>
+            <h4>Example 2</h4>
+            <p> Here $x_2 \ge 0$ already, $x_1$ is free, and there is an existing equality constraint: </p>
+            <table class="darkGreenText"> 
+                <tr> <td> min </td> <td> $2x_1 + 3x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 + x_2 \ge 4$ </td> </tr>
+                <tr> <td> </td> <td> $x_1 + 2x_2 = 5$ </td> </tr>
+                <tr> <td> </td> <td> $x_2 \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h3>Transforming LPs into SEF</h3>
+            <h4>Example 2 &mdash; Step 1</h4>
+            <p> Make it a max and the inequality $\le$ (the equality is untouched): </p>
+            <table class="darkGreenText"> 
+                <tr> <td> max </td> <td> $-2x_1 - 3x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $-x_1 - x_2 \le -4$ </td> </tr>
+                <tr> <td> </td> <td> $x_1 + 2x_2 = 5$ </td> </tr>
+                <tr> <td> </td> <td> $x_2 \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h3>Transforming LPs into SEF</h3>
+            <h4>Example 2 &mdash; Step 2</h4>
+            <p> Add a slack to the inequality only; the equality $x_1 + 2x_2 = 5$ needs no slack: </p>
+            <table class="darkGreenText"> 
+                <tr> <td> max </td> <td> $-2x_1 - 3x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $-x_1 - x_2 + s_1 = -4$ </td> </tr>
+                <tr> <td> </td> <td> $x_1 + 2x_2 = 5$ </td> </tr>
+                <tr> <td> </td> <td> $x_2, s_1 \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h3>Transforming LPs into SEF</h3>
+            <h4>Example 2 &mdash; Step 3</h4>
+            <p> Replace only the free variable $x_1$ with $x_1^+ - x_1^-$; since $x_2 \ge 0$ already, it is left alone: </p>
+            <table class="darkGreenText"> 
+                <tr> <td> max </td> <td> $-2(x_1^+-x_1^-) - 3x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $-(x_1^+-x_1^-) - x_2 + s_1 = -4$ </td> </tr>
+                <tr> <td> </td> <td> $(x_1^+-x_1^-) + 2x_2 = 5$ </td> </tr>
+                <tr> <td> </td> <td> $x_1^+, x_1^-, x_2, s_1 \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> This LP is now in standard equality form. </p>
+        </section>
+      </section>
+
+      <section>
+        <section>
+            <h2>Bases and Canonical Forms</h2>
+        </section>
+        <section>
+            <h3>Bases and Canonical Forms</h3>
+            <p>A <b>basis</b> (plural bases) of a matrix is a set of columns of the matrix which are linearly independent, with as many columns as possible.</p>
+            <p> A variable is <b>basic</b> if it is part of the basis, and nonbasic if it is not.</p>
+            <p class=fragment> For example, consider \[A = \begin{pmatrix} 1 & 1 & 2 & 0 \\ 2 & 0 & 4 & 1\end{pmatrix}.\] A basis is a set of two columns that are linearly independent. </p>
+            <p class=fragment> Most pairs of columns form a basis, for instance
+              \[
+                \{1,2\},\qquad \{2,3\},\qquad \{3,4\}.
+              \]
+            </p>
+            <p class=fragment> But <span style="color:#dc322f;">$\{1,3\}$ is <b>not</b> a basis</span>: column $3$ is twice column $1$, so those columns are linearly dependent. </p>
+        </section>
+        <section>
+            <h3>Bases and Canonical Forms</h3>
+            <p> The number of elements of a basis should be the <b>rank</b> of the matrix $A$ .</p>
+            <p class="fragment"> If the matrix $A$ has linearly independent rows (which will typically be the case in this class), then the basis will have the same number of elements as there are rows of the matrix. </p>
+            <p class="fragment"> \[
+                A =
+                \begin{pmatrix}
+                    1 & 2 & 3 & 4\\
+                    2 & 4 & 6 & 8\\
+                \end{pmatrix}
+                \]
+            </p>
+            <p class=fragment> This matrix is rank 1 (the two rows are linearly dependent, and all rows are the same), so a basis consists of any one column. </p>
+            <p class=fragment> Row reduction yields 
+                \[
+                A =
+                \begin{pmatrix}
+                    1 & 2 & 3 & 4\\
+                    0 & 0 & 0 & 0\\
+                \end{pmatrix}
+                \]
+            </p>
+        </section>
+        <section>
+            <h3>Bases and Canonical Forms</h3>
+            <p> There are many different ways of writing essentially the same system of linear equations: we can apply <b>row operations</b> without changing the solution set. </p>
+            <p> For every basis of a matrix $A$, there is a way to <i>canonicalize</i> (i.e. choose a unique presentation of the linear system) by bringing it into RREF. </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+            \[
+                \begin{pmatrix} \color{blue}1 & \color{blue}2 & 3 \\ \color{blue}4 & \color{blue}5 & 6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 0\end{pmatrix}.
+            \]
+            </p>
+            <p>We can row reduce this matrix using the first two columns (i.e. the basis $\{1,2\}$).</p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+            \[
+                \begin{pmatrix} \color{blue}1 & \color{blue}2 & 3 \\ \color{blue}4 & \color{blue}5 & 6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 0\end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_2 - 4 \rho_1}\]
+            \[
+                \begin{pmatrix} \color{blue}1 & \color{blue}2 & 3 \\ \color{blue}0 & \color{blue}{-3} & -6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ -4 \end{pmatrix}
+            \]
+            </p>
+            <p>Note that even though we change the form of the linear system, <b>the solutions stay the same</b>. In particular, any nonnegative solution to the first system is a nonnegative solution to the second (and vice versa).</p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+                <p> Further row operations reduce the problem to <b>Row Reduced Echelon Form (RREF) </b></p>
+                <p>
+            \[
+                \begin{pmatrix} \color{blue}1 & \color{blue}2 & 3 \\ \color{blue}0 & \color{blue}{-3} & -6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ -4 \end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_2 / -3}\]
+            \[
+                \begin{pmatrix} \color{blue}1 & \color{blue}2 & 3 \\ \color{blue}0 & \color{blue}1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 4/3 \end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+                <p> Further row operations reduce the problem to <b>Row Reduced Echelon Form (RREF) </b></p>
+                <p>
+            \[
+                \begin{pmatrix} \color{blue}1 & \color{blue}2 & 3 \\ \color{blue}0 & \color{blue}1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 4/3 \end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_1 - 2 \rho 2}\]
+            \[
+                \begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 \\ \color{blue}0 & \color{blue}1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -5/3 \\ 4/3 \end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p>
+            \[
+                \begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 \\ \color{blue}0 & \color{blue}1 & 2\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -5/3 \\ 4/3 \end{pmatrix}
+            \]
+            </p>
+            <p> This system of equations tells us that $x_1 = -\frac{5}{3} + x_3$ and $x_2 = \frac{4}{3} - 2x_3.$</p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> Let us instead reduce with respect to <span style="color:#dc322f;">columns $1$ and $3$</span>. 
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}4 & 5 & \color{red}6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 0\end{pmatrix}
+            \]
+            </p>
+            <p class=fragment>We apply <b>row operations</b> to reduce the highlighted columns. </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}4 & 5 & \color{red}6\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 0\end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_2 - 4 \rho_1}\]
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}0 & -3 & \color{red}{-6}\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ -4 \end{pmatrix}
+            \]
+            </p>
+            <p class=fragment>As before, the solution set is unchanged by row operations. </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+                <p> We reduce with respect to <span style="color:#dc322f;">columns $1$ and $3$</span>. </p>
+                <p>
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}0 & -3 & \color{red}{-6}\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ -4 \end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_2 / -6}\]
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}0 & 1/2 & \color{red}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 2/3 \end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p> <b> Example: </b> 
+                <p> We reduce with respect to <span style="color:#dc322f;">columns $1$ and $3$</span>. </p>
+                <p>
+            \[
+                \begin{pmatrix} \color{red}1 & 2 & \color{red}3 \\ \color{red}0 & 1/2 & \color{red}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} 1 \\ 2/3 \end{pmatrix}
+            \]
+            \[ \downarrow_{\rho_1 - 3 \rho_2}\]
+            \[
+                \begin{pmatrix} \color{red}1 & 1/2 & \color{red}0 \\ \color{red}0 & 1/2 & \color{red}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -1 \\ 2/3 \end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section>
+            <h3> Bases and Canonical Forms</h3>
+            <p>
+            \[
+                \begin{pmatrix} \color{red}1 & 1/2 & \color{red}0 \\ \color{red}0 & 1/2 & \color{red}1\end{pmatrix} \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix} = \begin{pmatrix} -1 \\ 2/3 \end{pmatrix}
+            \]
+            </p>
+            <p> Now $x_2$ is the free coordinate: $x_1 = -1 - \frac{1}{2}x_2$ and $x_3 = \frac{2}{3} - \frac{1}{2}x_2.$</p>
+        </section>
+        <section>
+            <h3>Bases and Canonical Forms</h3>
+            <p> For a linear program in SEF 
+                <table>
+                    <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+            </p>
+            <p> We can rewrite it so that its constraints are in RREF (with respect to a given basis). </p>
+            <p class="fragment"> We can also rewrite the objective so that it is more canonical. </p>
+        </section>
+        <section data-auto-animate>
+            <h3>Bases and Canonical Forms</h3>
+            <p><b> Rewriting the objective</b></p>
+            <p> Consider </p>
+            <table data-id="LPEX1">
+                <tr> <td> max </td> <td> $x_1 + x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_2 = 2$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
+            </table>
+            <div class="fragment">
+            <p> If $x_1 - x_2 = 2$, then $x_1 = 2 + x_2$ and the objective could also be written. </p>
+            <table>
+                <tr> <td> max </td> <td> $(2+x_2)$ $+x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_2 = 2$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
+            </table>
+            </div>
+            <p> . </p>
+        </section>
+        <section data-auto-animate>
+            <h3>Bases and Canonical Forms</h3>
+            <p><b> Rewriting the objective</b></p>
+            <p> Consider </p>
+            <table data-id="LPEX1">
+                <tr> <td> max </td> <td> $x_1 + x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_2 = 2$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
+            </table>
+            <div>
+            <p> If $x_1 - x_2 = 2$, then $x_1 = 2 + x_2$ and the objective could also be written. </p>
+            <table>
+                <tr> <td> max </td> <td> $2+2x_2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_2 = 2$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2 \ge 0$ </td> </tr>
+            </table>
+            </div>
+            <p class="fragment"> The objective has a constant term. It doesn't affect the optimization. </p>
+        </section>
+        <section>
+            <h3>Bases and Canonical Forms</h3>
+            <p>The RREF of a linear system solves for the basic variables in terms of the variables not in the basis.</p>
+            <p> If we backsubstitute for the basic variables in the objective, then we can remove the dependence of the objective on those variables. </p>
+        </section>
+        <section data-auto-animate>
+            <h3>Bases and Canonical Forms</h3>
+            <div data-id="generalLP">
+                <p> If the full-rank matrix $A$ is in RREF (and the basis is the first few columns), then $A$ has the form $\begin{pmatrix}I & A_N\end{pmatrix}$, where $A_N$ is some other matrix. </p>
+                <table data-id="generalLPEx">
+                    <tr> <td> max </td> <td> $c_B^{\intercal}x_B $ $+ c_N^{\intercal}x_N$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} I & A_{N} \end{pmatrix}\begin{pmatrix}x_B \\ x_N\end{pmatrix} = \begin{pmatrix}b_B\\b_N\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x_B, x_N \ge 0$ </td> </tr>
+                </table>
+                <p> The equations then become $x_B + A_Nx_N = b$, or $x_B = b-A_Nx_N$. </p>
+            </div>
+        </section>
+        <section data-auto-animate>
+            <h3>Bases and Canonical Forms</h3>
+            <div data-id="generalLP">
+                <p> If the full-rank matrix $A$ is in RREF (and the basis is the first few columns), then $A$ has the form $\begin{pmatrix}I & A_N\end{pmatrix}$, where $A_N$ is some other matrix. </p>
+                <table data-id="generalLPEx">
+                    <tr> <td> max </td> <td> $c_B^{\intercal}x_B $ $+ c_N^{\intercal}x_N$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} I & A_{N} \end{pmatrix}\begin{pmatrix}x_B \\ x_N\end{pmatrix} = \begin{pmatrix}b_B\\b_N\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x_B, x_N \ge 0$ </td> </tr>
+                </table>
+                <p> The equations then become $x_B + A_Nx_N = b$, or $x_B = b-A_Nx_N$. </p>
+            </div>
+        </section>
+        <section data-auto-animate>
+            <h3>Bases and Canonical Forms</h3>
+            <div data-id="generalLP">
+                <p> If the full-rank matrix $A$ is in RREF (and the basis is the first few columns), then $A$ has the form $\begin{pmatrix}I & A_N\end{pmatrix}$, where $A_N$ is some other matrix. </p>
+                <table data-id="generalLPEx">
+                    <tr> <td> max </td> <td> $\color{blue}{c_B^{\intercal}(b-A_Nx_N) }$ $+ c_N^{\intercal}x_N$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} I & A_{N} \end{pmatrix}\begin{pmatrix}x_B \\ x_N\end{pmatrix} = \begin{pmatrix}b_B\\b_N\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x_B, x_N \ge 0$ </td> </tr>
+                </table>
+                <p> The equations then become $x_B + A_Nx_N = b$, or $x_B = b-A_Nx_N$. </p>
+            </div>
+        </section>
+        <section data-auto-animate>
+            <h3>Bases and Canonical Forms</h3>
+            <div data-id="generalLP">
+                <p> If the full-rank matrix $A$ is in RREF (and the basis is the first few columns), then $A$ has the form $\begin{pmatrix}I & A_N\end{pmatrix}$, where $A_N$ is some other matrix. </p>
+                <table data-id="generalLPEx">
+                    <tr> <td> max </td> <td> $(c_N - A_N^{\intercal}c_B)^{\intercal}x_N+ c_B^{\intercal}b$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} I & A_{N} \end{pmatrix}\begin{pmatrix}x_B \\ x_N\end{pmatrix} = \begin{pmatrix}b_B\\b_N\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x_B, x_N \ge 0$ </td> </tr>
+                </table>
+            </div>
+        </section>
+        <section data-auto-animate>
+            <h3>Bases and Canonical Forms</h3>
+            <p><b>Example:</b></p>
+            <div>
+            <table data-id="LPEX2">
+                <tr> <td> max </td> <td> $x_1 + x_2$ $+ x_3 + x_4$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 $ $- x_3 + x_4 = 2$ </td> </tr>
+                <tr> <td> </td> <td> $x_2 $ $+ 2x_3 + x_4 = 3$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2, x_3, x_4 \ge 0$ </td> </tr>
+            </table>
+            </div>
+            <p> The linear system is in RREF. We can substitute back in for $x_1$ and $x_2$.</p>
+        </section>
+        <section data-auto-animate>
+            <h3>Bases and Canonical Forms</h3>
+            <p><b>Example:</b></p>
+            <div>
+            <table data-id="LPEX2">
+                <tr> <td> max </td> <td> $(2 + x_3 - x_4) + (3 - 2x_3 - x_4) $ $+ x_3 + x_4$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_1 - x_3 + x_4 = 2$ </td> </tr>
+                <tr> <td> such that </td> <td> $x_2 + 2x_3 + x_4 = 3$ </td> </tr>
+                <tr> <td> </td> <td> $x_1, x_2, x_3, x_4 \ge 0$ </td> </tr>
+            </table>
+            </div>
+            <p> The linear system is in RREF. We can substitute back in for $x_1$ and $x_2$.</p>
+        </section>
+        <section>
+            <h3>Bases and Canonical Forms</h3>
+            <p> A <b>canonical form</b> of a linear program with respect to a basis $B$ has two properties: 
+            </p>
+            <ol>
+                <li>The linear system is in RREF. </li>
+                <li>The basic variables do not appear in the objective (i.e. their coefficients are 0 in $c$). </li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>Canonical Forms: Examples</h2>
+        </section>
+
+        <!-- 2x4 example -->
+        <!-- 2x4 example (LP) -->
+        <section>
+            <h3>Canonical Forms </h3>
+            <p> Consider the LP in SEF </p>
+            <table>
+                <tr> <td> max </td> <td> $\begin{pmatrix}1 & 2 & 3 & 4\end{pmatrix} x$ </td> </tr>
+                <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 2 & 1 & 0 \\ 1 & 1 & 0 & 1\end{pmatrix} x = \begin{pmatrix} 3 \\ 2\end{pmatrix}$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> A basis is any $2$ linearly independent columns. All $\binom{4}{2} = 6$ pairs are independent, so there are <b>six</b> canonical forms. </p>
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p>Take the basis $\{1,2\}$. First bring the constraints to RREF on columns $1,2$.</p>
+            <p>
+              \[
+              \begin{aligned}
+                \begin{pmatrix} \color{blue}1 & \color{blue}2 & 1 & 0 \\ \color{blue}1 & \color{blue}1 & 0 & 1\end{pmatrix} x &= \begin{pmatrix} 3 \\ 2\end{pmatrix} 
+                &\rightarrow_{\rho_2 - \rho_1}\\
+                \begin{pmatrix} \color{blue}1 & \color{blue}2 & 1 & 0 \\ \color{blue}0 & \color{blue}{-1} & -1 & 1\end{pmatrix} x &= \begin{pmatrix} 3 \\ -1\end{pmatrix}
+                &\rightarrow_{-\rho_2}\\
+                \begin{pmatrix} \color{blue}1 & \color{blue}2 & 1 & 0 \\ \color{blue}0 & \color{blue}1 & 1 & -1\end{pmatrix} x &= \begin{pmatrix} 3 \\ 1\end{pmatrix}
+                &\rightarrow_{\rho_1 - 2\rho_2}\\
+                  \begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & 2 \\ \color{blue}0 & \color{blue}1 & 1 & -1\end{pmatrix} x &= \begin{pmatrix} 1 \\ 1\end{pmatrix}
+              \end{aligned}
+              \]
+            </p>
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p> The linear constraints are now in RREF.</p>
+            <p>
+                  \[\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & 2 \\ \color{blue}0 & \color{blue}1 & 1 & -1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}\]
+            </p>
+            <p>
+                For the objective, note that it is equivalently
+                \[
+                \begin{pmatrix}\color{blue}1 \\ \color{blue}2 \\ 3 \\ 4\end{pmatrix}^{\intercal}
+                x - 
+                \left(\begin{pmatrix}\color{blue}1 \\ \color{blue}0 \\ -1 \\ 2 \end{pmatrix}^{\intercal}
+                x - 1\right)-
+                2\left(\begin{pmatrix} \color{blue}0 \\ \color{blue}1 \\ 1 \\ -1 \end{pmatrix}^{\intercal}
+                x - 1\right) = 
+                \begin{pmatrix} \color{blue}0 \\ \color{blue}0 \\ 2 \\ 4 \end{pmatrix}^{\intercal}
+                x + 3.
+                \]
+            </p>
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p>Now rewrite the objective so the basic variables $x_1, x_2$ have coefficient $0$.  </p>
+            <p> The LP in canonical form for the basis $\{1,2\}$ is </p>
+            <table>
+                <tr> <td> max </td> <td> $\begin{pmatrix} 0 & 0 & 2 & 4 \end{pmatrix}x + 3$ </td> </tr>
+                <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 0 & -1 & 2 \\ 0 & 1 & 1 & -1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section>
+            <h3>Canonical Forms - 6 Examples</h3>
+            <div class="canonical-grid canonical-grid-2" style="font-size:10px;">
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{1,2\}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 2 & 4\end{pmatrix} x + 3$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & 2 \\ \color{blue}0 & \color{blue}1 & 1 & -1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{1,3\}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & -2 & \color{blue}0 & 6\end{pmatrix} x + 5$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & 1 \\ \color{blue}0 & 1 & \color{blue}1 & -1\end{pmatrix} x = \begin{pmatrix} 2 \\ 1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{1,4\}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 4 & 6 & \color{blue}0\end{pmatrix} x - 1$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 2 & 1 & \color{blue}0 \\ \color{blue}0 & -1 & -1 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ -1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{2,3\}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} 2 & \color{blue}0 & \color{blue}0 & 8\end{pmatrix} x + 1$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & \color{blue}1 & \color{blue}0 & 1 \\ -1 & \color{blue}0 & \color{blue}1 & -2\end{pmatrix} x = \begin{pmatrix} 2 \\ -1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{2,4\}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} -2 & \color{blue}0 & 4 & \color{blue}0\end{pmatrix} x + 5$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1/2 & \color{blue}1 & 1/2 & \color{blue}0 \\ 1/2 & \color{blue}0 & -1/2 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3/2 \\ 1/2\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{3,4\}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} -6 & -8 & \color{blue}0 & \color{blue}0\end{pmatrix} x + 17$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 2 & \color{blue}1 & \color{blue}0 \\ 1 & 1 & \color{blue}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 2\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 3x4 example -->
+        <section>
+            <h3>Canonical Forms </h3>
+            <p> Consider the LP in SEF </p>
+            <table>
+                <tr> <td> max </td> <td> $\begin{pmatrix}\color{blue}1 & \color{blue}1 & 1 & \color{blue}1\end{pmatrix} x$ </td> </tr>
+                <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}2 & \color{blue}4 & 2 & \color{blue}2 \\ \color{blue}1 & \color{blue}3 & 2 & \color{blue}1 \\ \color{blue}3 & \color{blue}5 & 1 & \color{blue}2\end{pmatrix} x = \begin{pmatrix} 8 \\ 7 \\ 9\end{pmatrix}$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> Columns $1,2,4$ are linearly independent, so $\{1,2,4\}$ is a basis. Let us row reduce the constraints, then rewrite the objective. </p>
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p> <b>Row $1$:</b> normalize its pivot to $1$. </p>
+              \[
+                \begin{pmatrix} \color{green}2 & 4 & 2 & 2 \\ 1 & 3 & 2 & 1 \\ 3 & 5 & 1 & 2\end{pmatrix} x = \begin{pmatrix} 8 \\ 7 \\ 9\end{pmatrix}.
+              \]
+              \[
+              \downarrow_{\rho_1 = \rho_1 / 2}
+              \]
+              \[
+                \begin{pmatrix} \color{green}1 & 2 & 1 & 1 \\ 1 & 3 & 2 & 1 \\ 3 & 5 & 1 & 2\end{pmatrix} x = \begin{pmatrix} 4 \\ 7 \\ 9\end{pmatrix}.
+              \]
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p> <b>Row $1$:</b> use it to eliminate column $1$ from the rows below. </p>
+              \[
+                \begin{pmatrix} \color{green}1 & 2 & 1 & 1 \\ \color{green}1 & 3 & 2 & 1 \\ \color{green}3 & 5 & 1 & 2\end{pmatrix} x = \begin{pmatrix} 4 \\ 7 \\ 9\end{pmatrix}.
+              \]
+              \[
+              \downarrow_{\rho_2 = \rho_2 - \rho_1,\;\; \rho_3 = \rho_3 - 3\rho_1}
+              \]
+              \[
+                \begin{pmatrix} \color{green}1 & 2 & 1 & 1 \\ \color{green}0 & 1 & 1 & 0 \\ \color{green}0 & -1 & -2 & -1\end{pmatrix} x = \begin{pmatrix} 4 \\ 3 \\ -3\end{pmatrix}.
+              \]
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p> <b>Row $2$:</b> its pivot is already $1$. Use it to eliminate column $2$ from the row below. </p>
+              \[
+                \begin{pmatrix} 1 & \color{green}2 & 1 & 1 \\ 0 & \color{green}1 & 1 & 0 \\ 0 & \color{green}{-1} & -2 & -1\end{pmatrix} x = \begin{pmatrix} 4 \\ 3 \\ -3\end{pmatrix}.
+              \]
+              \[
+              \downarrow_{\rho_3 = \rho_3 + \rho_2}
+              \]
+              \[
+                \begin{pmatrix} 1 & \color{green}2 & 1 & 1 \\ 0 & \color{green}1 & 1 & 0 \\ 0 & \color{green}0 & -1 & -1\end{pmatrix} x = \begin{pmatrix} 4 \\ 3 \\ 0\end{pmatrix}.
+              \]
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p> <b>Row $3$:</b> we take column $4$ as the third pivot. Normalize it to $1$. </p>
+              \[
+                \begin{pmatrix} 1 & 2 & 1 & \color{green}1 \\ 0 & 1 & 1 & \color{green}0 \\ 0 & 0 & -1 & \color{green}{-1}\end{pmatrix} x = \begin{pmatrix} 4 \\ 3 \\ 0\end{pmatrix}.
+              \]
+              \[
+              \downarrow_{\rho_3 = -\rho_3}
+              \]
+              \[
+                \begin{pmatrix} 1 & 2 & 1 & \color{green}1 \\ 0 & 1 & 1 & \color{green}0 \\ 0 & 0 & 1 & \color{green}1\end{pmatrix} x = \begin{pmatrix} 4 \\ 3 \\ 0\end{pmatrix}.
+              \]
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p> <b>Back-substitute:</b> use row $3$ to clear column $4$ from the rows above. </p>
+              \[
+                \begin{pmatrix} 1 & 2 & 1 & \color{green}1 \\ 0 & 1 & 1 & \color{green}0 \\ 0 & 0 & 1 & \color{green}1\end{pmatrix} x = \begin{pmatrix} 4 \\ 3 \\ 0\end{pmatrix}.
+              \]
+              \[
+              \downarrow_{\rho_1 = \rho_1 - \rho_3}
+              \]
+              \[
+                \begin{pmatrix} 1 & 2 & 0 & \color{green}0 \\ 0 & 1 & 1 & \color{green}0 \\ 0 & 0 & 1 & \color{green}1\end{pmatrix} x = \begin{pmatrix} 4 \\ 3 \\ 0\end{pmatrix}.
+              \]
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p> <b>Back-substitute:</b> use row $2$ to clear column $2$ from row $1$. </p>
+              \[
+                \begin{pmatrix} 1 & \color{green}2 & 0 & 0 \\ 0 & \color{green}1 & 1 & 0 \\ 0 & \color{green}0 & 1 & 1\end{pmatrix} x = \begin{pmatrix} 4 \\ 3 \\ 0\end{pmatrix}.
+              \]
+              \[
+              \downarrow_{\rho_1 = \rho_1 - 2\rho_2}
+              \]
+              \[
+                \begin{pmatrix} \color{green}1 & \color{green}0 & -2 & \color{green}0 \\ \color{green}0 & \color{green}1 & 1 & \color{green}0 \\ \color{green}0 & \color{green}0 & 1 & \color{green}1\end{pmatrix} x = \begin{pmatrix} -2 \\ 3 \\ 0\end{pmatrix}.
+              \]
+              <p class=fragment> The constraints are in RREF for the basis $\{1,2,4\}$. </p>
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p> The linear constraints are now in RREF.</p>
+            <p>
+                For the objective, note that it is equivalently
+                \[
+                \begin{pmatrix}\color{blue}1 \\ \color{blue}1 \\ 1 \\ \color{blue}1\end{pmatrix}^{\intercal}x -
+                \left(\begin{pmatrix}\color{blue}1 \\ \color{blue}0 \\ -2 \\ \color{blue}0 \end{pmatrix}^{\intercal}x + 2\right)-
+                \left(\begin{pmatrix}\color{blue}0 \\ \color{blue}1 \\ 1 \\ \color{blue}0 \end{pmatrix}^{\intercal}x - 3\right)-
+                \left(\begin{pmatrix}\color{blue}0 \\ \color{blue}0 \\ 1 \\ \color{blue}1 \end{pmatrix}^{\intercal}x\right) =
+                \begin{pmatrix} \color{blue}0 \\ \color{blue}0 \\ 1 \\ \color{blue}0 \end{pmatrix}^{\intercal}x + 1.
+                \]
+            </p>
+        </section>
+        <section>
+            <h3>Canonical Forms </h3>
+            <p>Now rewrite the objective so the basic variables $x_1, x_2, x_4$ have coefficient $0$.  </p>
+            <p> The LP in canonical form for the basis $\{1,2,4\}$ is </p>
+            <table>
+                <tr> <td> max </td> <td> $\begin{pmatrix} 0 & 0 & 1 & 0 \end{pmatrix}x + 1$ </td> </tr>
+                <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 0 & -2 & 0 \\ 0 & 1 & 1 & 0 \\ 0 & 0 & 1 & 1\end{pmatrix} x = \begin{pmatrix} -2 \\ 3 \\ 0\end{pmatrix}$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+        </section>
+      </section>
+      <section>
+        <section>
+            <h2>Basic Solutions</h2>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p>For a matrix in RREF with respect to a basis $B$, there is a unique solution $x$ where all of the nonbasic variables are 0. </p>
+            <p>Such a solution is called a <b>basic solution</b>. </p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p><b>Example</b> 
+                \[
+                    \begin{pmatrix} \color{green}1 & \color{green}0 & -2 & \color{green}0 \\ \color{green}0 & \color{green}1 & 1 & \color{green}0 \\ \color{green}0 & \color{green}0 & 1 & \color{green}1\end{pmatrix} x = \begin{pmatrix} -2 \\ 3 \\ 1\end{pmatrix}.
+                \]
+             </p>
+
+            <p> Basic solutions solve the augmented linear system.
+                \[
+                    \begin{pmatrix} \color{green}1 & \color{green}0 & -2 & \color{green}0 \\ \color{green}0 & \color{green}1 & 1 & \color{green}0 \\ \color{green}0 & \color{green}0 & 1 & \color{green}1 \\ 0 & 0 & 1 & 0\end{pmatrix} x = \begin{pmatrix} -2 \\ 3 \\ 1 \\ 0\end{pmatrix}.
+                \]
+                This is now a square system, that can be seen to be invertible, so there is a unique solution.
+            </p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p>More generally, if we have a matrix $A$ in RREF (and the basis is the first few columns), it will look like
+                \[
+                    \begin{pmatrix} I & A'\\ 0 & I\end{pmatrix} x = \begin{pmatrix}b\\0\end{pmatrix}.
+                \]
+             </p>
+            <p> 
+                This matrix is invertible, so there is a unique solution to the linear system.
+            </p>
+            <p> The unique solution is actually
+                \[
+                x = \begin{pmatrix} b \\ 0 \end{pmatrix}.
+                \]
+            </p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p><b>Example</b> 
+                \[
+                    \begin{pmatrix} \color{green}1 & \color{green}0 & -2 & \color{green}0 \\ \color{green}0 & \color{green}1 & 1 & \color{green}0 \\ \color{green}0 & \color{green}0 & 1 & \color{green}1\end{pmatrix} x = \begin{pmatrix} -2 \\ 3 \\ 1\end{pmatrix}.
+                \]
+             </p>
+
+            <p> Here, the basic solution is
+                \[
+                    x = \begin{pmatrix} -2 \\ 3 \\ 0 \\ 1\end{pmatrix}.
+                \]
+            </p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> Generally, you can get the basic solution with respect to a basis by taking the RREF linear system $Ax = b$ and then make $x$ by padding $b$ with zeros at all entries that correspond to nonbasic variables.</p>
+        </section>
+        <section>
+            <h3> Basic Feasible Solutions </h3>
+            <p> Given an LP in SEF, a <b>basic feasible solution</b> is a basic solution to the linear system with nonnegative entries. </p>
+            <div class="flexbox">
+                <div style="margin:0 18px;">
+                    <p>
+                    \[
+                        \begin{pmatrix} \color{blue}1 & \color{blue}0 & -2 & \color{blue}0 \\ \color{blue}0 & \color{blue}1 & 1 & \color{blue}0 \\ \color{blue}0 & \color{blue}0 & 1 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 3 \\ 1\end{pmatrix}
+                    \]</p>
+                    <p class=centered> basis $\{1,2,4\}$ gives $x = (2, 3, 0, 1) \ge 0$. </p>
+                    <p class=centered> This is a basic <b>feasible</b> solution. </p>
+                </div>
+                <div style="margin:0 18px;">
+                    <p>
+                    \[
+                        \begin{pmatrix} \color{blue}1 & -2 & \color{blue}0 & \color{blue}0 \\ \color{blue}0 & 1 & \color{blue}1 & \color{blue}0 \\ \color{blue}0 & 1 & \color{blue}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} -2 \\ 3 \\ 1\end{pmatrix}
+                    \]</p>
+                    <p class=centered> basis $\{1,3,4\}$ gives $x = (-2, 0, 3, 1)$. </p>
+                    <p class=centered> Since $x_1 = -2 < 0$, this is <b>not</b> feasible. </p>
+                </div>
+            </div>
+        </section>
+        <section>
+            <p>
+                Remember the linear system
+            \[\begin{pmatrix} 1 & 0 & -1 & 2 \\ 0 & 1 & 1 & -1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}.\]
+            It has 6 RREFs with respect to different bases. Some of these correspond to basic feasible solutions and others correspond to basic solutions that are not feasible.
+
+            </p>
+        </section>
+        <section>
+            <h3>Canonical Forms - 6 Examples</h3>
+            <div class="canonical-grid canonical-grid-2" style="font-size:10px;">
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{1,2\}$<br> $x_b = \begin{pmatrix} 1 \\ 1 \\ 0 \\ 0\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 2 & 4\end{pmatrix} x + 3$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & 2 \\ \color{blue}0 & \color{blue}1 & 1 & -1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{1,3\}$<br> $x_b = \begin{pmatrix} 2 \\ 0 \\ 1 \\ 0\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & -2 & \color{blue}0 & 6\end{pmatrix} x + 5$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & 1 \\ \color{blue}0 & 1 & \color{blue}1 & -1\end{pmatrix} x = \begin{pmatrix} 2 \\ 1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{1,4\}$ <br> $x_b = \begin{pmatrix} 3 \\ 0 \\ 0 \\ -1\end{pmatrix}$</span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 4 & 6 & \color{blue}0\end{pmatrix} x - 1$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 2 & 1 & \color{blue}0 \\ \color{blue}0 & -1 & -1 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ -1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{2,3\}$ <br> $x_b = \begin{pmatrix} 0 \\ 2 \\ -1 \\ 0\end{pmatrix}$</span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} 2 & \color{blue}0 & \color{blue}0 & 8\end{pmatrix} x + 1$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & \color{blue}1 & \color{blue}0 & 1 \\ -1 & \color{blue}0 & \color{blue}1 & -2\end{pmatrix} x = \begin{pmatrix} 2 \\ -1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{2,4\}$ <br> $x_b = \begin{pmatrix} 0 \\ 3/2 \\ 0 \\ 1/2\end{pmatrix}$</span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} -2 & \color{blue}0 & 4 & \color{blue}0\end{pmatrix} x + 5$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1/2 & \color{blue}1 & 1/2 & \color{blue}0 \\ 1/2 & \color{blue}0 & -1/2 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3/2 \\ 1/2\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{3,4\}$<br> $x_b = \begin{pmatrix} 0 \\ 0 \\ 3 \\ 2\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} -6 & -8 & \color{blue}0 & \color{blue}0\end{pmatrix} x + 17$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 2 & \color{blue}1 & \color{blue}0 \\ 1 & 1 & \color{blue}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 2\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> Consider the SEF LP with the single constraint $x_1 + x_2 + x_3 = 1$ and $x \ge 0$. Its feasible region is a triangle, and each <b>vertex</b> is a basic feasible solution. </p>
+            <img src="images/sef_vertices_bases.svg" height=300px />
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Theorem</b></p>
+                If a linear program in SEF has an optimal solution, then it has an optimal solution which is basic with respect to some basis (i.e. there is a basis where all of the nonbasic variables are 0).
+            </div>
+            <p class=fragment>Equivalently, any linear function that is bounded on a polytope will have a minimum which is a vertex of the polytope. </p>
+        </section>
+        <section>
+            <h3>Canonical Forms - 6 Examples</h3>
+            <div class="canonical-grid canonical-grid-2" style="font-size:10px;">
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{1,2\}$<br> $x_b = \begin{pmatrix} 1 \\ 1 \\ 0 \\ 0\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 2 & 4\end{pmatrix} x + 3$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & 2 \\ \color{blue}0 & \color{blue}1 & 1 & -1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{1,3\}$<br> $x_b = \begin{pmatrix} 2 \\ 0 \\ 1 \\ 0\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & -2 & \color{blue}0 & 6\end{pmatrix} x + 5$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & 1 \\ \color{blue}0 & 1 & \color{blue}1 & -1\end{pmatrix} x = \begin{pmatrix} 2 \\ 1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{1,4\}$ <br> $x_b = \begin{pmatrix} 3 \\ 0 \\ 0 \\ -1\end{pmatrix}$</span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 4 & 6 & \color{blue}0\end{pmatrix} x - 1$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 2 & 1 & \color{blue}0 \\ \color{blue}0 & -1 & -1 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ -1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{2,3\}$ <br> $x_b = \begin{pmatrix} 0 \\ 2 \\ -1 \\ 0\end{pmatrix}$</span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} 2 & \color{blue}0 & \color{blue}0 & 8\end{pmatrix} x + 1$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & \color{blue}1 & \color{blue}0 & 1 \\ -1 & \color{blue}0 & \color{blue}1 & -2\end{pmatrix} x = \begin{pmatrix} 2 \\ -1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{2,4\}$ <br> $x_b = \begin{pmatrix} 0 \\ 3/2 \\ 0 \\ 1/2\end{pmatrix}$</span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} -2 & \color{blue}0 & 4 & \color{blue}0\end{pmatrix} x + 5$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1/2 & \color{blue}1 & 1/2 & \color{blue}0 \\ 1/2 & \color{blue}0 & -1/2 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3/2 \\ 1/2\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left" style="border: 2px solid rgb(16, 223, 12); border-radius: 10px;">
+                    <span class="basis-label" style="color:rgb(16, 223, 12)"> $\{3,4\}$<br> $x_b = \begin{pmatrix} 0 \\ 0 \\ 3 \\ 2\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} -6 & -8 & \color{blue}0 & \color{blue}0\end{pmatrix} x + 17$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 2 & \color{blue}1 & \color{blue}0 \\ 1 & 1 & \color{blue}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 2\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Theorem</b></p>
+                If a linear program in SEF has an optimal solution, then it has an optimal solution which is basic with respect to some basis (i.e. there is a basis where all of the nonbasic variables are 0).
+            </div>
+            <p>How do we prove this?</p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> Proof by Picture</p>
+            <img src="images/sef_vertices_bases.svg" height=300px />
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> Proof by Picture</p>
+            <img src="images/sef_proof_1_xstar.svg" height=300px />
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> Proof by Picture</p>
+            <img src="images/sef_proof_2_direction.svg" height=300px />
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> Proof by Picture</p>
+            <img src="images/sef_proof_3_hitedge.svg" height=300px />
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> Proof by Picture</p>
+            <img src="images/sef_proof_4_edge.svg" height=300px />
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> Proof by Picture</p>
+            <img src="images/sef_proof_5_tovertex.svg" height=300px />
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> <b>Example</b> </p>
+            <table data-id="seform-table"> 
+                <tr> <td> max </td> <td> $\begin{pmatrix}1&1&1&1&0\end{pmatrix}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 1 & 1 & 1 & 0 \\ 0 & 1 & 2 & 0 & 1 \\ 1 & 0 & 0 & 1 & 1 \end{pmatrix}x = \begin{pmatrix} 5 \\ 3 \\ 3 \end{pmatrix}$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p> Here $\rank(A) = 3$. </p>
+        </section>
+        <section>
+            <h3> Basic Solutions &mdash; Example </h3>
+            <p> The point $x^* = (1, 1, 1, 2, 0)^{\intercal}$ is feasible: </p>
+            <p>
+            \[
+                \begin{pmatrix} 1 & 1 & 1 & 1 & 0 \\ 0 & 1 & 2 & 0 & 1 \\ 1 & 0 & 0 & 1 & 1 \end{pmatrix}\begin{pmatrix}1\\1\\1\\2\\0\end{pmatrix} = \begin{pmatrix} 5 \\ 3 \\ 3 \end{pmatrix}
+            \]
+            </p>
+            <p class=fragment> Its objective value is $1+1+1+2 = 5$. In fact the first equation forces $x_1+x_2+x_3+x_4 = 5$ for <b>every</b> feasible point, so $x^*$ is <b>optimal</b>. </p>
+            <p class=fragment> But $x^*$ has <b>four</b> nonzero entries, while $\rank(A) = 3$, so $x$ is not a basic solution. </p>
+            <p class=fragment> Can we correct $x^*$ so that it has fewer nonzero entries? </p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> <b>Example</b> </p>
+            <table data-id="seform-table"> 
+                <tr> <td> max </td> <td> $\begin{pmatrix}1&1&1&1&0\end{pmatrix}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 1 & 1 & 1 & 0 \\ 0 & 1 & 2 & 0 & 1 \\ 1 & 0 & 0 & 1 & 1 \end{pmatrix}x = \begin{pmatrix} 5 \\ 3 \\ 3 \end{pmatrix}$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p>$x^* = (1, 1, 1, 2, 0)^{\intercal}$</p>
+            <p> Since $x_5 = 0$, we can consider a modified linear program that drops the variable $x_5$. </p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> <b>Example</b> </p>
+            <table data-id="seform-table"> 
+                <tr> <td> max </td> <td> $\begin{pmatrix}1&1&1&1\end{pmatrix}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 1 & 1 & 1  \\ 0 & 1 & 2 & 0  \\ 1 & 0 & 0 & 1 \end{pmatrix}x = \begin{pmatrix} 5 \\ 3 \\ 3 \end{pmatrix}$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p>$x^* = (1, 1, 1, 2)^{\intercal}$</p>
+            <p> Note that if there is a basic feasible solution for this LP that is optimal, then it will also be basic and optimal for the original LP. </p>
+            <p class=fragment> Also note that this matrix has more variables than equations; there is a nonzero solution to $Av = 0$. </p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> <b>Example</b> </p>
+            <table data-id="seform-table"> 
+                <tr> <td> max </td> <td> $\begin{pmatrix}1&1&1&1\end{pmatrix}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 1 & 1 & 1  \\ 0 & 1 & 2 & 0  \\ 1 & 0 & 0 & 1 \end{pmatrix}x = \begin{pmatrix} 5 \\ 3 \\ 3 \end{pmatrix}$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p>$x^* = (1, 1, 1, 2)^{\intercal}$</p>
+            <p>$v = (1, 0, 0, -1)^{\intercal}$ solves $Av = 0$</p>
+            <p> So if we add $tv$ to $x^*$ for any $t$, this will still be feasible, since $A(x^* + tv) = Ax^* + t Av = Ax^* = b$.</p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <p> <b>Example</b> </p>
+            <table data-id="seform-table"> 
+                <tr> <td> max </td> <td> $\begin{pmatrix}1&1&1&1\end{pmatrix}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 1 & 1 & 1  \\ 0 & 1 & 2 & 0  \\ 1 & 0 & 0 & 1 \end{pmatrix}x = \begin{pmatrix} 5 \\ 3 \\ 3 \end{pmatrix}$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p>$x^* = (1, 1, 1, 2)^{\intercal}$</p>
+            <p>$v = (1, 0, 0, -1)^{\intercal}$ solves $Av = 0$</p>
+            <p> Choose $t$ so that $t c^{\intercal}v \ge 0$ and also $x^*+tv$ has <b> fewer nonzero enties</b>.</p>
+            <p class=fragment> x^* - v = (0, 1, 1, 3) is another feasible point with the same objective value. Now the number of nonzero entries is equal to $\rank(A)$, so we are done.</p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <table> 
+                <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p> We'll let $A \in \R^{m \times n}$. We'll prove this when $\rank(A) = m$. We have assumed there is an optimal point $x^*$.</p>
+            <p class=fragment> Let $S \subseteq \{1,\dots, n\}$ be the set of entries which are nonzero in $x^*$. </p>
+            <p class=fragment> If $S$ has fewer than $\rank(A)$ elements, then we are done, as $x^*$ would be a basic solution. </p>
+            <p class=fragment> Otherwise, we can look at a `reduced' linear program where all of the entries of $x$ that are not in $S$ deleted. </p>
+            <p class=fragment> A basic solution for this new LP will still be a basic solution for the original one. We have reduced to the case where $x^*$ has only positive entries, and where $\rank(A) > n$. </p>
+        </section>
+        <section>
+            <h3> Basic Solutions </h3>
+            <table> 
+                <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p> We now know that there is some $v \in \R^n$ so that $Av = 0$ and $c^{\intercal}v \ge 0$. </p>
+            <p> For our choice of $x$ </p>
+            <p class=fragment> We know there is an optimal $x^*$. Now, let's imagine that all of its entries are positive (i.e. it has no entries equal to 0). </p>
+            <p class=fragment>
+                The fact that there are more variables than constraints implies that there must be some $v \in \R^n$ so that $Av = 0$.
+            </p>
+            <p class=fragment>
+                We can assume that $c^{\intercal}v \ge 0$, otherwise, we can replace $v$ by $-v$.
+            </p>
+            <p class=fragment>
+                By choosing $t > 0$ appropriately, we can ensure that $x^* + tv$ has all nonnegative entries still, but now with at least one more entry equal to 0.
+            </p>
+        </section>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                        rank: '\\text{rank}',
+                    }
+                }
+            },
+
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>
