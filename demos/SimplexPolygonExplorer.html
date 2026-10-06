@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive simplex-method walk around a polygon with live canonical forms">
+  <title>Simplex Polygon Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --base3: #fdf6e3;
+      --base2: #eee8d5;
+      --base1: #93a1a1;
+      --base00: #657b83;
+      --base01: #586e75;
+      --base02: #073642;
+      --blue: #268bd2;
+      --cyan: #2aa198;
+      --yellow: #b58900;
+      --red: #dc322f;
+      --green: #859900;
+      --violet: #6c71c4;
+      --orange: #cb4b16;
+      --shadow: 0 18px 48px rgba(7, 54, 66, 0.09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--base3); color: var(--base01);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 16px; line-height: 1.5;
+    }
+    button { font: inherit; }
+    .page { width: min(1180px, 100%); margin: 0 auto; padding: 24px clamp(16px, 3vw, 40px) 36px; }
+    header { margin-bottom: 14px; }
+    h1 { margin: 0 0 4px; color: var(--base02); font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: -0.03em; }
+    .lede { margin: 0; max-width: 70ch; }
+    .layout { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+    .panel {
+      background: #fffdf5; border: 1px solid var(--base2); border-radius: 14px;
+      box-shadow: var(--shadow); padding: 16px;
+    }
+    .plot { flex: 1 1 440px; min-width: 360px; }
+    .info { flex: 1 1 380px; min-width: 320px; }
+    svg { width: 100%; height: auto; display: block; }
+    .vertex { cursor: pointer; }
+    .edge { cursor: pointer; }
+    .edge:hover { stroke: var(--violet); stroke-width: 7; }
+    table.cf { border-collapse: collapse; margin: 8px 0; font-variant-numeric: tabular-nums; }
+    table.cf td { padding: 2px 8px; text-align: right; }
+    table.cf td.lab { text-align: left; color: var(--base00); }
+    .mono { font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace; }
+    .basiccol { color: var(--blue); font-weight: 600; }
+    .hint { color: var(--base00); font-size: 0.9rem; }
+    .pill { display:inline-block; padding:2px 10px; border-radius:999px; background:var(--base2); color:var(--base01); font-size:0.85rem; margin-right:6px;}
+    .matrix { border-left: 2px solid var(--base01); border-right: 2px solid var(--base01); padding: 2px 10px; display: inline-block; }
+    button.reset {
+      border: 1px solid var(--base1); background: #fffdf5; color: var(--base01);
+      border-radius: 8px; padding: 6px 14px; cursor: pointer; margin-top: 8px;
+    }
+    button.reset:hover { background: var(--base2); }
+    .rowline td { border-top: 1.5px solid var(--base01); }
+    #tooltip {
+      position: fixed; z-index: 10; pointer-events: none; display: none;
+      background: #073642; color: #fdf6e3; border-radius: 8px; padding: 8px 11px;
+      font-size: 0.82rem; line-height: 1.35; box-shadow: 0 8px 24px rgba(7,54,66,0.28);
+      max-width: 260px;
+    }
+    #tooltip .ttrow { white-space: nowrap; }
+    #tooltip .ttlab { color: #93a1a1; }
+    #tooltip .enter { color: #859900; font-weight: 600; }
+    #tooltip .leave { color: #cb4b16; font-weight: 600; }
+    #tooltip .mono { font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace; color:#eee8d5; }
+    #tooltip .basisblue { color: #6fb7ec; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="layout">
+      <div class="panel plot">
+        <svg id="svg" viewBox="0 0 440 400" aria-label="feasible region"></svg>
+        <button class="reset" id="reset">Reset to start vertex</button>
+        <p class="hint" id="status"></p>
+      </div>
+      <div class="panel info">
+        <p><span class="pill">basis</span> <span class="mono" id="basis"></span></p>
+        <h3 style="margin:10px 0 4px;color:var(--base02);">Canonical form</h3>
+        <div id="canon"></div>
+        <p class="hint">Variables: x1, x2 are the plotted coordinates; s1..s5 are slacks, one per edge
+          (s<sub>i</sub> = 0 exactly on edge i). The basis is the set of columns that are 1 at the current vertex.</p>
+      </div>
+    </div>
+  </div>
+  <div id="tooltip"></div>
+
+<script>
+"use strict";
+
+/* ----------------------------------------------------------------------
+   LP in SEF.  Original (inequality) form in (x1,x2):
+     1)  -x1       <= 0      (x1 >= 0)
+     2)       -x2  <= 0      (x2 >= 0)
+     3)        x2  <= 4
+     4)   x1       <= 5
+     5)   x1 + x2  <= 7
+   Add slack s_i >= 0 to each:  a_i . (x1,x2) + s_i = b_i.
+   SEF variables:  x = (x1, x2, s1, s2, s3, s4, s5),  all >= 0.
+   Objective (to maximize):  c = (1, 1, 0, 0, 0, 0, 0)  ->  max x1 + x2.
+   ---------------------------------------------------------------------- */
+
+const AINEQ = [
+  [-1,  0],   // s1
+  [ 0, -1],   // s2
+  [ 0,  1],   // s3
+  [ 1,  0],   // s4
+  [ 1,  1],   // s5
+];
+const BINEQ = [0, 0, 4, 5, 7];
+const N = 7;                 // total SEF variables
+const M = 5;                 // equality constraints
+const cObj = [1, 1, 0, 0, 0, 0, 0];
+const varNames = ["1","2","3","4","5","6","7"];
+
+// Equality system A x = b  (A is 5 x 7): [ a_i | e_i ],  b = BINEQ
+function buildAb() {
+  const A = [];
+  for (let i = 0; i < M; i++) {
+    const row = new Array(N).fill(0);
+    row[0] = AINEQ[i][0];
+    row[1] = AINEQ[i][1];
+    row[2 + i] = 1;          // slack column
+    A.push(row);
+  }
+  return { A, b: BINEQ.slice() };
+}
+
+// Pentagon vertices in (x1,x2) with the two tight constraints (0-indexed edges).
+// tight edge i  <=>  slack s_i = 0  <=>  variable index (2+i) is nonbasic.
+const VERTS = [
+  { xy: [0, 0], tight: [0, 1] },   // x1=0, x2=0
+  { xy: [5, 0], tight: [1, 3] },   // x2=0, x1=5
+  { xy: [5, 2], tight: [3, 4] },   // x1=5, x1+x2=7
+  { xy: [3, 4], tight: [4, 2] },   // x1+x2=7, x2=4
+  { xy: [0, 4], tight: [2, 0] },   // x2=4, x1=0
+];
+// adjacency: edges of the pentagon connect consecutive vertices (and wrap)
+const EDGES = [[0,1],[1,2],[2,3],[3,4],[4,0]];
+
+// ---- linear algebra helpers (small, exact-ish with doubles) ----
+function solveBasis(basis, A, b) {
+  // Solve A[:,basis] y = b for the basic variables; return full x (nonbasic = 0).
+  const m = A.length, k = basis.length;
+  // build square matrix (m x k == m x m here)
+  const Mx = A.map(row => basis.map(j => row[j]));
+  const y = gauss(Mx, b.slice());
+  const x = new Array(N).fill(0);
+  basis.forEach((j, i) => { x[j] = y[i]; });
+  return x;
+}
+function gauss(Araw, bb) {
+  const n = Araw.length;
+  const A = Araw.map((r,i)=>r.concat(bb[i]));
+  for (let col = 0, row = 0; col < n && row < n; col++, row++) {
+    let piv = row;
+    for (let r = row+1; r < n; r++) if (Math.abs(A[r][col]) > Math.abs(A[piv][col])) piv = r;
+    if (Math.abs(A[piv][col]) < 1e-12) { row--; continue; }
+    [A[row], A[piv]] = [A[piv], A[row]];
+    const d = A[row][col];
+    for (let c = col; c <= n; c++) A[row][c] /= d;
+    for (let r = 0; r < n; r++) if (r !== row) {
+      const f = A[r][col];
+      for (let c = col; c <= n; c++) A[r][c] -= f * A[row][c];
+    }
+  }
+  return A.map(r => r[n]);
+}
+
+// Canonical form: row-reduce [A|b] so that basis columns form the identity,
+// then price out the objective. Returns {Acan, bcan, cbar, z0, basis, pivotOf}.
+function canonicalForm(basis) {
+  const { A, b } = buildAb();
+  // augmented copy
+  const T = A.map((r,i) => r.concat(b[i]));
+  const pivotOf = {}; // basis var -> row
+  let row = 0;
+  for (const j of basis) {
+    // find a row (>= row) with nonzero entry in column j
+    let piv = -1, best = 1e-9;
+    for (let r = row; r < M; r++) if (Math.abs(T[r][j]) > best) { best = Math.abs(T[r][j]); piv = r; }
+    if (piv === -1) continue;
+    [T[row], T[piv]] = [T[piv], T[row]];
+    const d = T[row][j];
+    for (let c = 0; c <= N; c++) T[row][c] /= d;
+    for (let r = 0; r < M; r++) if (r !== row) {
+      const f = T[r][j];
+      for (let c = 0; c <= N; c++) T[r][c] -= f * T[row][c];
+    }
+    pivotOf[j] = row;
+    row++;
+  }
+  const Acan = T.map(r => r.slice(0, N));
+  const bcan = T.map(r => r[N]);
+  // price out objective: cbar = c - sum_i c_{basis_i} * (canonical row of basis_i)
+  const cbar = cObj.slice();
+  let z0 = 0;
+  for (const j of basis) {
+    const r = pivotOf[j];
+    if (r === undefined) continue;
+    const cb = cObj[j];
+    for (let c = 0; c < N; c++) cbar[c] -= cb * Acan[r][c];
+    z0 += cb * bcan[r];
+  }
+  // clean -0
+  for (let c = 0; c < N; c++) if (Math.abs(cbar[c]) < 1e-9) cbar[c] = 0;
+  return { Acan, bcan, cbar, z0, basis, pivotOf };
+}
+
+function basisOfVertex(vi) {
+  // nonbasic = the two tight slacks; basic = everyone else (x1,x2 + 3 slacks)
+  const tightSlacks = VERTS[vi].tight.map(e => 2 + e);
+  const basis = [];
+  for (let j = 0; j < N; j++) if (!tightSlacks.includes(j)) basis.push(j);
+  return basis;
+}
+
+// ---- rendering ----
+const svg = document.getElementById("svg");
+const SVGNS = "http://www.w3.org/2000/svg";
+// data -> pixel: x1 in [0,5], x2 in [0,4]; margin box
+const PAD = 46, W = 440, H = 400;
+const sx = v => PAD + (v / 6) * (W - 2*PAD);
+const sy = v => (H - PAD) - (v / 5.2) * (H - 2*PAD);
+
+function el(tag, attrs) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function num(v) {
+  const r = Math.round(v);
+  if (Math.abs(v - r) < 1e-9) return String(r);
+  // show simple fractions for halves/quarters, else 2 decimals
+  for (const d of [2,3,4,6]) { const n = v*d; if (Math.abs(n-Math.round(n))<1e-9) return `${Math.round(n)}/${d}`; }
+  return v.toFixed(2);
+}
+
+let current = 0;        // current vertex index
+let animating = false;
+
+// Info about the simplex step along the edge current -> target.
+function edgeInfo(target) {
+  const Ab = buildAb();
+  const bFrom = basisOfVertex(current), bTo = basisOfVertex(target);
+  const setFrom = new Set(bFrom), setTo = new Set(bTo);
+  // entering: in bTo but not bFrom; leaving: in bFrom but not bTo
+  const entering = bTo.find(j => !setFrom.has(j));
+  const leaving  = bFrom.find(j => !setTo.has(j));
+  // edge direction in SEF space, scaled so the entering variable increases by 1
+  const xF = solveBasis(bFrom, Ab.A, Ab.b);
+  const xT = solveBasis(bTo,   Ab.A, Ab.b);
+  let dir = xT.map((v,i) => v - xF[i]);
+  const de = dir[entering];
+  // scale so the entering variable is -1 (direction being SUBTRACTED: x = x_B - v t)
+  if (Math.abs(de) > 1e-9) dir = dir.map(v => -v / de);
+  return { entering, leaving, dir, basisFrom: setFrom };
+}
+
+function showTooltip(evt, target) {
+  const { entering, leaving, dir, basisFrom } = edgeInfo(target);
+  const comps = dir.map((v, j) =>
+    basisFrom.has(j) ? `<span class="basisblue">${num(v)}</span>` : num(v)
+  ).join(", ");
+  const tip = document.getElementById("tooltip");
+  tip.innerHTML =
+    `<div class="ttrow"><span class="ttlab">entering:</span> <span class="enter">${varNames[entering]}</span>` +
+    `&nbsp;&nbsp;<span class="ttlab">leaving:</span> <span class="leave">${varNames[leaving]}</span></div>` +
+    `<div class="ttrow"><span class="ttlab">direction</span> (per unit ${varNames[entering]}):</div>` +
+    `<div class="ttrow mono">(${comps})</div>`;
+  tip.style.display = "block";
+  moveTooltip(evt);
+}
+function moveTooltip(evt) {
+  const tip = document.getElementById("tooltip");
+  let x = evt.clientX + 14, y = evt.clientY + 14;
+  const r = tip.getBoundingClientRect();
+  if (x + r.width > window.innerWidth) x = evt.clientX - r.width - 14;
+  if (y + r.height > window.innerHeight) y = evt.clientY - r.height - 14;
+  tip.style.left = x + "px";
+  tip.style.top = y + "px";
+}
+function hideTooltip() { document.getElementById("tooltip").style.display = "none"; }
+
+function draw() {
+  svg.innerHTML = "";
+  // axes
+  svg.appendChild(el("line", {x1: sx(0), y1: sy(0), x2: sx(6), y2: sy(0), stroke:"#93a1a1", "stroke-width":1.5}));
+  svg.appendChild(el("line", {x1: sx(0), y1: sy(0), x2: sx(0), y2: sy(5.2), stroke:"#93a1a1", "stroke-width":1.5}));
+  // polygon
+  const pts = VERTS.map(v => `${sx(v.xy[0])},${sy(v.xy[1])}`).join(" ");
+  svg.appendChild(el("polygon", {points: pts, fill:"#268bd2", "fill-opacity":0.14, stroke:"#268bd2", "stroke-width":2}));
+
+  // edges leaving the current vertex are clickable
+  EDGES.forEach((e, ei) => {
+    const [a,bv] = e;
+    const incident = (a === current || bv === current);
+    const other = (a === current) ? bv : a;
+    const line = el("line", {
+      x1: sx(VERTS[a].xy[0]), y1: sy(VERTS[a].xy[1]),
+      x2: sx(VERTS[bv].xy[0]), y2: sy(VERTS[bv].xy[1]),
+      stroke: incident ? "#6c71c4" : "transparent",
+      "stroke-width": incident ? 4 : 10,
+      "stroke-linecap":"round",
+      class: incident ? "edge" : ""
+    });
+    if (incident && !animating) {
+      line.addEventListener("click", () => pivotTo(other));
+      line.addEventListener("mouseenter", (evt) => showTooltip(evt, other));
+      line.addEventListener("mousemove", moveTooltip);
+      line.addEventListener("mouseleave", hideTooltip);
+    }
+    svg.appendChild(line);
+  });
+
+  // vertices
+  VERTS.forEach((v, i) => {
+    const c = el("circle", {
+      cx: sx(v.xy[0]), cy: sy(v.xy[1]),
+      r: i === current ? 9 : 6,
+      fill: i === current ? "#cb4b16" : "#eee8d5",
+      stroke: "#8a3210", "stroke-width": 2, class:"vertex"
+    });
+    if (!animating) c.addEventListener("click", () => { current = i; render(); });
+    svg.appendChild(c);
+    const t = el("text", {x: sx(v.xy[0])+10, y: sy(v.xy[1])-8, "font-size":12, fill:"#586e75"});
+    t.textContent = `(${v.xy[0]}, ${v.xy[1]})`;
+    svg.appendChild(t);
+  });
+
+  // moving dot (during animation handled separately)
+}
+
+function renderInfo() {
+  const basis = basisOfVertex(current);
+  const cf = canonicalForm(basis);
+  const x = solveBasis(basis, buildAb().A, buildAb().b);
+  document.getElementById("basis").textContent =
+    "{" + basis.map(j => varNames[j]).join(", ") + "}";
+  // document.getElementById("xvec").textContent =
+  //   "(" + x.map(num).join(", ") + ")";
+  // const z = cObj.reduce((s,ci,i)=> s + ci*x[i], 0);
+  // document.getElementById("objval").textContent = num(z);
+  document.getElementById("canon").innerHTML = canonTable(cf);
+  document.getElementById("status").textContent =
+    "Current vertex: (" + VERTS[current].xy.join(", ") + "). Click a purple edge to pivot.";
+}
+
+function canonTable(cf) {
+  const basisSet = new Set(cf.basis);
+  let html = '<table class="cf"><tr><td class="lab">max</td>';
+  // objective row (cbar) + constant
+  for (let j = 0; j < N; j++) {
+    const cls = basisSet.has(j) ? ' class="basiccol"' : '';
+    html += `<td${cls}>${num(cf.cbar[j])}</td>`;
+  }
+  html += `<td class="lab">+ ${num(cf.z0)}</td></tr>`;
+  // constraint rows
+  for (let r = 0; r < M; r++) {
+    html += '<tr' + (r===0?' class="rowline"':'') + '><td class="lab">' + (r===0?'s.t.':'') + '</td>';
+    for (let j = 0; j < N; j++) {
+      const cls = basisSet.has(j) ? ' class="basiccol"' : '';
+      html += `<td${cls}>${num(cf.Acan[r][j])}</td>`;
+    }
+    html += `<td class="lab">= ${num(cf.bcan[r])}</td></tr>`;
+  }
+  html += '</table>';
+  // header labels
+  let head = '<table class="cf"><tr><td class="lab"></td>';
+  for (let j = 0; j < N; j++) head += `<td class="hint">${varNames[j]}</td>`;
+  head += '<td></td></tr></table>';
+  return head + html;
+}
+
+function pivotTo(target) {
+  if (animating) return;
+  hideTooltip();
+  animating = true;
+  const Ab = buildAb();
+  const xStart = solveBasis(basisOfVertex(current), Ab.A, Ab.b);
+  const xEnd = solveBasis(basisOfVertex(target), Ab.A, Ab.b);
+  // edge direction v = xEnd - xStart (we move x = xStart + t*(xEnd-xStart), t:0->1)
+  const dur = 650, t0 = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - t0) / dur);
+    draw();
+    // moving point
+    const px = VERTS[current].xy[0] + t*(VERTS[target].xy[0]-VERTS[current].xy[0]);
+    const py = VERTS[current].xy[1] + t*(VERTS[target].xy[1]-VERTS[current].xy[1]);
+    svg.appendChild(el("circle", {cx: sx(px), cy: sy(py), r:7, fill:"#2aa198", stroke:"#0d6b63","stroke-width":2}));
+    document.getElementById("status").textContent =
+      `Sliding along the edge:  x = x_start + t·v,  t = ${t.toFixed(2)}`;
+    if (t < 1) requestAnimationFrame(step);
+    else { animating = false; current = target; render(); }
+  }
+  requestAnimationFrame(step);
+}
+
+function render() { draw(); renderInfo(); }
+
+document.getElementById("reset").addEventListener("click", () => { current = 0; render(); });
+render();
+</script>
+</body>
+</html>

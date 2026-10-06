@@ -3,6 +3,26 @@ p, li, td {
   text-align:left;
 }
 
+/* Pseudocode block for displaying algorithms. */
+.pseudocode {
+    display: inline-block;
+    text-align: left;
+    font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 0.62em;
+    line-height: 1.5;
+    background: rgba(238, 232, 213, 0.5);
+    border: 1px solid #93a1a1;
+    border-left: 4px solid #268bd2;
+    border-radius: 8px;
+    padding: 14px 22px;
+    margin: 0 auto;
+}
+.pseudocode .ln { display: block; white-space: pre; }
+.pseudocode .kw { color: #859900; font-weight: 700; }
+.pseudocode .cm { color: #93a1a1; font-style: italic; }
+.pseudocode .ind { padding-left: 2.2em; }
+.pseudocode .ind2 { padding-left: 4.4em; }
+
 .flexbox {
     display: flex;
 }
