@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>
+            Lecture 9
+        </h4>
+        <br>
+        <p class=centered>
+          Kevin Shu
+        </p>
+        <aside class="notes">
+          Add private speaker notes here. Press S during the presentation to open speaker view.
+        </aside>
+      </section>
+
+      <section>
+        <h2>Lecture Outline</h2>
+        <ul>
+          <li>Simplex Iterations Again</li>
+          <li>The Simplex Algorithm</li>
+        </ul>
+      </section>
+
+      <!-- ===================== Simplex Method ===================== -->
+      <section>
+        <section>
+            <h2>The Simplex Method: Part 1</h2>
+        </section>
+        <section>
+            <h3>Canonical Forms - 6 Examples</h3>
+            <div class="canonical-grid canonical-grid-2" style="font-size:10px;">
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{1,2\}$<br> $x_b = \begin{pmatrix} 1 \\ 1 \\ 0 \\ 0\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 2 & 4\end{pmatrix} x + 3$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & 2 \\ \color{blue}0 & \color{blue}1 & 1 & -1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{1,3\}$<br> $x_b = \begin{pmatrix} 2 \\ 0 \\ 1 \\ 0\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & -2 & \color{blue}0 & 6\end{pmatrix} x + 5$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & 1 \\ \color{blue}0 & 1 & \color{blue}1 & -1\end{pmatrix} x = \begin{pmatrix} 2 \\ 1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{1,4\}$ <br> $x_b = \begin{pmatrix} 3 \\ 0 \\ 0 \\ -1\end{pmatrix}$</span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 4 & 6 & \color{blue}0\end{pmatrix} x - 1$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 2 & 1 & \color{blue}0 \\ \color{blue}0 & -1 & -1 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ -1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label"> $\{2,3\}$ <br> $x_b = \begin{pmatrix} 0 \\ 2 \\ -1 \\ 0\end{pmatrix}$</span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} 2 & \color{blue}0 & \color{blue}0 & 8\end{pmatrix} x + 1$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & \color{blue}1 & \color{blue}0 & 1 \\ -1 & \color{blue}0 & \color{blue}1 & -2\end{pmatrix} x = \begin{pmatrix} 2 \\ -1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{2,4\}$ <br> $x_b = \begin{pmatrix} 0 \\ 3/2 \\ 0 \\ 1/2\end{pmatrix}$</span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} -2 & \color{blue}0 & 4 & \color{blue}0\end{pmatrix} x + 5$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1/2 & \color{blue}1 & 1/2 & \color{blue}0 \\ 1/2 & \color{blue}0 & -1/2 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3/2 \\ 1/2\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{3,4\}$<br> $x_b = \begin{pmatrix} 0 \\ 0 \\ 3 \\ 2\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} -6 & -8 & \color{blue}0 & \color{blue}0\end{pmatrix} x + 17$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 2 & \color{blue}1 & \color{blue}0 \\ 1 & 1 & \color{blue}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 2\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h3>The LP in Two Dimensions</h3>
+            <p> Solving for $x_3, x_4$ in terms of $x_1$ and $x_2$, the constraints become 
+              \[x_1, x_2 \ge 0, \qquad x_1 + 2x_2 \le 3, \qquad x_1 + x_2 \le 2.\]
+            </p>
+            <img src="images/simplex_lp_2d.svg" height=300px />
+            <p> The 6 basic solutions are intersections of the lines, and the 4 basic feasible solutions are the intersections that lie in the feasible region. </p>
+        </section>
+        <section>
+            <h3>The LP in Two Dimensions</h3>
+            <p> The simplex method makes use of the <b>edges</b> in this picture to move from one feasible point to another. </p>
+            <img src="images/simplex_lp_2d_walk.svg" height=300px />
+            <p class=fragment><b> What do these edges look like in algebra?</b></p>
+        </section>
+        <section>
+            <h3>Pictures and Algebra</h3>
+            <img src="images/simplex_lp_2d_walk.svg" height=300px style="margin-top:-30px; margin-bottom:-30px;"/>
+            <div class="canonical-grid canonical-grid-2" style="font-size:10px;">
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{1,2\}$<br> $x_b = \begin{pmatrix} 1 \\ 1 \\ 0 \\ 0\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 2 & 4\end{pmatrix} x + 3$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & 2 \\ \color{blue}0 & \color{blue}1 & 1 & -1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{1,3\}$<br> $x_b = \begin{pmatrix} 2 \\ 0 \\ 1 \\ 0\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & -2 & \color{blue}0 & 6\end{pmatrix} x + 5$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & 1 \\ \color{blue}0 & 1 & \color{blue}1 & -1\end{pmatrix} x = \begin{pmatrix} 2 \\ 1\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{2,4\}$ <br> $x_b = \begin{pmatrix} 0 \\ 3/2 \\ 0 \\ 1/2\end{pmatrix}$</span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} -2 & \color{blue}0 & 4 & \color{blue}0\end{pmatrix} x + 5$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1/2 & \color{blue}1 & 1/2 & \color{blue}0 \\ 1/2 & \color{blue}0 & -1/2 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3/2 \\ 1/2\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                    </div>
+                </div>
+                <div class="canonical-cell label-left">
+                    <span class="basis-label" style="color:red"> $\{3,4\}$<br> $x_b = \begin{pmatrix} 0 \\ 0 \\ 3 \\ 2\end{pmatrix}$ </span>
+                    <div class="program">
+                      <table>
+                        <tr> <td> max </td> <td> $\begin{pmatrix} -6 & -8 & \color{blue}0 & \color{blue}0\end{pmatrix} x + 17$ </td> </tr>
+                        <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 2 & \color{blue}1 & \color{blue}0 \\ 1 & 1 & \color{blue}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 2\end{pmatrix}$ </td> </tr>
+                        <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                      </table>
+                  </div>
+                </div>
+            </div>
+            <h2 class=fragment style="margin-top:-300px;"> The edges go between bases that differ by one element. </h2>
+        </section>
+        <section>
+          <h3> Simplex Iterations </h3>
+          <p> At each step of the simplex algorithm, we have a basis in mind (and an LP in canonical form with respect to that basis). </p>
+          <p> Each iteration, one element of the basis <i>leaves</i> and one nonbasis element <i>enters</i>, so that the number of basis elements stays the same.</p>
+          <p class=fragment> For now, the element that enters can be any that has a positive coefficient in the objective, and the element that leaves is the one that passes the ratio test. </p>
+          <p class=fragment> At the new basis, we need to put the LP into canonical form again with respect to the new basis. </p>
+          <p class=fragment> We terminate when the coefficient vector has no positive entries, or when we find that the LP is unbounded (we'll discuss this later). </p>
+        </section>
+        <section>
+            <h3>A Simplex Iteration</h3>
+            <p>Start with a basic feasible solution</p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,2\}$</p></span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 2 & 4\end{pmatrix} x + 3$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & 2 \\ \color{blue}0 & \color{blue}1 & 1 & -1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> In pictures, we want to find an edge of the polytope and move along it to get to a new basic feasible solution with better objective. How do we do this?</p>
+            <p> We need to pick an entry where the objective vector has a positive coefficient (here either $3$ or $4$).</p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> Let's pick the 4th one (last time we picked the third one)</p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,2\}$</p></span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 2 & \color{red}4\end{pmatrix} x + 3$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & \color{red}2 \\ \color{blue}0 & \color{blue}1 & 1 & \color{red}{-1}\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> Variable <span style="color:red">$x_4$</span> is entering. Which variable leaves?  </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> Let's pick the 4th one (last time we picked the third one)</p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,2\}$</p></span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 2 & \color{red}4\end{pmatrix} x + 3$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & \color{red}2 \\ \color{blue}0 & \color{blue}1 & 1 & \color{red}{-1}\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> The ratio test says that we should compare the 4th column of $A$ to the right side of the equations $b$:
+              \[
+              A_4 = \begin{pmatrix}2 \\ -1\end{pmatrix}\qquad b = \begin{pmatrix}1 \\ 1\end{pmatrix}.
+              \]
+              The ratios are $\frac{1}{2}$ and $\frac{1}{-1}$. The smallest nonnegative ratio is the first one so <span style="color:blue">$x_1$ leaves</span>.
+            </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> Let's pick the 4th one (last time we picked the third one)</p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,2\}$</p></span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 2 & \color{red}4\end{pmatrix} x + 3$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & \color{red}2 \\ \color{blue}0 & \color{blue}1 & 1 & \color{red}{-1}\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> Since $x_4$ entered, and $x_1$ leaves, we should update the basis from $\{1,2\}$ to $\{1,2\} \setminus \{1\} \cup \{4\} = \{2,4\}$.
+              Now, we need to put the system back in RREF.
+            </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> Let's pick the 4th one (last time we picked the third one)</p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,2\}$</p></span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 2 & \color{red}4\end{pmatrix} x + 3$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & \color{red}2 \\ \color{blue}0 & \color{blue}1 & 1 & \color{red}{-1}\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> Since $x_4$ entered, and $x_1$ leaves, we should update the basis from $\{1,2\}$ to $\{1,2\} \setminus \{1\} \cup \{4\} = \{2,4\}$.
+              Now, we need to put the system back in RREF.
+            </p>
+        </section>
+        <section>
+            <h3>A Simplex Iteration</h3>
+            <p>Here is the system (in RREF with respect to $\{\color{orange}1,\color{blue}2\}$). We want to row reduce with respect to the basis $\{\color{blue}2,\color{red}4\}$.</p>
+            <p>\[\begin{pmatrix} \color{orange}1 & \color{blue}0 & -1 & \color{red}2 \\ \color{orange}0 & \color{blue}1 & 1 & \color{red}{-1}\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}\]</p>
+            <p class=fragment>We ultimately want the system to look like 
+              \[\begin{pmatrix} ? & \color{blue}1 & ? & \color{red}0 \\ ? & \color{blue}0 & ? & \color{red}1\end{pmatrix} x = \begin{pmatrix} ? \\ ?\end{pmatrix}\]
+            </p>
+            <p class=fragment> We can fix the blue column by swapping the two rows.</p>
+        </section>
+        <section>
+            <h3>A Simplex Iteration</h3>
+          <p>Here is the system with the rows swapped </p>
+          <p>\[\begin{pmatrix} \color{orange}0 & \color{blue}1 & 1 & \color{red}{-1} \\ \color{orange}1 & \color{blue}0 & -1 & \color{red}2\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}\]</p>
+          <p class=fragment>This makes the second column already correct. Now, we just need to fix the 4th column to put it in RREF.</p>
+        </section>
+        <section>
+            <h3>A Simplex Iteration</h3>
+          <p>Here is the system we want to row reduce.</p>
+          <p>\[\begin{pmatrix} \color{orange}0 & \color{blue}1 & 1 & \color{red}{-1} \\ \color{orange}1 & \color{blue}0 & -1 & \color{red}2\end{pmatrix} x = \begin{pmatrix} 1 \\ 1\end{pmatrix}\]</p>
+          <p>\[\downarrow_{\rho_2 = \rho_2/2}\]</p>
+          <p>\[\begin{pmatrix} \color{orange}0 & \color{blue}1 & 1 & \color{red}{-1} \\ \color{orange}{\frac{1}{2}} & \color{blue}0 & -\frac{1}{2} & \color{red}1\end{pmatrix} x = \begin{pmatrix} 1 \\ \frac{1}{2}\end{pmatrix}\]</p>
+          <p>\[\downarrow_{\rho_1 = \rho_1 + \rho_2}\]</p>
+          <p>\[\begin{pmatrix} \color{orange}{\frac{1}{2}} & \color{blue}1 & \frac{1}{2} & \color{red}0 \\ \color{orange}{\frac{1}{2}} & \color{blue}0 & -\frac{1}{2} & \color{red}1\end{pmatrix} x = \begin{pmatrix} \frac{3}{2} \\ \frac{1}{2}\end{pmatrix}\]</p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> We have the equivalent LP</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{orange}0 & \color{blue}0 & 2 & \color{red}4\end{pmatrix} x + 3$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{orange}{\frac{1}{2}} & \color{blue}1 & \frac{1}{2} & \color{red}0 \\ \color{orange}{\frac{1}{2}} & \color{blue}0 & -\frac{1}{2} & \color{red}1\end{pmatrix} x = \begin{pmatrix} \frac{3}{2} \\ \frac{1}{2}\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> This is still not in RREF; to put it in RREF, subtract 4 times the second row from the objective.  </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> We have the equivalent LP</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $(\begin{pmatrix} \color{orange}0 & \color{blue}0 & 2 & \color{red}4\end{pmatrix} - 4\begin{pmatrix} \color{orange}{\frac{1}{2}} & \color{blue}0 & -\frac{1}{2} & \color{red}1\end{pmatrix}) x + (3 + 4 \times \frac{1}{2})$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{orange}{\frac{1}{2}} & \color{blue}1 & \frac{1}{2} & \color{red}0 \\ \color{orange}{\frac{1}{2}} & \color{blue}0 & -\frac{1}{2} & \color{red}1\end{pmatrix} x = \begin{pmatrix} \frac{3}{2} \\ \frac{1}{2}\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> This is still not in RREF; to put it in RREF, subtract 4 times the second row from the objective.  </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> We have the equivalent LP</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{orange}{-2} & \color{blue}0 & 4 & \color{red}0\end{pmatrix}  x + 5$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{orange}{\frac{1}{2}} & \color{blue}1 & \frac{1}{2} & \color{red}0 \\ \color{orange}{\frac{1}{2}} & \color{blue}0 & -\frac{1}{2} & \color{red}1\end{pmatrix} x = \begin{pmatrix} \frac{3}{2} \\ \frac{1}{2}\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> This is now in canonical form with respect to $\{2,4\}$.</p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> We have the equivalent LP</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} -2 & \color{blue}0 & 4 & \color{blue}0\end{pmatrix}  x + 5$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} {\frac{1}{2}} & \color{blue}1 & \frac{1}{2} & \color{blue}0 \\ {\frac{1}{2}} & \color{blue}0 & -\frac{1}{2} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} \frac{3}{2} \\ \frac{1}{2}\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> What should our next entering variable be? </p>
+            <p class=fragment> It has to be variable 3, since it is the only one with a positive coefficient in the objective. </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} -2 & \color{blue}0 & 4 & \color{blue}0\end{pmatrix}  x + 5$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} {\frac{1}{2}} & \color{blue}1 & \frac{1}{2} & \color{blue}0 \\ {\frac{1}{2}} & \color{blue}0 & -\frac{1}{2} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} \frac{3}{2} \\ \frac{1}{2}\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> Variable 3 enters, what variable leaves?
+            <span class=fragment> The ratio test asks us to look at
+              \[
+                A_3 = \begin{pmatrix}\frac{1}{2}\\-\frac{1}{2}\end{pmatrix} \qquad b = \begin{pmatrix}\frac{3}{2} \\ \frac{1}{2} \end{pmatrix} \qquad b / A_3 = \begin{pmatrix}\tfrac{\frac{3}{2}}{\frac{1}{2}} \\ \tfrac{\frac{1}{2}}{-\frac{1}{2}}\end{pmatrix}.
+              \]
+            </span> </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} -2 & \color{blue}0 & 4 & \color{blue}0\end{pmatrix}  x + 5$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} {\frac{1}{2}} & \color{blue}1 & \frac{1}{2} & \color{blue}0 \\ {\frac{1}{2}} & \color{blue}0 & -\frac{1}{2} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} \frac{3}{2} \\ \frac{1}{2}\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> In the vector $ b / A_3 = \begin{pmatrix}\tfrac{\frac{3}{2}}{\frac{1}{2}} \\ \tfrac{\frac{1}{2}}{-\frac{1}{2}}\end{pmatrix}$, the only positive entry is the first one, so the first basis element (2) leaves (the one with the 1 in the first row).
+            </span> </p>
+            <p> The new basis is $\{2,4\} \setminus \{2\} \cup \{3\} = \{3,4\}$.</p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> We now have to put the following into canonical form with respect to $\{3,4\}$.</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} -2 & \color{orange}0 & \color{red}4 & \color{blue}0\end{pmatrix}  x + 5$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} {\frac{1}{2}} & \color{orange}1 & \color{red}{\frac{1}{2}} & \color{blue}0 \\ {\frac{1}{2}} & \color{orange}0 & \color{red}{-\frac{1}{2}} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} \frac{3}{2} \\ \frac{1}{2}\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> First row reduce the linear system.</p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            \[
+              \begin{pmatrix} {\frac{1}{2}} & \color{orange}1 & \color{red}{\frac{1}{2}} & \color{blue}0 \\ {\frac{1}{2}} & \color{orange}0 & \color{red}{-\frac{1}{2}} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} \frac{3}{2} \\ \frac{1}{2}\end{pmatrix}
+            \]
+            <p> Column 4 is already correct; we now need to perform row operations to fix the 3rd column. </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p>
+            \[
+              \begin{pmatrix} {\frac{1}{2}} & \color{orange}1 & \color{red}{\frac{1}{2}} & \color{blue}0 \\ {\frac{1}{2}} & \color{orange}0 & \color{red}{-\frac{1}{2}} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} \frac{3}{2} \\ \frac{1}{2}\end{pmatrix}
+            \]
+            \[
+              \downarrow_{\rho_1 = 2\rho_1}
+            \]
+            \[
+              \begin{pmatrix} 1 & \color{orange}2 & \color{red}{1} & \color{blue}0 \\ {\frac{1}{2}} & \color{orange}0 & \color{red}{-\frac{1}{2}} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\\frac{1}{2}\end{pmatrix}
+            \]
+            \[
+              \downarrow_{\rho_2 = \rho_2 + \frac{1}{2}\rho_1}
+            \]
+            \[
+              \begin{pmatrix} 1 & \color{orange}2 & \color{red}{1} & \color{blue}0 \\ 1 & \color{orange}1 & \color{red}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 2\end{pmatrix}
+            \]
+            </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> Now. we have the equivalent LP</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} -2 & \color{orange}0 & \color{red}4 & \color{blue}0\end{pmatrix}  x + 5$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & \color{orange}2 & \color{red}{1} & \color{blue}0 \\ 1 & \color{orange}1 & \color{red}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix}3 \\ 2\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> We again eliminate coefficient 3 in the objective by subtracting a multiple of row 1 from the objective.</p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> Now. we have the equivalent LP</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $(\begin{pmatrix} -2 & \color{orange}0 & \color{red}4 & \color{blue}0\end{pmatrix} - 4\begin{pmatrix} 1 & \color{orange}2 & \color{red}{1} & \color{blue}0 \end{pmatrix})  x + (5 + 4*3)$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & \color{orange}2 & \color{red}{1} & \color{blue}0 \\ 1 & \color{orange}1 & \color{red}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 2\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> We again eliminate coefficient 3 in the objective by subtracting a multiple of row 2 from the objective.</p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> Now. we have canonical form LP</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} -6 & -8 & \color{blue} 0 & \color{blue}0\end{pmatrix}   x + 17$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & 2 & \color{blue}{1} & \color{blue}0 \\ 1 & 1 & \color{blue}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 2\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p class=fragment> The objective vector has only nonpositive entries, so this is optimal. </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> Why does the ratio test work for determining a leaving variable? Why does the objective function go up in each iteration? </p>
+            <p class = fragment> For an LP in canonical form with respect to a basis $B = \{\beta_1, \dots, \beta_m\}$, the basic feasible solution $x_b$ is a vertex. For a given $k \not \in B$, an edge direction is defined to be a vector $v$ so that 
+              \[
+                Av = 0 \qquad c^{\intercal}v > 0 \qquad v_{k} = 1 \qquad \forall j \not \in B \cup \{k\}, v_j = 0.
+              \]
+            </p>
+            <p class = fragment> 
+              If $v$ is an edge direction, then 
+              \[
+                x^{(t)} = x_b + tv
+              \]
+              satisfies the linear constraints since $A(x_b + tv) = Ax_b = b$. Also, $c^{\intercal} x^{(t)} = c^{\intercal}x_b + t c^{\intercal}v$ is increasing in $t$.
+            </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> 
+              \[
+                x^{(t)} = x_b + tv
+              \]
+            </p>
+            <p> $x^{(t)}$ is therefore feasible as long as it is nonnegative; it is nonnegative as long as $(x_b)_i + tv_i \ge 0$ for each $i$.</p>
+            <p class=fragment> Note that if $i$ is not basic and also not the entering variable $k$, then $x_i = v_i = 0$ by definition of the edge direction and the basic feasible solution, so these entries are nonnegative.</p>
+            <p class=fragment> Also, if $v_i \ge 0$, then $(x_b)_i + tv_i \ge 0$ for $t \ge 0$, so these also aren't interesting. In particular, the $k$th entry is always $t \ge 0$.</p>
+            <p class=fragment> The only relevant constraints are that whenever $i$ is in the basis, and $v_i < 0$, $t \le -\frac{x_i}{v_i}$.</p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Simplex Iteration</h3>
+            <p> 
+              What are the entries of $x^{(t)}_i$ and $v_i$ when $i = \beta_{\ell}$ is in the basis?
+            </p>
+            <p> We have seen that $x_{\beta_{\ell}} = b_{\ell}$.</p>
+            <p> It also happens that the edge direction satisfies $v_{\beta_{\ell}} = - A_{\ell k}$ for each $\ell$, which can be checked by solving a linear system of equations.</p>
+            <p class=fragment> So, the $t$ that works is $t = \min_{\ell : A_{\ell k} > 0} \frac{b_{\ell}}{A_{\ell k}}$, and the leaving variable (that goes to $x$ in $x$ that goes to 0) can be any $\ell$ so that this minimum is achieved. </p>
+        </section>
+        <section>
+          <h3>Simplex Explorer</h3>
+          <p> We really just need to keep track of the canonical form in each iteration.</p>
+          <embed src="demos/SimplexPolygonExplorer.html" style="width:1100px; height:640px;">
+        </section>
+        <section>
+            <h3>Another Simplex Iteration</h3>
+            <p>Here is a bigger LP ($3$ constraints, $5$ variables), in canonical form with respect to the basis $\{1,3,5\}$.</p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,3,5\}$</span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 2 & \color{blue}0 & 3 & \color{blue}0\end{pmatrix} x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 0 & \color{blue}0 & 1 & \color{blue}0 \\ \color{blue}0 & -1 & \color{blue}1 & 2 & \color{blue}0 \\ \color{blue}0 & -1 & \color{blue}0 & -1 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 6 \\ 4\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> What is the basic feasible solution? </p>
+            <p class=fragment> The basic feasible solution is $x = (2, 0, 6, 0, 4)$. We can enter either $x_2$ or $x_4$ (both have positive objective coefficients). </p>
+        </section>
+        <section data-auto-animate>
+            <h3>Another Simplex Iteration</h3>
+            <p> Let's enter <span style="color:red">$x_4$</span>. Which variable leaves? </p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,3,5\}$</span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 2 & \color{blue}0 & \color{red}3 & \color{blue}0\end{pmatrix} x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 0 & \color{blue}0 & \color{red}1 & \color{blue}0 \\ \color{blue}0 & -1 & \color{blue}1 & \color{red}2 & \color{blue}0 \\ \color{blue}0 & -1 & \color{blue}0 & \color{red}{-1} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 6 \\ 4\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p class=fragment> 
+              \[
+              A_4 = \begin{pmatrix}1 \\ 2 \\ -1\end{pmatrix} \qquad b = \begin{pmatrix}2 \\ 6 \\ 4\end{pmatrix} \qquad b / A_4 = \begin{pmatrix}\frac{2}{1}\\ \frac{6}{2} \\ \frac{4}{-1}\end{pmatrix}.
+              \]
+              The ratio test compares the $4$th column $A_4$ with $b$:
+              The smallest is $2$, in the first row, so <span style="color:blue">$x_1$ leaves</span>.
+            </p>
+        </section>
+        <section data-auto-animate>
+            <h3>Another Simplex Iteration</h3>
+            <p> $x_4$ entered and $x_1$ left. $\{1,3,5\} \setminus \{1\} \cup \{4\} = \{3,4,5\}$. Put the system back in RREF with respect to $\{3,4,5\}$.</p>
+            <p>\[\begin{pmatrix} \color{orange}1 & 0 & \color{blue}0 & \color{red}1 & \color{blue}0 \\ \color{orange}0 & -1 & \color{blue}1 & \color{red}2 & \color{blue}0 \\ \color{orange}0 & -1 & \color{blue}0 & \color{red}{-1} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 6 \\ 4\end{pmatrix}\]</p>
+            <p class=fragment>We would like the final matrix to look like 
+            \[\begin{pmatrix} ? & ? & \color{blue}1 & \color{red}0 & \color{blue}0 \\ ? & ? & \color{blue}0 & \color{red}1 & \color{blue}0 \\ ? & ? & \color{blue}0 & \color{red}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 6 \\ 2 \\ 4\end{pmatrix}\]
+            </p>
+            <p class=fragment> If we swap rows 1 and 2, then the blue are already done (the swapping is because the leaving variable was the first variable in the basis, and the entering variable will be the second).</p>
+        </section>
+        <section data-auto-animate>
+            <h3>Another Simplex Iteration</h3>
+            <p> Now, we have an easier time row reducing the following: </p>
+            <p>\[\begin{pmatrix} \color{orange}0 & -1 & \color{blue}1 & \color{red}2 & \color{blue}0 \\ \color{orange}1 & 0 & \color{blue}0 & \color{red}1 & \color{blue}0 \\ \color{orange}0 & -1 & \color{blue}0 & \color{red}{-1} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 6 \\ 2 \\ 4\end{pmatrix}\downarrow_{\rho_1 = \rho_1 - 2\rho_2}\]</p>
+            <p>\[\begin{pmatrix} \color{orange}{-2} & -1 & \color{blue}1 & \color{red}0 & \color{blue}0 \\ \color{orange}1 & 0 & \color{blue}0 & \color{red}1 & \color{blue}0 \\ \color{orange}0 & -1 & \color{blue}0 & \color{red}{-1} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 2 \\ 4\end{pmatrix}\downarrow_{\rho_3 = \rho_3 + \rho_2}\]</p>
+            <p>\[\begin{pmatrix} \color{orange}{-2} & -1 & \color{blue}1 & \color{red}0 & \color{blue}0 \\ \color{orange}1 & 0 & \color{blue}0 & \color{red}1 & \color{blue}0 \\ \color{orange}1 & -1 & \color{blue}0 & \color{red}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 2 \\ 6\end{pmatrix}\]</p>
+        </section>
+        <section data-auto-animate>
+            <h3>Another Simplex Iteration</h3>
+            <p> We have the equivalent LP (the constraints are in RREF for $\{3,4,5\}$):</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} 0 & 2 & \color{blue}0 & \color{red}3 & \color{blue}0\end{pmatrix} x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} -2 & -1 & \color{blue}1 & \color{red}0 & \color{blue}0 \\ 1 & 0 & \color{blue}0 & \color{red}1 & \color{blue}0 \\ 1 & -1 & \color{blue}0 & \color{red}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 2 \\ 6\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> The objective still has a nonzero coefficient on the basic variable $x_4$. Subtract $3$ times row $2$ from the objective to price it out.</p>
+        </section>
+        <section data-auto-animate>
+            <h3>Another Simplex Iteration</h3>
+            <p> We have the equivalent LP</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $(\begin{pmatrix} 0 & 2 & \color{blue}0 & \color{red}3 & \color{blue}0\end{pmatrix} - 3\begin{pmatrix} 1 & 0 & \color{blue}0 & \color{red}1 & \color{blue}0\end{pmatrix}) x + 3 \times 2$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} -2 & -1 & \color{blue}1 & \color{red}0 & \color{blue}0 \\ 1 & 0 & \color{blue}0 & \color{red}1 & \color{blue}0 \\ 1 & -1 & \color{blue}0 & \color{red}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 2 \\ 6\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> This gives canonical form with respect to $\{3,4,5\}$.</p>
+        </section>
+        <section data-auto-animate>
+            <h3>Another Simplex Iteration</h3>
+            <p> Canonical form with respect to $\{3,4,5\}$, with basic feasible solution $x = (0,0,2,2,6)$ and objective value $6$:</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} -3 & 2 & \color{blue}0 & \color{blue}0 & \color{blue}0\end{pmatrix} x + 6$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} -2 & -1 & \color{blue}1 & \color{blue}0 & \color{blue}0 \\ 1 & 0 & \color{blue}0 & \color{blue}1 & \color{blue}0 \\ 1 & -1 & \color{blue}0 & \color{blue}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 2 \\ 6\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> The only positive objective coefficient is on $x_2$, so $x_2$ enters next. </p>
+        </section>
+        <section data-auto-animate>
+            <h3>Another Simplex Iteration</h3>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} -3 & \color{red}2 & \color{blue}0 & \color{blue}0 & \color{blue}0\end{pmatrix} x + 6$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} -2 & \color{red}{-1} & \color{blue}1 & \color{blue}0 & \color{blue}0 \\ 1 & \color{red}0 & \color{blue}0 & \color{blue}1 & \color{blue}0 \\ 1 & \color{red}{-1} & \color{blue}0 & \color{blue}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 2 \\ 6\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> Entering $x_2$: what happens when we perform the ratio test? </p>
+            <p class=fragment> Column $A_2$ (red) has <b>no positive entry</b>, so the ratio test has no limiting row: we can increase $x_2 = t$ forever, increasing the objective while keeping things feasible. </p>
+            <p class=fragment> The LP is <b>unbounded</b>. </p>
+        </section>
+        <section data-auto-animate>
+            <h3>Another Simplex Iteration</h3>
+            <p> In summary, we can keep performing these simplex iterations, each time picking an entering variable with positive objective coefficient and using the ratio test to determine the leaving variable. </p>
+            <p> Two ways to terminate:</p>
+            <ul>
+              <li> The objective vector becomes nonpositive, and we terminate with an optimal feasible point.</li>
+              <li> The column of the entering variable becomes nonpositive, and we terminate with an unbounded LP.</li>
+            </ul>
+        </section>
+        <section data-auto-animate>
+            <h3>A Degenerate Pivot</h3>
+            <p>Sometimes a pivot changes the basis but <b>not</b> the point. Here is a canonical form with respect to $\{1,2,3\}$.</p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,2,3\}$</span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & \color{blue}0 & 5\end{pmatrix} x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & \color{blue}0 & 1 \\ \color{blue}0 & \color{blue}1 & \color{blue}0 & -1 \\ \color{blue}0 & \color{blue}0 & \color{blue}1 & 2\end{pmatrix} x = \begin{pmatrix} 0 \\ 2 \\ 3\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p class=fragment> The basic feasible solution is $x = (0, 2, 3, 0)$. It is <b>degenerate</b>: $x_1$ is basic but equals $0$. </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Degenerate Pivot</h3>
+            <p> Enter <span style="color:red">$x_4$</span> (its objective coefficient $5 > 0$). Which variable leaves? </p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,2,3\}$</span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & \color{blue}0 & \color{red}5\end{pmatrix} x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & \color{blue}0 & \color{red}1 \\ \color{blue}0 & \color{blue}1 & \color{blue}0 & \color{red}{-1} \\ \color{blue}0 & \color{blue}0 & \color{blue}1 & \color{red}2\end{pmatrix} x = \begin{pmatrix} 0 \\ 2 \\ 3\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p class=fragment>
+              <p>\[A_4 = \begin{pmatrix}1 \\ -1 \\ 2\end{pmatrix} \qquad b = \begin{pmatrix}0 \\ 2 \\ 3\end{pmatrix} \qquad b / A_4 = \begin{pmatrix}\frac{0}{1} \\ \frac{2}{-1} \\ \frac{3}{2}\end{pmatrix}.\]</p>
+              The smallest nonnegative ratio is $0$, in the first row, so <span style="color:blue">$x_1$ leaves</span>. The step length is $t = 0$.
+            </p>
+        </section>
+        <section data-auto-animate>
+            <h3>A Degenerate Pivot</h3>
+            <p> $x_4$ entered and $x_1$ left, so the new basis is $\{2,3,4\}$. Clearing column $4$ (pivot in row $1$) and pricing out gives: </p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{2,3,4\}$</span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} -5 & \color{blue}0 & \color{blue}0 & \color{blue}0\end{pmatrix} x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & \color{blue}0 & \color{blue}0 & \color{blue}1 \\ 1 & \color{blue}1 & \color{blue}0 & \color{blue}0 \\ -2 & \color{blue}0 & \color{blue}1 & \color{blue}0\end{pmatrix} x = \begin{pmatrix} 0 \\ 2 \\ 3\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p class=fragment> The basic feasible solution is still $x = (0, 2, 3, 0)$ &mdash; the <b>point did not move</b>, but the basis and canonical form changed. </p>
+            <p class=fragment> The objective value is also unchanged (still $0$). This is exactly what happens in a degenerate pivot. </p>
+        </section>
+        <!-- ===================== 6x4 example (two steps, ends optimal) ===================== -->
+        <section>
+            <h3>One More Simplex Example</h3>
+            <p>A larger LP ($4$ constraints, $6$ variables), in canonical form with respect to the basis $\{1,3,4,6\}$.</p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,3,4,6\}$</span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 3 & \color{blue}0 & \color{blue}0 & 4 & \color{blue}0\end{pmatrix} x + 4$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & \color{blue}0 & 1 & \color{blue}0 \\ \color{blue}0 & 0 & \color{blue}1 & \color{blue}0 & -1 & \color{blue}0 \\ \color{blue}0 & 1 & \color{blue}0 & \color{blue}1 & 0 & \color{blue}0 \\ \color{blue}0 & 0 & \color{blue}0 & \color{blue}0 & 1 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 1 \\ 2 \\ 2\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p class=fragment> The basic feasible solution is $x = (3,0,1,2,0,2)$. Both $x_2$ and $x_5$ have positive objective coefficients. </p>
+        </section>
+        <section data-auto-animate>
+            <h3>One More Simplex Example</h3>
+            <p> Let's enter <span style="color:red">$x_5$</span>. Which variable leaves? </p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,3,4,6\}$</span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 3 & \color{blue}0 & \color{blue}0 & \color{red}4 & \color{blue}0\end{pmatrix} x + 4$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & \color{blue}0 & \color{red}1 & \color{blue}0 \\ \color{blue}0 & 0 & \color{blue}1 & \color{blue}0 & \color{red}{-1} & \color{blue}0 \\ \color{blue}0 & 1 & \color{blue}0 & \color{blue}1 & \color{red}0 & \color{blue}0 \\ \color{blue}0 & 0 & \color{blue}0 & \color{blue}0 & \color{red}1 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 1 \\ 2 \\ 2\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+              <p class=fragment>\[A_5 = \begin{pmatrix}1 \\ -1 \\ 0 \\ 1\end{pmatrix} \qquad b = \begin{pmatrix}3 \\ 1 \\ 2 \\ 2\end{pmatrix} \qquad b / A_5 = \begin{pmatrix}\frac{3}{1} \\ \frac{1}{-1} \\ \frac{2}{0} \\ \frac{2}{1}\end{pmatrix}.\]</p>
+              The smallest nonnegative ratio is $2$, in the fourth row, so <span style="color:blue">$x_6$ leaves</span>.
+        </section>
+        <section data-auto-animate>
+            <h3>One More Simplex Example</h3>
+            <p> $x_5$ entered and $x_6$ left. The new basis is $\{1,3,4,6\} \setminus \{6\} \cup \{5\} = \{1,3,4,5\}$. The entering column already pivots in the last row, so no row swap is needed; we just clear column $5$.</p>
+            <p>\[\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & \color{blue}0 & \color{red}1 & \color{orange}0 \\ \color{blue}0 & 0 & \color{blue}1 & \color{blue}0 & \color{red}{-1} & \color{orange}0 \\ \color{blue}0 & 1 & \color{blue}0 & \color{blue}1 & \color{red}0 & \color{orange}0 \\ \color{blue}0 & 0 & \color{blue}0 & \color{blue}0 & \color{red}1 & \color{orange}1\end{pmatrix} x = \begin{pmatrix} 3 \\ 1 \\ 2 \\ 2\end{pmatrix}\downarrow_{\rho_1 = \rho_1 - \rho_4}\]</p>
+            <p>\[\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & \color{blue}0 & \color{red}0 & \color{orange}{-1} \\ \color{blue}0 & 0 & \color{blue}1 & \color{blue}0 & \color{red}{-1} & \color{orange}0 \\ \color{blue}0 & 1 & \color{blue}0 & \color{blue}1 & \color{red}0 & \color{orange}0 \\ \color{blue}0 & 0 & \color{blue}0 & \color{blue}0 & \color{red}1 & \color{orange}1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1 \\ 2 \\ 2\end{pmatrix}\]</p>
+        </section>
+        <section data-auto-animate>
+            <h3>One More Simplex Example</h3>
+            <p> $x_5$ entered and $x_6$ left. The new basis is $\{1,3,4,6\} \setminus \{6\} \cup \{5\} = \{1,3,4,5\}$. The entering column already pivots in the last row, so no row swap is needed; we just clear column $5$.</p>
+            <p>\[\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & \color{blue}0 & \color{red}0 & \color{orange}{-1} \\ \color{blue}0 & 0 & \color{blue}1 & \color{blue}0 & \color{red}{-1} & \color{orange}0 \\ \color{blue}0 & 1 & \color{blue}0 & \color{blue}1 & \color{red}0 & \color{orange}0 \\ \color{blue}0 & 0 & \color{blue}0 & \color{blue}0 & \color{red}1 & \color{orange}1\end{pmatrix} x = \begin{pmatrix} 1 \\ 1 \\ 2 \\ 2\end{pmatrix}\downarrow_{\rho_2 = \rho_2 + \rho_4}\]</p>
+            <p>\[\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & \color{blue}0 & \color{red}0 & \color{orange}{-1} \\ \color{blue}0 & 0 & \color{blue}1 & \color{blue}0 & \color{red}0 & \color{orange}1 \\ \color{blue}0 & 1 & \color{blue}0 & \color{blue}1 & \color{red}0 & \color{orange}0 \\ \color{blue}0 & 0 & \color{blue}0 & \color{blue}0 & \color{red}1 & \color{orange}1\end{pmatrix} x = \begin{pmatrix} 1 \\ 3 \\ 2 \\ 2\end{pmatrix}\]</p>
+        </section>
+        <section data-auto-animate>
+            <h3>One More Simplex Example</h3>
+            <p> Price out the objective by subtracting $4$ times row $4$ (the $x_5$ row):</p>
+            <div class="canonical-cell label-left">
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 3 & \color{blue}0 & \color{blue}0 & \color{blue}0 & -4\end{pmatrix} x + 12$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 1 & \color{blue}0 & \color{blue}0 & \color{blue}0 & -1 \\ \color{blue}0 & 0 & \color{blue}1 & \color{blue}0 & \color{blue}0 & 1 \\ \color{blue}0 & 1 & \color{blue}0 & \color{blue}1 & \color{blue}0 & 0 \\ \color{blue}0 & 0 & \color{blue}0 & \color{blue}0 & \color{blue}1 & 1\end{pmatrix} x = \begin{pmatrix} 1 \\ 3 \\ 2 \\ 2\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p> This is canonical form with respect to $\{1,3,4,5\}$, with BFS $x = (1,0,3,2,2,0)$ and objective value $12$. </p>
+        </section>
+        <section data-auto-animate>
+            <h3>One More Simplex Example</h3>
+            <p> Only $x_2$ has a positive objective coefficient, so <span style="color:red">$x_2$ enters</span>. Which variable leaves?</p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{1,3,4,5\}$</span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{red}3 & \color{blue}0 & \color{blue}0 & \color{blue}0 & -4\end{pmatrix} x + 12$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & \color{red}1 & \color{blue}0 & \color{blue}0 & \color{blue}0 & -1 \\ \color{blue}0 & \color{red}0 & \color{blue}1 & \color{blue}0 & \color{blue}0 & 1 \\ \color{blue}0 & \color{red}1 & \color{blue}0 & \color{blue}1 & \color{blue}0 & 0 \\ \color{blue}0 & \color{red}0 & \color{blue}0 & \color{blue}0 & \color{blue}1 & 1\end{pmatrix} x = \begin{pmatrix} 1 \\ 3 \\ 2 \\ 2\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p class=fragment>
+              The entering column is $A_2 = \begin{pmatrix}1 \\ 0 \\ 1 \\ 0\end{pmatrix}$. The ratios $b/A_2$ are $\frac{1}{1} = 1$ (row $1$) and $\frac{2}{1} = 2$ (row $3$). The smallest is $1$, so <span style="color:blue">$x_1$ leaves</span>.
+            </p>
+        </section>
+        <section data-auto-animate>
+            <h3>One More Simplex Example</h3>
+            <p> $x_2$ entered and $x_1$ left; the new basis is $\{2,3,4,5\}$. Column $2$ already pivots in row $1$, so we just clear it from the other rows.</p>
+            <p>\[\begin{pmatrix} \color{orange}1 & \color{red}1 & \color{blue}0 & \color{blue}0 & \color{blue}0 & -1 \\ \color{orange}0 & \color{red}0 & \color{blue}1 & \color{blue}0 & \color{blue}0 & 1 \\ \color{orange}0 & \color{red}1 & \color{blue}0 & \color{blue}1 & \color{blue}0 & 0 \\ \color{orange}0 & \color{red}0 & \color{blue}0 & \color{blue}0 & \color{blue}1 & 1\end{pmatrix} x = \begin{pmatrix} 1 \\ 3 \\ 2 \\ 2\end{pmatrix}\downarrow_{\rho_3 = \rho_3 - \rho_1}\]</p>
+            <p>\[\begin{pmatrix} \color{orange}1 & \color{red}1 & \color{blue}0 & \color{blue}0 & \color{blue}0 & -1 \\ \color{orange}0 & \color{red}0 & \color{blue}1 & \color{blue}0 & \color{blue}0 & 1 \\ \color{orange}{-1} & \color{red}0 & \color{blue}0 & \color{blue}1 & \color{blue}0 & 1 \\ \color{orange}0 & \color{red}0 & \color{blue}0 & \color{blue}0 & \color{blue}1 & 1\end{pmatrix} x = \begin{pmatrix} 1 \\ 3 \\ 1 \\ 2\end{pmatrix}\]</p>
+        </section>
+        <section data-auto-animate>
+            <h3>One More Simplex Example &mdash; optimal</h3>
+            <p> Price out the objective by subtracting $3$ times row $1$ (the $x_2$ row):</p>
+            <div class="canonical-cell label-left">
+                <span class="basis-label" style="color:blue"> $\{2,3,4,5\}$</span>
+                <div class="program">
+                  <table>
+                    <tr> <td> max </td> <td> $\begin{pmatrix} -3 & \color{blue}0 & \color{blue}0 & \color{blue}0 & \color{blue}0 & -1\end{pmatrix} x + 15$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} 1 & \color{blue}1 & \color{blue}0 & \color{blue}0 & \color{blue}0 & -1 \\ 0 & \color{blue}0 & \color{blue}1 & \color{blue}0 & \color{blue}0 & 1 \\ -1 & \color{blue}0 & \color{blue}0 & \color{blue}1 & \color{blue}0 & 1 \\ 0 & \color{blue}0 & \color{blue}0 & \color{blue}0 & \color{blue}1 & 1\end{pmatrix} x = \begin{pmatrix} 1 \\ 3 \\ 1 \\ 2\end{pmatrix}$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                  </table>
+                </div>
+            </div>
+            <p class=fragment> The objective vector has no positive entry, so this is <b>optimal</b>: $x = (0,1,3,1,2,0)$ with objective value $15$. </p>
+        </section>
+
+      </section>
+      <section>
+        <section>
+          <h2> The Simplex Algorithm</h2>
+        </section>
+        <section>
+          <h3> The Simplex Algorithm: Formalized</h3>
+          <p> <b>Input:</b> an LP in canonical form w.r.t. a basis $B$, and a basic feasible solution $x$. </p>
+          <div class="pseudocode">
+            <span class="ln"><span class="kw">loop</span>:</span>
+            <span class="ln ind"><span class="cm"># optimality test</span></span>
+            <span class="ln ind"><span class="kw">if</span> c has no positive entry <span class="kw">then return</span> "optimal", x</span>
+            <span class="ln ind">Choose k with c<sub>k</sub> &gt; 0 &nbsp;&nbsp;<span class="cm"># entering variable *</span></span>
+            <span class="ln ind"><span class="cm"># unboundedness test</span></span>
+            <span class="ln ind"><span class="kw">if</span> column A<sub>k</sub> has no positive entry <span class="kw">then return</span> "unbounded"</span>
+            <span class="ln ind"><span class="cm"># ratio test: leaving variable</span></span>
+            <span class="ln ind">&#8467; &#8592; argmin<sub>i basic, A<sub>ik</sub> &gt; 0</sub> &nbsp; b<sub>i</sub> / A<sub>ik</sub></span>
+            <span class="ln ind">B &#8592; (B &#8746; {k}) &#92; {&#8467;}</span>
+            <span class="ln ind">recanonicalize the LP w.r.t. the new basis B</span>
+          </div>
+          <p style="font-size:0.7em;">$^*$ any choice rule works for correctness; the choice affects running time.</p>
+        </section>
+        <section>
+          <h3> Correctness for Unboundedness</h3>
+          <p>If the simplex method terminates with unbounded, how do we know that it is unbounded?</p>
+          <div style="flex:1 1 0; min-width:0; border:2px solid #cb4b16; border-radius:12px; padding:8px 10px;">
+            <p style="color:#cb4b16; font-weight:700; margin:0 0 4px;">Unboundedness Certificate</p>
+            <p style="margin:2px 0;">A feasible $x$, and a $v$ with </p>
+            <p style="margin:2px 0;">\[Av = 0\qquad v \ge 0\qquad c^{\intercal} v > 0\]</p>
+          </div>
+          <p class=fragment> If the simplex method declares unboundedness, then there is a canonical form for the LP with a basic feasible solution so that $A_k$ has only nonpositive entries, and $c_k > 0$. </p>
+          <p class="fragment"> <b>Claim: </b> The vector $v$ obtained by padding $-A_k$ by 0's at all nonbasic variables except for $x_k$ and a 1 at $v_k$ is a recession direction. </p>
+        </section>
+        <section>
+          <h3> Correctness for Unboundedness</h3>
+          <p>For the computation, we will assume that $B = \{1,2,\dots, m\}$ and that that $k = m+1$ since we can permute the rows/columns. </p>
+          <p class="fragment">
+            Because the LP is in canonical form, we can write
+            \[
+            c = \begin{pmatrix} 0 \\ c_k \\ c'\end{pmatrix}, \qquad A = \begin{pmatrix} I & A_k & A' \end{pmatrix},
+            \]
+            where $A'$ is some matrix, and $c'$ is some vector.
+          </p>
+          <p class="fragment">
+            $v = \begin{pmatrix} -A_k \\ 1  \\ 0\end{pmatrix}$, so
+            \[
+            c^{\intercal}v = c_k > 0, \qquad Av = 0 \qquad v \ge 0.
+            \]
+          </p>
+        </section>
+        <section>
+          <h3> Correctness for Optimality</h3>
+          <p> A picture of optimality: the objective is maximized at a vertex, and neither edge leaving it improves the objective. </p>
+          <img src="images/simplex_optimality.svg" height=300px />
+        </section>
+        <section>
+          <h3> Correctness for Optimality</h3>
+          <p> A picture of optimality: the objective is maximized at a vertex, and neither edge leaving it improves the objective. </p>
+          <img src="images/simplex_nonconvex.svg" height=300px />
+          <p> Why is this picture impossible? Here, no local change can improve the objective, but nevertheless, there is an improved feasible point. </p>
+        </section>
+        <section>
+          <h3> Correctness for Optimality</h3>
+              <div style="flex:1 1 0; min-width:0; border:2px solid #859900; border-radius:12px; padding:8px 10px;">
+                <p style="color:#859900; font-weight:700; margin:0 0 4px;">Optimality Certificate</p>
+                <p style="margin:6px 0 2px;">A feasible $x^*$ and a $y$ with </p>
+                <p style="margin:2px 0;">\[A^{\intercal} y \ge c\qquad b^{\intercal} y = c^{\intercal} x^*\]</p>
+              </div>
+              <p>If simplex terminates with optimal, then we know that the LP has a canonical form with a basic feasible solution so that $c$ has only nonpositive entries. </p>
+              <p class="fragment"> Let $x^*$ be that basic feasible solution. We will show that $y = 0$ already certifies its optimality. </p>
+        </section>
+        <section data-auto-animate>
+          <h3> Correctness for Optimality</h3>
+          <p> We work directly with the LP as given in canonical form, so the LP is </p> <table class="darkBlueText" data-id="lp"> 
+              <tr> <td> max </td> <td> $c^{\intercal}x +$ $z$ </td> </tr>
+              <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+              <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+          </table>
+          <p>
+          where $z$ is some constant (e.g. 5).
+          </p>
+        </section>
+        <section data-auto-animate>
+          <h3> Correctness for Optimality</h3>
+          <p> We work directly with the LP as given in canonical form, so the LP is </p>
+           <table class="darkBlueText" data-id="lp"> 
+              <tr> <td> max </td> <td> $c^{\intercal}x +$ $\not{z}$ </td> </tr>
+              <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+              <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+          </table>
+          <p>
+            We can remove the constant $z$ since the optimal solutions do not change with or without it.
+          </p>
+          <p class=fragment> The termination condition is that $c \le 0$ and the fact that the LP is in canonical form imply that $c_i x_i^* = 0$ for each $i$, and in particular $c^{\intercal}x^* = 0$.</p>
+          <p class=fragment> Letting $y = 0$, we get that
+            \[Ay = 0 \ge c\qquad b^{\intercal}y = 0 = c^{\intercal}x^*. \]
+          </p>
+        </section>
+        <section>
+          <h3> Correctness for Optimality</h3>
+          <p> Let's think through the logic more directly:</p>
+           <table class="darkBlueText" data-id="lp"> 
+              <tr> <td> max </td> <td> $c^{\intercal}x +$ $z$ </td> </tr>
+              <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+              <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+          <p> We have that $c_i = 0$ if $i$ is in the basis and $c_i \le 0$ if $i$ is not in the basis.</p>
+          <p class=fragment> Any feasible point has all entries being nonnegative, and so $c^{\intercal}x \le 0$ for all $x \ge 0$.</p>
+          <p class=fragment> On the other hand, at the basic feasible solution, $c^{\intercal}x^* = 0$, so every other feasible point has a smaller objective value than this one.</p>
+        </section>
+        <section>
+          <h3> Termination </h3>
+          <p> How do we know that the simplex algorithm ever terminates? </p>
+          <p class=fragment> There are only finitely many vertices (because there are only finitely many bases). </p>
+          <p class=fragment> Each time we change basic feasible solutions, the objective increases strictly, so we can only change basic feasible solutions finitely many times. </p>
+          <p class=fragment> So we have to avoid returning to the same vertex twice; this can be accomplished with <i>Bland's rule</i> for selecting entering variables.</p>
+        </section>
+        <section>
+          <h3>Bland's Rule</h3>
+          <p> The strict-increase argument breaks under <b>degeneracy</b>: a pivot with step length $0$ leaves the objective unchanged, and the algorithm can <b>cycle</b> through a set of bases forever. </p>
+          <p class=fragment> <b>Bland's rule</b> removes the ambiguity in <i>which</i> variable to pick, always breaking ties by smallest index: </p>
+          <ul>
+            <li class=fragment> <b>Entering:</b> among all variables with $c_k &gt; 0$, choose the one with the <b>smallest index</b> $k$. </li>
+            <li class=fragment> <b>Leaving:</b> among all rows attaining the minimum ratio $\frac{b_i}{A_{ik}}$, choose the one whose basic variable has the <b>smallest index</b>. </li>
+          </ul>
+          <p class=fragment> <b>Theorem.</b> With Bland's rule, the simplex method never repeats a basis, so it always terminates. </p>
+          <p class=fragment> Intuitively, consistently preferring low-index variables prevents the algorithm from being "tricked" into a repeating cycle of degenerate pivots. </p>
+        </section>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>
