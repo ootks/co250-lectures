@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300" font-family="Georgia, serif">
+  <!-- Inequality relaxation: the filled triangle a1 x1 + a2 x2 <= b, x >= 0,
+       below the same line. Includes the origin. No text. -->
+  <defs>
+    <marker id="axr2d" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#93a1a1"/>
+    </marker>
+  </defs>
+
+  <!-- feasible region: triangle origin (50,250), x1-intercept (240,250), x2-intercept (50,100) -->
+  <polygon points="50,250 240,250 50,100"
+           fill="#859900" fill-opacity="0.25" stroke="#556100" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- axes -->
+  <line x1="50" y1="250" x2="285" y2="250" stroke="#93a1a1" stroke-width="1.8" marker-end="url(#axr2d)"/>
+  <line x1="50" y1="250" x2="50"  y2="45"  stroke="#93a1a1" stroke-width="1.8" marker-end="url(#axr2d)"/>
+
+  <!-- the bounding line of the relaxation, drawn over the triangle edge -->
+  <line x1="50" y1="100" x2="240" y2="250" stroke="#268bd2" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- the point x = 0 (origin), feasible for the relaxation -->
+  <circle cx="50" cy="250" r="5.5" fill="#cb4b16" stroke="#8a3210" stroke-width="1.6"/>
+</svg>
