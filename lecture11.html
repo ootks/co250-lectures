@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>
+            Lecture 11
+        </h4>
+        <br>
+        <p class=centered>
+          Kevin Shu
+        </p>
+        <aside class="notes">
+          Add private speaker notes here. Press S during the presentation to open speaker view.
+        </aside>
+      </section>
+
+      <section>
+        <h2>Lecture Outline</h2>
+        <ul>
+          <li>Two Phase Simplex Method Review</li>
+          <li>Geometry of Polytopes</li>
+        </ul>
+      </section>
+
+      <section>
+        <section>
+            <h2> Two Phase Simplex Method </h2>
+        </section>
+        <section class="fullscreen">
+            <div class=flexbox>
+            <img src="images/simplex_flowchart.svg" height="600px" />
+            <div>
+            <p class=fragment><b>Ratio test</b>: look at the column of $A$ associated to the entering variable, and find the positive entries in it (if there are none, then the LP is infeasible). For each positive entry, look at the corresponding entry of $b$, divide it by the entry of $A$ and then take some$^*$ row with the minimum ratio. That row corresponds to the leaving basic variable. </p>
+            <p class=fragment>If there are multiple rows which have the same minimum ratio, any of them could potentially leave; Bland's rule says to take the one of them that has the smallest index.</p></div></div>
+        </section>
+
+        <section>
+            <h3> Two Phase Simplex Algorithm </h3>
+            <p>Given a linear program, how do we check that it is feasible?</p>
+            <table>
+            <tr> <td>maximize </td> <td> $c^{\intercal}x$ </td> </tr>
+            <tr>  <td> such that </td><td> $Ax = b$ </td> </tr>
+            <tr>  <td></td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <div class=fragment>
+                <p>We can rewrite an equivalent LP with $b \ge 0$ by negating some of the equations.</p>
+             </div>
+        </section>
+        <section>
+            <h3> Two Phase Simplex Algorithm </h3>
+            <p>Starting with an LP in SEF with $b \ge 0$, we can write down the <b>auxilliary LP</b></p>
+            <div class="flexbox">
+                <table style="margin-right:30px;">
+                <tr> <td>maximize </td> <td> $c^{\intercal}x$ </td> </tr>
+                <tr>  <td> such that </td><td> $Ax = b$ </td> </tr>
+                <tr>  <td></td> <td> $x \ge 0$ </td> </tr>
+                </table>
+                <table style="color:#bd17fe;">
+                <tr> <td>maximize </td> <td> $-\sum_{i=1}^m s_i$ </td> </tr>
+                <tr>  <td> such that </td><td> $Ax + s = b$ </td> </tr>
+                <tr>  <td></td> <td> $x,s \ge 0$ </td> </tr>
+                </table>
+            </div>
+            <p>$m$ is the number of equations (the number of rows of $A$).</p>
+            <p class=fragment> The auxilliary LP is always <b>feasible</b> and its optimal value is 0 if and only if the original LP was feasible.</p>
+        </section>
+        <section>
+            <h3> Two Phase Simplex Algorithm </h3>
+            <p>Mechanically, the new LP is defined from the old components via the new matrices/vectors</p>
+            <p>
+            \[
+                \color{#bd17fe}{A'} = \begin{pmatrix} A & I \end{pmatrix}\qquad 
+                \color{#bd17fe}{b'} = b\qquad
+                \color{#bd17fe}{c'}^{\intercal} = (\vec{0}_n, -\vec{1}_m)
+            \]
+            <p>where $\vec{1}_m$ is the all one's vector of length $m$, and $\vec{0}_n$ is the all zeros vector of length $n$.</p>
+            <p class=fragment>Note that $\color{#bd17fe}{A'}^{\intercal}  \vec{1} = (A^{\intercal}\vec{1}_m, \vec{1}_m)$, and the following LP is in canonical form whose basis is the auxilliary variables $\{x_{n+1},\dots,x_{n+m}\}$.
+            </p>
+            <div class="fragment">
+                <table style="color:#bd17fe;">
+                <tr> <td>maximize </td> <td> $(A^{\intercal}\vec{1}, \vec{0}_m)^{\intercal}x' - b^{\intercal}\vec{1}_m$ </td> </tr>
+                <tr>  <td> such that </td><td> $A'x' = b$ </td> </tr>
+                <tr>  <td></td> <td> $x' \ge 0$ </td> </tr>
+                </table>
+                <p>$x'$ is a new vector of length $m+n$.</p>
+            </div>
+        </section>
+        <section>
+            <h3> Example </h3>
+            <div class="flexbox">
+              <div>
+                <p class=centered> Original LP </p>
+                <table>
+                  <tr> <td> max </td> <td> $\begin{pmatrix} 3 & 2 & 1 \end{pmatrix} x$ </td> </tr>
+                  <tr> <td> s.t. </td> <td> $\begin{pmatrix} 1 & 1 & 2 \\ 2 & 1 & 1 \end{pmatrix} x = \begin{pmatrix} 4 \\ 5 \end{pmatrix}$ </td> </tr>
+                  <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+              </div>
+              <div style="color:#bd17fe;margin-left:40px;">
+                <p class=centered> Auxiliary LP </p>
+                <table>
+                  <tr> <td> max </td> <td> $\begin{pmatrix} 0 & 0 & 0 & -1 & -1 \end{pmatrix} x'$ </td> </tr>
+                  <tr> <td> s.t. </td> <td> $\begin{pmatrix} 1 & 1 & 2 & 1 & 0 \\ 2 & 1 & 1 & 0 & 1 \end{pmatrix} x' = \begin{pmatrix} 4 \\ 5 \end{pmatrix}$ </td> </tr>
+                  <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+                </table>
+              </div>
+            </div>
+            <table  style="color:#bd17fe; margin-top:50px;" class="fragment">
+                <p class=centered> Canonical Form</p>
+            <tr> <td> max </td> <td> $\begin{pmatrix} 3 & 2 & 3 & \color{blue}0 & \color{blue}0 \end{pmatrix} x' - 9$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $\begin{pmatrix} 1 & 1 & 2 & \color{blue}1 & \color{blue}0 \\ 2 & 1 & 1 & \color{blue}0 & \color{blue}1 \end{pmatrix} x' = \begin{pmatrix} 4 \\ 5 \end{pmatrix}$ </td> </tr>
+            <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+            </table>
+        </section>
+
+        <!-- ===================== Phase 1 worked out ===================== -->
+        <section data-auto-animate>
+            <h3> Phase 1 &mdash; Iteration 1 </h3>
+            <p> We start in canonical form with respect to the basis $\color{blue}{\{4,5\}}$: </p>
+            <table style="color:#bd17fe;">
+            <tr> <td> max </td> <td> $\begin{pmatrix} 3 & 2 & 3 & \color{blue}0 & \color{blue}0 \end{pmatrix} x' - 9$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $\begin{pmatrix} 1 & 1 & 2 & \color{blue}1 & \color{blue}0 \\ 2 & 1 & 1 & \color{blue}0 & \color{blue}1 \end{pmatrix} x' = \begin{pmatrix} 4 \\ 5 \end{pmatrix}$ </td> </tr>
+            <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> The positive objective coefficients are $\{x_1, x_2, x_3\}$; Bland's rule enters the smallest index, $x_1$. </p>
+            <p class=fragment> Ratio test on $A_1 = \begin{pmatrix}1\\2\end{pmatrix}$: $\tfrac{4}{1} = 4$ (row $\color{blue}{x_4}$), $\tfrac{5}{2}$ (row $\color{blue}{x_5}$). The minimum is $\tfrac{5}{2}$, so $x_5$ leaves. </p>
+        </section>
+        <section data-auto-animate>
+            <h3> Phase 1 &mdash; Iteration 1 </h3>
+            <p style="color:#bd17fe;">
+              \[
+                \begin{pmatrix} \color{red}2 & 1 & 1 & \color{blue}0 & \color{green}1 \\ \color{red}1 & 1 & 2 & \color{blue}1 & \color{green}0 \end{pmatrix} x' = \begin{pmatrix} 5 \\ 4 \end{pmatrix}
+              \]
+              \[ \downarrow_{\ \rho_1 \,=\, \frac{1}{2}\rho_1} \]
+              \[
+                \begin{pmatrix} \color{red}1 & \tfrac{1}{2} & \tfrac{1}{2} & \color{blue}0 & \color{green}{\tfrac{1}{2}} \\ \color{red}1 & 1 & 2 & \color{blue}1 & \color{green}0 \end{pmatrix} x' = \begin{pmatrix} \tfrac{5}{2} \\ 4 \end{pmatrix}
+              \]
+              \[ \downarrow_{\ \rho_2 \,=\, \rho_2 - \rho_1} \]
+              \[
+                \begin{pmatrix} \color{red}1 & \tfrac{1}{2} & \tfrac{1}{2} & \color{blue}0 & \color{green}{\tfrac{1}{2}} \\ \color{red}0 & \tfrac{1}{2} & \tfrac{3}{2} & \color{blue}1 & \color{green}{-\tfrac{1}{2}} \end{pmatrix} x' = \begin{pmatrix} \tfrac{5}{2} \\ \tfrac{3}{2} \end{pmatrix}
+              \]
+            </p>
+        </section>
+        <section>
+            <h3> Phase 1 &mdash; Iteration 1 </h3>
+            <table style="color:#bd17fe;">
+            <tr> <td> max </td> <td> $\begin{pmatrix} \color{red}3 & 2 & 3 & \color{blue}0 & \color{green}0 \end{pmatrix} x' - 9$ </td> </tr>
+            <tr> <td> s.t. </td> <td>
+                $\begin{pmatrix} \color{red}1 & \tfrac{1}{2} & \tfrac{1}{2} & \color{blue}0 & \color{green}{\tfrac{1}{2}} \\ \color{red}0 & \tfrac{1}{2} & \tfrac{3}{2} & \color{blue}1 & \color{green}{-\tfrac{1}{2}} \end{pmatrix} x' = \begin{pmatrix} \tfrac{5}{2} \\ \tfrac{3}{2} \end{pmatrix}$
+            </td> </tr>
+            <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment>First equation says that $\begin{pmatrix} \color{red}1 & \tfrac{1}{2} & \tfrac{1}{2} & \color{blue}0 & \color{green}{\tfrac{1}{2}}\end{pmatrix}x' -  \frac{5}2 = 0$, so we can subtract this from the objective:
+            </p>
+            <p  class=fragment style="margin-left:-100px;">
+            \[
+                \begin{aligned}
+                &\left(\begin{pmatrix} \color{red}3 & 2 & 3 & \color{blue}0 & \color{green}0 \end{pmatrix} x' - 9\right)\\
+                 - &3\left(\begin{pmatrix} \color{red}1 & \tfrac{1}{2} & \tfrac{1}{2} & \color{blue}0 & \color{green}{\tfrac{1}{2}}\end{pmatrix}x' -  \frac{5}2\right)\\
+                =& \begin{pmatrix} \color{blue}0 & \tfrac{1}{2} & \tfrac{3}{2} & \color{blue}0 & -\tfrac{3}{2} \end{pmatrix} x' - \tfrac{3}{2}
+                \end{aligned}
+            \]
+                 </p>
+        </section>
+        <section data-auto-animate>
+            <h3> Phase 1 &mdash; Iteration 1 </h3>
+            <table style="color:#bd17fe;">
+            <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \tfrac{1}{2} & \tfrac{3}{2} & \color{blue}0 & -\tfrac{3}{2} \end{pmatrix} x' - \tfrac{3}{2}$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $\begin{pmatrix} \color{blue}1 & \tfrac{1}{2} & \tfrac{1}{2} & \color{blue}0 & \tfrac{1}{2} \\ \color{blue}0 & \tfrac{1}{2} & \tfrac{3}{2} & \color{blue}1 & -\tfrac{1}{2} \end{pmatrix} x' = \begin{pmatrix} \tfrac{5}{2} \\ \tfrac{3}{2} \end{pmatrix}$ </td> </tr>
+            <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+            </table>
+        </section>
+        <section data-auto-animate>
+            <h3> Phase 1 &mdash; Iteration 2 </h3>
+            <p> Canonical form with respect to $\color{blue}{\{1,4\}}$, basic feasible solution $x' = \left(\tfrac{5}{2},0,0,\tfrac{3}{2},0\right)$, objective value $-\tfrac{3}{2}$: </p>
+            <table style="color:#bd17fe;">
+            <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \tfrac{1}{2} & \tfrac{3}{2} & \color{blue}0 & -\tfrac{3}{2} \end{pmatrix} x' - \tfrac{3}{2}$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $\begin{pmatrix} \color{blue}1 & \tfrac{1}{2} & \tfrac{1}{2} & \color{blue}0 & \tfrac{1}{2} \\ \color{blue}0 & \tfrac{1}{2} & \tfrac{3}{2} & \color{blue}1 & -\tfrac{1}{2} \end{pmatrix} x' = \begin{pmatrix} \tfrac{5}{2} \\ \tfrac{3}{2} \end{pmatrix}$ </td> </tr>
+            <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> The positive objective coefficients are $\{x_2, x_3\}$; Bland's rule enters $x_2$. </p>
+            <p class=fragment> Ratio test on $A_2 = \begin{pmatrix}\tfrac{1}{2}\\\tfrac{1}{2}\end{pmatrix}$: $\tfrac{5/2}{1/2} = 5$ (row $\color{blue}{x_1}$), $\tfrac{3/2}{1/2} = 3$ (row $\color{blue}{x_4}$). The minimum is $3$, so $x_4$ leaves. </p>
+        </section>
+        <section data-auto-animate>
+            <h3> Phase 1 &mdash; Iteration 2  </h3>
+            <p style="color:#bd17fe;">
+              \[
+                \begin{pmatrix} \color{blue}1 & \color{red}{\tfrac{1}{2}} & \tfrac{1}{2} & \color{green}0 & \tfrac{1}{2} \\ \color{blue}0 & \color{red}{\tfrac{1}{2}} & \tfrac{3}{2} & \color{green}1 & -\tfrac{1}{2} \end{pmatrix} x' = \begin{pmatrix} \tfrac{5}{2} \\ \tfrac{3}{2} \end{pmatrix}
+              \]
+              \[ \downarrow_{\ \rho_2 \,=\, 2\rho_2} \]
+              \[
+                \begin{pmatrix} \color{blue}1 & \color{red}{\tfrac{1}{2}} & \tfrac{1}{2} & \color{green}0 & \tfrac{1}{2} \\ \color{blue}0 & \color{red}1 & 3 & \color{green}2 & -1 \end{pmatrix} x' = \begin{pmatrix} \tfrac{5}{2} \\ 3 \end{pmatrix}
+              \]
+              \[ \downarrow_{\ \rho_1 \,=\, \rho_1 - \frac{1}{2}\rho_2} \]
+              \[
+                \begin{pmatrix} \color{blue}1 & \color{red}0 & -1 & \color{green}{-1} & 1 \\ \color{blue}0 & \color{red}1 & 3 & \color{green}2 & -1 \end{pmatrix} x' = \begin{pmatrix} 1 \\ 3 \end{pmatrix}
+              \]
+            </p>
+        </section>
+        <section data-auto-animate>
+            <h3> Phase 1 &mdash; Iteration 2 </h3>
+            <p> Canonical form with respect to $\color{blue}{\{1,4\}}$, basic feasible solution $x' = \left(\tfrac{5}{2},0,0,\tfrac{3}{2},0\right)$, objective value $-\tfrac{3}{2}$: </p>
+            <table style="color:#bd17fe;">
+            <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \tfrac{1}{2} & \tfrac{3}{2} & \color{blue}0 & -\tfrac{3}{2} \end{pmatrix} x' - \tfrac{3}{2}$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $
+                \begin{pmatrix} \color{blue}1 & \color{red}0 & -1 & \color{green}{-1} & 1 \\ \color{blue}0 & \color{red}1 & 3 & \color{green}2 & -1 \end{pmatrix} x' = \begin{pmatrix} 1 \\ 3 \end{pmatrix}
+$ </td> </tr>
+            <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment>Second equation says that $\begin{pmatrix} \color{blue}0 & \color{red}1 & 3 & \color{green}2 & -1 \end{pmatrix}x' - 3 = 0$, so we can subtract this from the objective:
+            </p>
+            <p class=fragment style="margin-left:-100px;">
+            \[
+                \begin{aligned}
+                &\left(\begin{pmatrix} \color{blue}0 & \color{red}{\tfrac{1}{2}} & \tfrac{3}{2} & \color{blue}0 & -\tfrac{3}{2} \end{pmatrix} x' - \tfrac{3}{2}\right)\\
+                 - &\tfrac{1}{2}\left(\begin{pmatrix} \color{blue}0 & \color{red}1 & 3 & \color{green}2 & -1 \end{pmatrix}x' - 3\right)\\
+                =& \begin{pmatrix} \color{blue}0 & \color{blue}0 & 0 & -1 & -1 \end{pmatrix} x' - 0
+                \end{aligned}
+            \]
+            </p>
+        </section>
+        <section data-auto-animate>
+            <h3> Phase 1 &mdash; Iteration 3 </h3>
+            <p> This gives the canonical form with respect to $\color{blue}{\{1,2\}}$ (sorted), with basic feasible solution $x' = (1,3,0,0,0)$ and objective value $0$: </p>
+            <table style="color:#bd17fe;">
+            <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & 0 & -1 & -1 \end{pmatrix} x'$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 & -1 & 1 \\ \color{blue}0 & \color{blue}1 & 3 & 2 & -1 \end{pmatrix} x' = \begin{pmatrix} 1 \\ 3 \end{pmatrix}$ </td> </tr>
+            <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> The objective has no positive coefficient, so phase 1 is optimal with value $0$. The artificial variables $x_4, x_5$ are both $0$, so the original LP is <b>feasible</b>, and $\{x_1, x_2\}$ is a starting basis for phase 2. </p>
+        </section>
+        <!-- ===================== Phase 2 ===================== -->
+        <section data-auto-animate>
+            <h3> Phase 2 &mdash; Setup </h3>
+            <p> Drop the artificial variables $x_4, x_5$ and restore the original objective $\max\ 3x_1 + 2x_2 + x_3$. Phase 1 ended at the basis $\color{blue}{\{1,2\}}$, which we use to start phase 2. </p>
+            <p> Taking the phase-1 constraint rows (restricted to $x_1, x_2, x_3$) already in canonical form with respect to $\color{blue}{\{1,2\}}$: </p>
+            <table>
+            <tr> <td> max </td> <td> $\begin{pmatrix} 3 & 2 & 1 \end{pmatrix} x$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 \\ \color{blue}0 & \color{blue}1 & 3 \end{pmatrix} x = \begin{pmatrix} 1 \\ 3 \end{pmatrix}$ </td> </tr>
+            <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> The objective is not yet reduced: the basic variables $x_1, x_2$ still have nonzero coefficients. </p>
+        </section>
+        <section data-auto-animate>
+            <h3> Phase 2 &mdash; Optimal </h3>
+            <p> Reduce the objective so the basic variables $x_1, x_2$ have zero coefficients. This gives the canonical form with respect to $\color{blue}{\{1,2\}}$, with basic feasible solution $x = (1,3,0)$ and objective value $9$: </p>
+            <table>
+            <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & \color{blue}0 & -2 \end{pmatrix} x + 9$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $\begin{pmatrix} \color{blue}1 & \color{blue}0 & -1 \\ \color{blue}0 & \color{blue}1 & 3 \end{pmatrix} x = \begin{pmatrix} 1 \\ 3 \end{pmatrix}$ </td> </tr>
+            <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> The objective vector has no positive coefficient, so this is already <b>optimal</b>. The optimal solution is $x_1 = 1,\ x_2 = 3,\ x_3 = 0$ with value $3(1) + 2(3) + 1(0) = 9$. </p>
+        </section>
+
+
+        <section>
+            <h2>Another Example</h2>
+        </section>
+        <!-- ===================== Phase 1 example: infeasible original LP ===================== -->
+        <section>
+            <h3> Phase 1 </h3>
+            <div class="flexbox">
+              <div>
+                <p class=centered> Original LP </p>
+                <table>
+                  <tr> <td> max </td> <td> $c^{\intercal} x$ </td> </tr>
+                  <tr> <td> s.t. </td> <td> $\begin{pmatrix} 1 & 1 & 1 \\ 2 & 2 & 3 \end{pmatrix} x = \begin{pmatrix} 1 \\ 5 \end{pmatrix}$ </td> </tr>
+                  <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+              </div>
+              <div style="color:#bd17fe;margin-left:40px;">
+                <p class=centered> Auxiliary LP </p>
+                <table>
+                  <tr> <td> max </td> <td> $\begin{pmatrix} 0 & 0 & 0 & -1 & -1 \end{pmatrix} x'$ </td> </tr>
+                  <tr> <td> s.t. </td> <td> $\begin{pmatrix} 1 & 1 & 1 & 1 & 0 \\ 2 & 2 & 3 & 0 & 1 \end{pmatrix} x' = \begin{pmatrix} 1 \\ 5 \end{pmatrix}$ </td> </tr>
+                  <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+                </table>
+              </div>
+            </div>
+        </section>
+        <section data-auto-animate>
+            <h3> Phase 1 &mdash; Iteration 1 </h3>
+            <p> Canonical form with respect to $\color{blue}{\{4,5\}}$, basic feasible solution $x' = (0,0,0,1,5)$, with $x_4 + x_5 = 6$: </p>
+            <table style="color:#bd17fe;">
+            <tr> <td> max </td> <td> $\begin{pmatrix} 3 & 3 & 4 & \color{blue}0 & \color{blue}0 \end{pmatrix} x' - 6$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $\begin{pmatrix} 1 & 1 & 1 & \color{blue}1 & \color{blue}0 \\ 2 & 2 & 3 & \color{blue}0 & \color{blue}1 \end{pmatrix} x' = \begin{pmatrix} 1 \\ 5 \end{pmatrix}$ </td> </tr>
+            <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> The positive objective coefficients are $\{x_1, x_2, x_3\}$; Bland's rule enters $x_1$. </p>
+            <p class=fragment> Ratio test on $A_1 = \begin{pmatrix}1\\2\end{pmatrix}$: $\tfrac{1}{1} = 1$ (row $\color{blue}{x_4}$), $\tfrac{5}{2}$ (row $\color{blue}{x_5}$). The minimum is $1$, so $x_4$ leaves. </p>
+        </section>
+        <section data-auto-animate>
+            <h3> Phase 1 &mdash; Iteration 2 </h3>
+            <p> After the pivot, the basis is $\color{blue}{\{1,5\}}$ (already sorted). Canonical form with basic feasible solution $x' = (1,0,0,0,3)$, with $x_4 + x_5 = 3$: </p>
+            <table style="color:#bd17fe;">
+            <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 0 & 1 & \color{blue}{-3} & \color{blue}0 \end{pmatrix} x' - 3$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $\begin{pmatrix} \color{blue}1 & 1 & 1 & \color{blue}1 & \color{blue}0 \\ \color{blue}0 & 0 & 1 & \color{blue}{-2} & \color{blue}1 \end{pmatrix} x' = \begin{pmatrix} 1 \\ 3 \end{pmatrix}$ </td> </tr>
+            <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> The only positive objective coefficient is $x_3$, so $x_3$ enters. Ratio test on $A_3 = \begin{pmatrix}1\\1\end{pmatrix}$: $\tfrac{1}{1} = 1$ (row $\color{blue}{x_1}$), $\tfrac{3}{1} = 3$ (row $\color{blue}{x_5}$). The minimum is $1$, so $x_1$ leaves. </p>
+        </section>
+        <section data-auto-animate>
+            <h3> IPhase 1 &mdash; Iteration 3  </h3>
+            <p> After the pivot, the basis is $\color{blue}{\{3,5\}}$ (already sorted). Canonical form with basic feasible solution $x' = (0,0,1,0,2)$, with $x_4 + x_5 = 2$: </p>
+            <table style="color:#bd17fe;">
+            <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}{-1} & -1 & \color{blue}0 & -4 & \color{blue}0 \end{pmatrix} x' - 2$ </td> </tr>
+            <tr> <td> s.t. </td> <td> $\begin{pmatrix} \color{blue}1 & 1 & \color{blue}1 & 1 & \color{blue}0 \\ \color{blue}{-1} & -1 & \color{blue}0 & -3 & \color{blue}1 \end{pmatrix} x' = \begin{pmatrix} 1 \\ 2 \end{pmatrix}$ </td> </tr>
+            <tr> <td> </td> <td> $x' \ge 0$ </td> </tr>
+            </table>
+            <p class=fragment> The objective has no positive coefficient, so phase 1 is optimal with value $\max\big(-(x_4+x_5)\big) = -2$, i.e. $\min(x_4 + x_5) = 2 &gt; 0$. </p>
+            <p class=fragment> The artificials cannot all be driven to $0$ (here $x_5 = 2$), so the original LP is <b>infeasible</b>. </p>
+        </section>
+      </section>
+      <section>
+        <section>
+            <h2> Geometry of Polytopes </h2>
+        </section>
+        <section>
+            <h3> Half-Spaces</h3>
+            <p> Every polytope is built out of inequalities of the form $a^{\intercal}x \le b$, which defines a half-space</p>
+            <img src="images/halfspace_2d.svg" height="260px" />
+        </section>
+        <section>
+            <h3> Half-Spaces</h3>
+            <div class="flexbox">
+                <div>
+                    <p>A halfspace defined by</p>
+                    <p> \[a^{\intercal}x \le b\] has the important property of <b>convexity</b>. An average of two points satisfying this condition still satisfies this condition. For $0 \le t \le 1$,</p>
+                    <p>\[\begin{aligned}a^{\intercal}(tx+(1-t)y) &= ta^{\intercal}x + (1-t)a^{\intercal}y\\ &\le tb + (1-t)b\\ &= b.\end{aligned}\]</p>
+                </div>
+            <img src="images/convexity_2d.svg" height="260px" />
+            </div>
+        </section>
+        <section>
+            <h3> Half-Spaces</h3>
+            <div class="flexbox">
+                <img src="images/polyhedra-collection.svg" height="300px"/>
+                <div>
+                    <p>The feasible region for an LP is an intersection of halfspaces.</p>
+                    <p class="fragment"> Intersections of convex sets are still convex, so every feasible region of an LP is convex. </p>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h3> Standard Equality Form</h3>
+            <div class="flexbox">
+                <img src="images/sef_lift_triangle.svg" height="300px" />
+                <div>
+                    <p>We have seen that a linear program with feasible set $Ax \le b$ can also be described in standard equality form by adding some extra variables.</p>
+                    <p> This corresponds to `lifting' the polytope into a higher dimensional space, or in other words, drawing the polytope as a projection of a higher dimensional polytope. </p>
+                </div>
+            </div>
+        </section>
+        <section class="fullscreen" data-auto-animate>
+            <h3> Affine Hulls of Polytopes </h3>
+            <div class="flexbox" style="align-items:center;">
+                <img src="images/polytope_dimensions.svg" height="600px" style="flex:0 0 auto;" />
+                <div style="flex:1 1 auto; min-width:0;">
+                    <p>For a polytope defined by $P = \{x \in \R^n : Ax \le b\}$, where $A$ has rows $a_1, \dots, a_m$, we will let the set of <b>implicit equations</b> be $S = \{i : \forall x \in P, a_i^{\intercal}x = b_i\}$.</p>
+                    <p>The affine hull is defined as $\{x \in \R^n : \forall i \in S, a_i^{\intercal}x = b_i\}$.$^*$ .</p>
+                    <p class="fragment">Consider the feasible set defined by $\{x \in \R^2 : x_1 + x_2 \le 2, x_1 - x_2 \le 0, x_1 \ge 1\}$. What is its affine hull? <span class="fragment"> Just a one point set $\{(1,1)\}$.</span></p>
+                    <small>This is not the most general definition of the affine hull.</small>
+                </div>
+            </div>
+        </section>
+        <section class="fullscreen" data-auto-animate>
+            <h3> Affine Hulls of Polytopes </h3>
+            <div class="flexbox" style="align-items:center;">
+                <img src="images/polytope_dimensions.svg" height="600px" style="flex:0 0 auto;" />
+                <div style="flex:1 1 auto; min-width:0;">
+                    <p>For a polytope defined by $P = \{x \in \R^n : Ax \le b\}$, where $A$ has rows $a_1, \dots, a_m$, we will let the set of <b>implicit equations</b> be $S = \{i : \forall x \in P, a_i^{\intercal}x = b_i\}$.</p>
+                    <p>The affine hull is defined as $\{x \in \R^n : \forall i \in S, a_i^{\intercal}x = b_i\}$.$^*$ .</p>
+                    <p class=fragment>The <b>dimension</b> of the polytope is defined to be the dimension of this affine hull.</p>
+                    <p class=fragment>Computing the affine hull of $P = \{x \in \R^n : Ax \le b\}$ requires finding which rows of $A$ define constant functions on $P.$ This is a linear programming problem.</p>
+                    <small>This is not the most general definition of the affine hull.</small>
+                </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Affine Hulls of Polytopes </h3>
+            <div class="flexbox" style="align-items:center;">
+                <img src="images/sef_lift_triangle.svg" height="300px" />
+                <div style="flex:1 1 auto; min-width:0;">
+                    <p> If a polytope $P = \{x \in \R^n : Ax = b, x \ge 0\}$ is written in SEF, then the affine hull will be contained in $\{x \in \R^n : Ax = b\}$, but it might be smaller.</p>
+                    <div class=fragment>
+                        <img style="margin-top:-80px;" src="images/orthant_intersection_2d.svg" height="300px" />
+                        <p> If $P = \{x \in \R^3 : x_1 + x_2 = 0, x \ge 0\}$, then the affine hull of $P$ is $\{x \in \R^3 : x_1 = x_2 = 0\}$.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h3> Dimensions of Polytopes </h3>
+            <p>What are the dimensions of the following polytopes? </p>
+            <div class="flexbox" style="align-items:flex-end; justify-content:center;">
+                <img src="images/polytope_dim2.svg" height="240px" />
+                <img src="images/polytope_dim3.svg" height="240px" />
+                <img src="images/polytope_dim1.svg" height="240px" />
+            </div>
+        </section>
+        <section>
+            <h3> Faces of Polytopes </h3>
+            <div class="flexbox">
+                <div>
+                    <img src="images/polytope_triangle.svg"/>
+                    <p class=fragment>The faces consist of the 3 red edges, the 3 green vertices and the whole triangle (blue). </p>
+                </div>
+                <div>
+                    <p> Let $P$ be a polytope $\{x \in \R^n : Ax \le b\}$. For a set $S \subseteq [m]$, the associated <b>face</b> of $P$ is the set of points where the associated inequalities are met with equality.
+                        \[
+                            F = \{x \in \R^n : Ax \le b, \text{ and }\forall i \in S, a_i^{\intercal}x = b_i  \}.
+                        \]
+                    </p>
+                    <p class=fragment> Each face is a <b>polytope</b> with its own dimension. </p> 
+                    <p class=fragment> The vertices of $P$ are the 0 dimensional faces. These are points where as many of the inequalities are equations as possible (the number of equations should equal the dimension of the affine hull). </p> 
+                    <p class=fragment> An edge in a polytope is a 1 dimensional face. </p> 
+                </div>
+            </div>
+        </section>
+        <section class=fullscreen data-auto-animate>
+            <h3> Faces of Polytopes </h3>
+            <h4>Example: Cube</h4>
+            <div class=flexbox>
+                <p style="margin-top:200px;"> The cube is $\{x \in \R^3 : 0 \le x_1, x_2, x_3 \le 1\}$.</p>
+                <img src="images/cube_faces.svg" height="400px" style="margin-top:-100px;" />
+            </div>
+            <p> The 6 faces that are 2-dimensional (one for each inequality in its description). In a polytope, faces of dimension $n-1$ are called <b>facets</b>, and they correspond to necessary constraints in the inequality description.</p>
+        </section>
+        <section class=fullscreen data-auto-animate>
+            <h3> Faces of Polytopes </h3>
+            <h4>Example: Cube</h4>
+            <div class=flexbox>
+                <p style="margin-top:200px;"> The cube is $\{x \in \R^3 : 0 \le x_1, x_2, x_3 \le 1\}$.</p>
+                <img src="images/cube_edges.svg" height="400px" style="margin-top:-100px;" />
+            </div>
+            <p> There are 12 edges in the cube (each facet has 4 edges, and each edge is on 2 faces for a total of $\frac{4 \times 6}{2} = 12$ ). </p>
+        </section>
+        <section class=fullscreen data-auto-animate>
+            <h3> Faces of Polytopes </h3>
+            <h4>Example: Cube</h4>
+            <div class=flexbox>
+                <p style="margin-top:200px;"> The cube is $\{x \in \R^3 : 0 \le x_1, x_2, x_3 \le 1\}$.</p>
+                <img src="images/cube_vertices.svg" height="400px" style="margin-top:-100px;" />
+            </div>
+            <p> There are 8 vertices of the cube. We can count this as each vertex corresponds to setting 3 of the inequalities to equations. Each such equation specifies that $x_i = 0$ or $x_i = 1$; there are 8 ways to choose one of these choices for each coordinate. </p>
+        </section>
+        <section>
+            <h3> Faces of Polytopes </h3>
+            <div class="flexbox">
+            <img src="images/sef_lift_triangle_noshadow.svg" height="300px" />
+            <div>
+                <p> What do vertices correspond to for a polytope of the form $P = \{x \in \R^n : Ax = b, x \ge 0\}$? </p>
+                <p> Let's assume that the affine hull is $\{x \in \R^n : Ax = b\}$ and $A$ is full rank. The dimension of this affine hull is $n-m$.</p>
+                <p class="fragment"> Thus, the vertices should correspond to points in $P$ where $n-m$ of the inequalities are tight. Each inequality is of the form $x_i \ge 0$, so these are points where $n-m$ entries are 0.</p>
+                <p class="fragment"> These are exactly the basic feasible solutions! </p>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Vertices are Extreme Points </h3>
+            <div class="flexbox">
+            <img src="images/polytope_triangle.svg"/>
+            <div>
+                <p>An <b>extreme point</b> of a set $S \subseteq \R^n$ is a point in $S$ which is not contained in any line segment joining two distinct points in $S$.</p>
+                <p class=fragment> That is that $x \in S$ is an extreme point if for any $y, z \in S$ so that $x \neq y, z$,
+                \[
+                    x \neq t y + (1-t)z
+                \]
+                for any $t \in (0,1)$.
+                </p>
+                <div class=fragment style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                    <p><b>Theorem</b></p>
+                    <p>A point in a polytope $P = \{x \in \R^n : Ax \le b\}$ is an extreme point if and only if that point is a vertex, i.e. there are $n$ linearly independent rows of $A$ so that $x$ meets those inequalities with equality.</p>
+                </div>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Vertices are Extreme Points </h3>
+            <div class="flexbox">
+            <img src="images/polytope_triangle.svg"/>
+            <div>
+                <p><b>Proof of the Theorem:</b> Suppose that $x \in P$ is a vertex, and let's say that $a_1^{\intercal}x = b_1, a_2^{\intercal}x = b_2,\dots, a_n^{\intercal}x = b_n$ where $a_1, \dots, a_n$ are linearly independent.</p>
+                <p class=fragment>We can write this as a square system $A^= x = b^=$. Note that this implies that $x = (A^=)^{-1}b^=$ is the unique solution to this system. </p>
+                <p class=fragment>Suppose that $x = t y + (1-t)z$, where $y, z \in P$, so that $a_i^{\intercal} y, a_i^{\intercal} z \le b_i$ for each $i$. Suppose that $a_i^{\intercal}y < b_i$ for some $i$ (or symmetrically that $a_i^{\intercal}z \le b_i$).</p>
+                <p class=fragment>Then $a_i^{\intercal}x_i = ta_i^{\intercal}y + (1-t)a_i^{\intercal}z < t b_i + (1-t)b_i < b_i$, a contradiction.</p>
+                <p class=fragment>Therefore, $A^= y = A^= z = b$, and so $y = z = x$.</p>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Vertices are Extreme Points </h3>
+            <div class="flexbox">
+            <img src="images/polytope_triangle.svg"/>
+            <div>
+                <p><b>Proof of the Theorem:</b> Suppose that $x \in P$ is an extreme point.</p>
+                <p>Suppose that $a_1, \dots, a_k$ satisfy $a_i x = b_i$, and that $a_{k+1},\dots, a_m$ satisfy $a_i^{\intercal} x < b_i$ (where these are the only two cases since $a_i^{\intercal}x \le b_i$ for each $i$).</p>
+                <p class="fragment">If $x$ is not a vertex, then the span of $a_1, \dots, a_k$ has dimension less than $n$, and so there is some nonzero $v \in \R^n$ so that $a_i^{\intercal}v = 0$ for $i=1, \dots, k$. </p>
+                <p class="fragment">Consider now $x + tv$; $a_i^{\intercal}(x+tv)= a_i^{\intercal}x = b_i $ for $i=1,\dots,k$. On the other hand, if $|t|$ is small enough, then $a_i^{\intercal}(x+tv) < b_i$, since $a_i^{\intercal}x < b_i$. Choosing such a small $t > 0$, we see that $x = \frac{1}{2}(x+tv)+\frac{1}{2}(x-tv)$, contradicting $x$ being an extreme point. </p>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Linear Programs and Vertices </h3>
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Theorem</b></p>
+                <p>Claim: Every linear function that has a maximum on a set $S \subseteq \R^n$ is maximized at some extreme point of $S$.</p>
+            </div>
+            <div class="flexbox">
+            <img src="images/sef_lift_triangle_noshadow.svg" height="300px" />
+            <div>
+                <p><b>Proof:</b>Let $c^{\intercal}x$ be this linear function. Let's start by assuming that there is a unique maximizer of the linear function on $S$, $x^*$. Suppose that $x^*$ is not an extreme point, so there are $y, z \in S$ with $y,z \neq x^*$ and $\lambda \in [0,1]$ so that $x^* = \lambda y + (1-\lambda)z$.</p>
+                <p class=fragment>Well, then $c^{\intercal}x^* = t c^{\intercal}y + (1-t)c^{\intercal}z$, and since $x^*$ was the unique minimizer, $c^{\intercal}y, c^{\intercal}z < c^{\intercal}x^*$, and we get the contradiction that $c^{\intercal}x^* < c^{\intercal}x^*$. </p>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Linear Programs and Vertices </h3>
+            <div class="flexbox">
+            <img src="images/sef_lift_triangle_noshadow.svg" height="300px" />
+            <div>
+                <p>Well what if there are multiple maximizers?</p>
+                <p class=fragment> In this case, the above argument would only show that $x^*$ can only be written as convex combinations of other maximizers of $c^{\intercal}x$, but it does not show that one of those maximizers must be extreme.
+                </p>
+                <p class="fragment">
+                    There are different ways to deal with this technical issue. Intuitively, we will do the following: restrict our attention to $S' = \{x \in S : c^{\intercal}x = c^{\intercal}x^*\}$, and note that this is contained in an affine space of dimension $n-1$ (assuming $c \neq 0$), and so by induction, $S'$ has an extreme point $x^{**}$. This $x^{**}$ is also an extreme point of $S$, so we are done.
+                </p>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Linear Programs and Vertices </h3>
+            <div class="flexbox">
+            <img src="images/sef_lift_triangle_noshadow.svg" height="300px" />
+            <div>
+                <p> A corollary of this fact is that any linear program in SEF that is bounded and feasible has some basic feasible solution as an optimal solution. </p>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Geometry and Duality </h3>
+            <p>The most important theorem in convex geometry. </p>
+            <div class=flexbox>
+                <img src="images/sep_hyp_diagram.svg" />
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Separating Hyperplane Theorem</b></p>
+                <p> If $P$ and $Q$ are two convex polytopes in $\R^n$, and $P \cap Q = \varnothing$, then there exists some $y$ so that $y^{\intercal}p < y^{\intercal}q$ for any $p \in P$ and $q \in Q$. </p>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Geometry and Duality </h3>
+            <p><b>Proof:</b> We will make use of a lemma: </p>
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Lemma</b></p>
+                <p> If $P$ and $Q$ are disjoint convex polytopes in $\R^n$, then there exists a pair of points $(p,q)$ with the smallest possible distance from $p$ to $q$. </p>
+            </div>
+            <p>Let $(p,q)$ be this distance minimizing pair, and let $y = p - q$. We claim that this $y$ satisfies the conditions of the theorem.</p>
+            <p>Suppose that there were some $p', q'$ so that $y^{\intercal}p < y^{\intercal}q$, and consider 
+            \[
+            \]
+            </p>
+        </section>
+        <section class="fullscreen">
+            <h3> Geometry and Duality </h3>
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Farkas' Lemma</b></p>
+                <p> The set $\{x\in \R^n : Ax = b, x \ge 0\}$ is empty if and only if there exists some $y$ so that $A^{\intercal}y \ge 0$ and $b^{\intercal}y < 0$. </p>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Geometry and Duality </h3>
+            <p><b>Proof:</b> Since $\{x\in \R^n : Ax = b, x \ge 0\}$ is empty, the two sets $P = \{x \in \R^n : Ax = b\}$ and $Q = \{x \in \R^n : x \ge 0\}$ are disjoint.</p>
+            <p>Let's first consider the possibility htat $P$ is empty. Linear algebra implies that there must exist some $y$ so that $A^{\intercal}y = 0$ and $b^{\intercal}y = -1$, which supplies the needed contradiction.</p>
+                
+            <p>
+            If $P$ is nonempty, then the separating hyperplane theorem states that there exists some $y$ so that 
+            \[
+                y^{\intercal}q \le y^{\intercal}p.
+            \]
+            </p>
+        </section>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

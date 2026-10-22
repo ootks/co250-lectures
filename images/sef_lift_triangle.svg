@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 360" width="320" height="360" font-family="Georgia, serif">
+  <!-- Triangle = convex hull of three points on the coordinate axes (a,0,0),(0,b,0),(0,0,c),
+       with its shadow (projection x3 -> 0) on the x1-x2 plane.
+       Orientation: x1 due east, x2 south-east, x3 up. -->
+  <defs>
+    <marker id="axd" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#93a1a1"/>
+    </marker>
+  </defs>
+
+  <!-- axes from origin (100,210): x1 east, x2 south-east, x3 up -->
+  <line x1="100" y1="210" x2="296"   y2="210"   stroke="#93a1a1" stroke-width="1.8" marker-end="url(#axd)"/>
+  <line x1="100" y1="210" x2="230.7" y2="340.7" stroke="#93a1a1" stroke-width="1.8" marker-end="url(#axd)"/>
+  <line x1="100" y1="210" x2="100"   y2="14"    stroke="#93a1a1" stroke-width="1.8" marker-end="url(#axd)"/>
+  <text x="300" y="214" font-size="13" font-style="italic" fill="#93a1a1">x&#8321;</text>
+  <text x="234" y="353" font-size="13" font-style="italic" fill="#93a1a1">x&#8322;</text>
+  <text x="106" y="20"  font-size="13" font-style="italic" fill="#93a1a1">x&#8323;</text>
+
+  <!-- shadow of the triangle on the x1-x2 plane: hull of (a,0,0),(0,b,0),origin -->
+  <polygon points="268,210 218.8,328.8 100,210"
+           fill="#859900" fill-opacity="0.55" stroke="#556100" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- projection line from apex (0,0,c) down to its shadow (origin) -->
+  <line x1="100" y1="42" x2="100" y2="210" stroke="#657b83" stroke-width="1.2" stroke-dasharray="3 3"/>
+
+  <!-- 3D triangle: convex hull of the three axis points -->
+  <polygon points="268,210 218.8,328.8 100,42"
+           fill="#268bd2" fill-opacity="0.22" stroke="#268bd2" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- vertices on the axes -->
+  <circle cx="268"   cy="210"   r="5" fill="#859900" stroke="#556100" stroke-width="1.5"/>
+  <circle cx="218.8" cy="328.8" r="5" fill="#859900" stroke="#556100" stroke-width="1.5"/>
+  <circle cx="100"   cy="42"    r="5" fill="#859900" stroke="#556100" stroke-width="1.5"/>
+
+  <!-- shadow of the apex (origin) -->
+  <circle cx="100" cy="210" r="4" fill="#556100"/>
+</svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320" font-family="Georgia, serif">
+  <!-- The plane x2 + x3 = 0 (blue), drawn through the origin.
+       It meets the nonnegative orthant in the x1 coordinate axis (green).
+       Orientation: x1 east, x2 south-east, x3 up. -->
+  <defs>
+    <marker id="oax" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#93a1a1"/>
+    </marker>
+    <marker id="oaxg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#556100"/>
+    </marker>
+  </defs>
+
+  <!-- the plane x2 + x3 = 0 (spanned by (1,0,0) and (0,1,-1)), through the origin -->
+  <polygon points="65.8,94.6 217.0,94.6 300.2,295.4 149.0,295.4"
+           fill="#268bd2" fill-opacity="0.18" stroke="#268bd2" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- nonnegative orthant axes from origin (120,195): x2 south-east, x3 up -->
+  <line x1="120" y1="195" x2="215" y2="290"  stroke="#93a1a1" stroke-width="1.8" marker-end="url(#oax)"/>
+  <line x1="120" y1="195" x2="120" y2="43.8" stroke="#93a1a1" stroke-width="1.8" marker-end="url(#oax)"/>
+  <text x="219" y="302" font-size="13" font-style="italic" fill="#93a1a1">x&#8322;</text>
+  <text x="126" y="44"  font-size="13" font-style="italic" fill="#93a1a1">x&#8323;</text>
+
+  <!-- the intersection with the nonnegative orthant: the x1 coordinate axis (green) -->
+  <line x1="120" y1="195" x2="262.8" y2="195" stroke="#556100" stroke-width="3.5" marker-end="url(#oaxg)"/>
+  <text x="267" y="199" font-size="13" font-style="italic" fill="#556100">x&#8321;</text>
+
+  <!-- origin -->
+  <circle cx="120" cy="195" r="4.5" fill="#556100"/>
+</svg>

@@ -27,6 +27,18 @@ p, li, td {
     display: flex;
 }
 
+/* Top-level children of a flexbox, other than the first, get a left margin. */
+.flexbox > :not(:first-child) {
+    margin-left: 30px;
+}
+
+/* Widen a single slide beyond the default 960px logical width, keeping it
+   centered. Attach to a <section>. */
+.reveal .slides section.fullscreen {
+    width: 1200px;
+    margin-left: -120px;
+}
+
 /* Grid for displaying several canonical forms in equal-width cells. */
 .canonical-grid {
     display: grid;

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420" width="420" height="420" font-family="Georgia, serif">
+  <!-- Exploded faces/edges/vertices of a cube. Projection: +x right, +y depth (up-right), +z up.
+       Central cube: solid purple (no edges). Faces: blue squares (parallelograms).
+       Exploded edges: red. Exploded vertices: green. -->
+
+  <!-- ===================== connectors (behind everything) ===================== -->
+  <g stroke="#93a1a1" stroke-width="1" stroke-dasharray="3 3">
+    <line x1="196.1" y1="224.9" x2="98.3"  y2="294.4"/>  <!-- front -->
+    <line x1="223.9" y1="205.1" x2="321.7" y2="135.6"/>  <!-- back -->
+    <line x1="179.0" y1="215.0" x2="59.0"  y2="215.0"/>  <!-- left -->
+    <line x1="241.0" y1="215.0" x2="361.0" y2="215.0"/>  <!-- right -->
+    <line x1="210.0" y1="184.0" x2="210.0" y2="64.0"/>   <!-- top -->
+    <line x1="210.0" y1="246.0" x2="210.0" y2="366.0"/>  <!-- bottom -->
+  </g>
+
+  <!-- ===================== central cube: solid purple, no edges ===================== -->
+  <polygon points="165.1,255.9 227.1,255.9 254.9,236.1 254.9,174.1 192.9,174.1 165.1,193.9"
+           fill="#6c71c4"/>
+
+  <!-- ===================== exploded faces: blue squares ===================== -->
+  <g fill="#268bd2" fill-opacity="0.45" stroke="#1f6fa8" stroke-width="1.5" stroke-linejoin="round">
+    <polygon points="67.3,325.4 129.3,325.4 129.3,263.4 67.3,263.4"/>   <!-- front -->
+    <polygon points="290.7,166.6 352.7,166.6 352.7,104.6 290.7,104.6"/> <!-- back -->
+    <polygon points="45.1,255.9 72.9,236.1 72.9,174.1 45.1,193.9"/>     <!-- left -->
+    <polygon points="347.1,255.9 374.9,236.1 374.9,174.1 347.1,193.9"/> <!-- right -->
+    <polygon points="165.1,73.9 227.1,73.9 254.9,54.1 192.9,54.1"/>     <!-- top -->
+    <polygon points="165.1,375.9 227.1,375.9 254.9,356.1 192.9,356.1"/> <!-- bottom -->
+  </g>
+
+  <!-- ===================== exploded edges: red (all 12, offset outward) ===================== -->
+  <g stroke="#dc322f" stroke-width="4" stroke-linecap="round">
+    <!-- each edge = average of its position on the two incident exploded squares -->
+    <line x1="56.2"  y1="290.7" x2="56.2"  y2="228.7"/>
+    <line x1="105.1" y1="315.9" x2="132.9" y2="296.1"/>
+    <line x1="116.2" y1="350.7" x2="178.2" y2="350.7"/>
+    <line x1="105.1" y1="133.9" x2="132.9" y2="114.1"/>
+    <line x1="116.2" y1="168.7" x2="178.2" y2="168.7"/>
+    <line x1="181.8" y1="201.3" x2="181.8" y2="139.3"/>
+    <line x1="241.8" y1="261.3" x2="303.8" y2="261.3"/>
+    <line x1="241.8" y1="79.3"  x2="303.8" y2="79.3"/>
+    <line x1="238.2" y1="290.7" x2="238.2" y2="228.7"/>
+    <line x1="287.1" y1="315.9" x2="314.9" y2="296.1"/>
+    <line x1="287.1" y1="133.9" x2="314.9" y2="114.1"/>
+    <line x1="363.8" y1="201.3" x2="363.8" y2="139.3"/>
+  </g>
+
+  <!-- ===================== exploded vertices: green (all 8, offset outward) ===================== -->
+  <g fill="#859900" stroke="#556100" stroke-width="1.6">
+    <circle cx="76.3"  cy="336.7" r="7"/>
+    <circle cx="56.4"  cy="143.0" r="7"/>
+    <circle cx="117.5" cy="329.4" r="7"/>
+    <circle cx="146.8" cy="63.3"  r="7"/>
+    <circle cx="273.2" cy="366.7" r="7"/>
+    <circle cx="302.5" cy="100.6" r="7"/>
+    <circle cx="363.6" cy="287.0" r="7"/>
+    <circle cx="343.7" cy="93.3"  r="7"/>
+  </g>
+</svg>

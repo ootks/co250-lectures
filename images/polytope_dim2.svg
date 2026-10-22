@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220" font-family="Georgia, serif">
+  <!-- A 2-dimensional polytope: a filled polygon (quadrilateral). -->
+  <polygon points="45,150 110,55 180,95 150,175"
+           fill="#268bd2" fill-opacity="0.20" stroke="#dc322f" stroke-width="3.5" stroke-linejoin="round"/>
+  <circle cx="45"  cy="150" r="6" fill="#859900" stroke="#556100" stroke-width="1.6"/>
+  <circle cx="110" cy="55"  r="6" fill="#859900" stroke="#556100" stroke-width="1.6"/>
+  <circle cx="180" cy="95"  r="6" fill="#859900" stroke="#556100" stroke-width="1.6"/>
+  <circle cx="150" cy="175" r="6" fill="#859900" stroke="#556100" stroke-width="1.6"/>
+</svg>

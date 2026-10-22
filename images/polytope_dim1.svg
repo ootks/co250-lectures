@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220" font-family="Georgia, serif">
+  <!-- A 1-dimensional polytope: a line segment. -->
+  <line x1="40" y1="120" x2="180" y2="120" stroke="#dc322f" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="40"  cy="120" r="7" fill="#859900" stroke="#556100" stroke-width="1.8"/>
+  <circle cx="180" cy="120" r="7" fill="#859900" stroke="#556100" stroke-width="1.8"/>
+</svg>

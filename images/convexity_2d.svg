@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 300" width="360" height="300" font-family="Georgia, serif">
+  <!-- Convexity of a half-space: two points x, y inside, and the whole segment
+       between them (the average tx + (1-t)y) also inside. -->
+
+  <!-- shaded half-space (same boundary as halfspace_2d.svg), single polygon -->
+  <polygon points="0,16.5 271,300 0,300" fill="#268bd2" fill-opacity="0.16"/>
+
+  <!-- boundary line a^T x = b -->
+  <line x1="10" y1="27" x2="300" y2="330" stroke="#6c71c4" stroke-width="3"/>
+
+  <!-- segment between two interior points (lies entirely inside the half-space) -->
+  <line x1="70" y1="150" x2="150" y2="255" stroke="#859900" stroke-width="3"/>
+
+  <!-- the two endpoints x and y -->
+  <circle cx="70"  cy="150" r="5.5" fill="#cb4b16" stroke="#8a3210" stroke-width="1.5"/>
+  <circle cx="150" cy="255" r="5.5" fill="#cb4b16" stroke="#8a3210" stroke-width="1.5"/>
+  <text x="56"  y="146" font-size="16" font-style="italic" fill="#8a3210">x</text>
+  <text x="156" y="258" font-size="16" font-style="italic" fill="#8a3210">y</text>
+
+  <!-- the midpoint (average) on the segment, also inside -->
+  <circle cx="110" cy="202.5" r="5" fill="#556100" stroke="#333" stroke-width="1.2"/>
+</svg>
