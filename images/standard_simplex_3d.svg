@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="404" height="336" viewBox="3 -21 404 336" role="img" aria-labelledby="title desc">
+  <title id="title">Three-dimensional standard simplex</title>
+  <desc id="desc">A tetrahedron with vertices at the origin and the three unit coordinate vectors. Three coordinate axes extend outward past the unit vertices with arrowheads. All four vertices are highlighted in green. Dashed edges are hidden behind the front face.</desc>
+  <defs>
+    <marker id="axis-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10Z" fill="#586e75"/>
+    </marker>
+  </defs>
+  <!-- Projected vertices: origin (184,226), e1 (355,285),
+       e2 (55,285), and e3 (184,35). -->
+  <g stroke-linejoin="round">
+    <path d="M184 226L355 285L55 285Z" fill="#268bd2" fill-opacity=".10"/>
+    <path d="M184 226L355 285L184 35Z" fill="#268bd2" fill-opacity=".12"/>
+    <path d="M184 226L55 285L184 35Z" fill="#6c71c4" fill-opacity=".12"/>
+    <path d="M55 285L355 285L184 35Z" fill="#268bd2" fill-opacity=".20"/>
+    <path d="M184 226L355 285M184 226L55 285M184 226L184 35" fill="none" stroke="#657b83" stroke-width="2.5" stroke-dasharray="7 6"/>
+    <path d="M55 285L355 285L184 35Z" fill="none" stroke="#cb4b16" stroke-width="3"/>
+  </g>
+  <!-- Continue the three edges from the origin along the coordinate axes. -->
+  <g fill="none" stroke="#586e75" stroke-width="2.5" marker-end="url(#axis-arrow)">
+    <path d="M355 285L398 300"/>
+    <path d="M55 285L12 305"/>
+    <path d="M184 35L184 -12"/>
+  </g>
+  <g fill="#859900" stroke="#fdf6e3" stroke-width="2">
+    <circle cx="184" cy="226" r="7"/>
+    <circle cx="355" cy="285" r="7"/>
+    <circle cx="55" cy="285" r="7"/>
+    <circle cx="184" cy="35" r="7"/>
+  </g>
+</svg>

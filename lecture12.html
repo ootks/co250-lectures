@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>
+            Lecture 12
+        </h4>
+        <br>
+        <p class=centered>
+          Kevin Shu
+        </p>
+        <aside class="notes">
+          Add private speaker notes here. Press S during the presentation to open speaker view.
+        </aside>
+      </section>
+
+      <section>
+        <h2>Lecture Outline</h2>
+        <ul>
+          <li>Geometry of Polytopes</li>
+          <li>Convexity and Extreme Points</li>
+          <li>Duality Theory</li>
+        </ul>
+      </section>
+
+      <section>
+        <section>
+            <h2> Geometry of Polytopes </h2>
+        </section>
+        <section>
+            <h3> Half-Spaces</h3>
+            <p> Every polytope is built out of inequalities of the form $a^{\intercal}x \le b$, which defines a half-space</p>
+            <img src="images/halfspace_2d.svg" height="260px" />
+        </section>
+        <section>
+            <h3> Half-Spaces</h3>
+            <p> A half space has the property of being <b>convex</b>. </p>
+            <p> A set of points $S \subseteq \R^n$ is convex when the line segment containing any two points in a set is contained in the set. </p>
+            <div class=fragment>
+                <p> Algebraically, this means the set is closed under taking averages: if $x,y \in S$ and $t \in [0,1]$, then</p>
+                <p>\[tx + (1-t)y \in S.\]</p>
+            </div>
+            <img src="images/convexity_2d.svg" height="260px" />
+        </section>
+        <section>
+            <h3> Half-Spaces</h3>
+            <p>If two sets $S,T \subseteq \R^n$ are convex, then their intersection $S \cap T$ is also convex. </p>
+            <div class="r-stack">
+                <img class="fragment fade-out" data-fragment-index="0" src="images/halfspace_intersection_scene1.svg" height="420px" alt="The line segment lies inside the first halfspace." />
+                <img class="fragment current-visible" data-fragment-index="0" src="images/halfspace_intersection_scene2.svg" height="420px" alt="The same line segment lies inside the second halfspace." />
+                <img class="fragment" data-fragment-index="1" src="images/halfspace_intersection_scene3.svg" height="420px" alt="The same line segment lies inside the intersection of both halfspaces." />
+            </div>
+        </section>
+        <section>
+            <h3> Half-Spaces</h3>
+            <div class="flexbox">
+                <img src="images/polyhedra-collection.svg" height="300px"/>
+                <div>
+                    <p>The feasible region for an LP is an intersection of halfspaces.</p>
+                    <p class="fragment"> Intersections of convex sets are still convex, so every feasible region of an LP is convex. </p>
+                </div>
+            </div>
+        </section>
+        <section class="fullscreen" data-auto-animate>
+            <h3> Dimensions of Polytopes </h3>
+            <div class="flexbox" style="align-items:center;">
+                <img src="images/polytope_dimensions.svg" height="600px" style="flex:0 0 auto;" />
+                <div style="flex:1 1 auto; min-width:0;">
+                    <p>For a polytope defined by $P = \{x \in \R^n : Ax \le b\}$, where $A$ has rows $a_1, \dots, a_m$, we will let the set of <b>implicit equations</b> be $S = \{i : \forall x \in P, a_i^{\intercal}x = b_i\}$.</p>
+                    <p>The affine hull is defined as $\{x \in \R^n : \forall i \in S, a_i^{\intercal}x = b_i\}.^*$</p>
+                    <p>The <b>dimension</b> of the polytope is defined to be the dimension of this affine hull, which is the same as the rank of the matrix whose rows are the implicit equations.</p>
+                    <small>* This is not the most general definition of the affine hull.</small>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h3> Dimensions of Polytopes </h3>
+            <p>What are the dimensions of the following polytopes? </p>
+            <div class="flexbox" style="align-items:flex-end; justify-content:center;">
+                <img src="images/polytope_dim2.svg" height="240px" />
+                <img src="images/polytope_dim3.svg" height="240px" />
+                <img src="images/polytope_dim1.svg" height="240px" />
+            </div>
+        </section>
+        <section>
+            <h3> Faces of Polytopes </h3>
+            <div class="flexbox">
+                <div>
+                    <img src="images/polytope_triangle.svg"/>
+                    <p class=fragment>The faces consist of the 3 red edges, the 3 green vertices and the whole triangle (blue). </p>
+                </div>
+                <div>
+                    <p> Let $P$ be a polytope $\{x \in \R^n : Ax \le b\}$. For a set $S \subseteq [m]$, the associated <b>face</b> of $P$ is the set of points where the associated inequalities are met with equality.
+                        \[
+                            F = \{x \in \R^n : Ax \le b, \text{ and }\forall i \in S, a_i^{\intercal}x = b_i  \}.
+                        \]
+                    </p>
+                    <p class=fragment> Each face is a <b>polytope</b> with its own dimension. </p> 
+                </div>
+            </div>
+        </section>
+        <section>
+            <h3> Faces of Polytopes </h3>
+            <div class="flexbox">
+                <div>
+                    <img src="images/triangle_vertex_boundaries.svg" height=600px style="margin-top:-100px;" alt="Three colored transparent halfplanes overlap in a triangle; each green vertex is the intersection of two boundary lines." />
+                </div>
+                <div>
+                    <p> Zero dimensional faces are especially important; they are called <b>vertices</b></p>
+                    <p> A vertex in a polytope is a point where $n$ linearly independent inequalities hold with equality, where $n$ is the dimension of the ambient space. </p>
+                </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Faces of Polytopes </h3>
+            <div class="flexbox">
+                <div>
+                    <img src="images/standard_simplex_3d.svg"  height="340px" alt="A tetrahedron with its four vertices highlighted." />
+                    <p style="padding-left:50px; max-width:500px; box-sizing:border-box;"> If we take $P = \{x \in \R^3 : x_1+x_2+x_3 \le 1, x_1, x_2, x_3 \ge 0\},$ then a vertex is a point where 3 of these inequalities are met with equality.</p>
+                </div>
+                <div>
+                    <table style="font-size:0.7em;">
+                        <thead>
+                            <tr><th>Vertex</th><th>Tight inequalities (as equations)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>$(0,0,0)$</td><td>$x_1=0,\ x_2=0,\ x_3=0$</td></tr>
+                            <tr><td>$(1,0,0)$</td><td>$x_1+x_2+x_3=1,$<br>$x_2=0,\ x_3=0$</td></tr>
+                            <tr><td>$(0,1,0)$</td><td>$x_1+x_2+x_3=1,$<br>$x_1=0,\ x_3=0$</td></tr>
+                            <tr><td>$(0,0,1)$</td><td>$x_1+x_2+x_3=1,$<br>$x_1=0,\ x_2=0$</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <section class=fullscreen data-auto-animate>
+            <h3> Faces of Polytopes </h3>
+            <h4>Example: Cube</h4>
+            <div class=flexbox>
+                <p style="margin-top:100px;"> The cube is
+                    $\left\{x \in \R^3 : \begin{aligned}
+                        0 &\le x_1 \le 1\\
+                        0 &\le x_2 \le 1\\
+                        0 &\le x_3 \le 1
+                    \end{aligned}\right\}$.
+                </p>
+                <img src="images/cube_faces.svg" height="400px" style="margin-top:-100px;" />
+            </div>
+            <p> What are the 2 dimensional faces of the cube? </p>
+            <p class=fragment> The 6 faces that are 2-dimensional (one for each inequality in its description). In a polytope, faces of dimension $\dim(P)-1$ are called <b>facets</b>, and they correspond to nonredundant constraints in the inequality description.</p>
+        </section>
+        <section class=fullscreen data-auto-animate>
+            <h3> Faces of Polytopes </h3>
+            <h4>Example: Cube</h4>
+            <div class=flexbox>
+                <p style="margin-top:100px;"> The cube is
+                    $\left\{x \in \R^3 : \begin{aligned}
+                        0 &\le x_1 \le 1\\
+                        0 &\le x_2 \le 1\\
+                        0 &\le x_3 \le 1
+                    \end{aligned}\right\}$.
+                </p>
+                <img src="images/cube_edges.svg" height="400px" style="margin-top:-100px;" />
+            </div>
+            <p> What are the 1 dimensional faces of the cube?</p>
+            <p class=fragment> There are 12 edges in the cube (each facet has 4 edges, and each edge is on 2 faces for a total of $\frac{4 \times 6}{2} = 12$ ). </p>
+        </section>
+        <section class=fullscreen data-auto-animate>
+            <h3> Faces of Polytopes </h3>
+            <h4>Example: Cube</h4>
+            <div class=flexbox>
+                <p style="margin-top:100px;"> The cube is
+                    $\left\{x \in \R^3 : \begin{aligned}
+                        0 &\le x_1 \le 1\\
+                        0 &\le x_2 \le 1\\
+                        0 &\le x_3 \le 1
+                    \end{aligned}\right\}$.
+                </p>
+                <img src="images/cube_vertices.svg" height="400px" style="margin-top:-100px;" />
+            </div>
+            <p> What are the 0 dimensional faces of the cube?</p>
+            <p class=fragment> There are 8 vertices of the cube. We can count this as each vertex corresponds to setting 3 of the inequalities to equations. Each such equation specifies that $x_i = 0$ or $x_i = 1$; there are 8 ways to choose one of these choices for each coordinate. </p>
+        </section>
+        <section>
+            <h3> Faces of Polytopes </h3>
+            <div class="flexbox">
+            <img src="images/sef_lift_triangle_noshadow.svg" height="300px" />
+            <div>
+                <p> What do vertices correspond to for a polytope of the form
+                    $P = \left\{x \in \R^n : \begin{aligned}
+                        Ax &= b\\
+                        x &\ge 0
+                    \end{aligned}\right\}$?
+                </p>
+                <p> Let's assume that $A \in \R^{m \times n}$ is full rank. This means that there are $n-m$ implicit equalities for this polytope; how many of the remaining inequalities should be made equalities to find a vertex?</p>
+                <p class="fragment"> Thus, the vertices should correspond to points in $P$ where $n-m$ of the inequalities $x_i \ge 0$ are tight. These are points where at least $n-m$ entries are 0.</p>
+                <p class="fragment"> These are exactly the basic feasible solutions! </p>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Vertices are Extreme Points </h3>
+            <div class="flexbox">
+            <figure style="flex:0 0 330px; margin:0 24px 0 0;">
+                <img src="images/extreme_point_definition.svg" style="width:330px; margin:0;" alt="An interior point lies between two points of the set; extending segments through a vertex leaves the set." />
+                <figcaption style="font-size:0.45em;">Above: not extreme. Below: extreme.</figcaption>
+            </figure>
+            <div>
+                <p>An <b>extreme point</b> of a set $S \subseteq \R^n$ is a point in $S$ not contained in the interior of any line segment joining two points in $S$.</p>
+                <p class=fragment> Algebraically, $x \in S$ is an extreme point if for any $y, z \in S$ so that $x \neq y, z$, and any $t \in (0,1)$.
+                \[
+                    x \neq t y + (1-t)z
+                \]
+                </p>
+                <div class=fragment style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                    <p><b>Theorem</b></p>
+                    <p>A point in a polytope $P = \{x \in \R^n : Ax \le b\}$ is an extreme point if and only if that point is a vertex, i.e. there are $n$ linearly independent rows of $A$ so that $x$ meets those inequalities with equality.</p>
+                </div>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Vertices are Extreme Points </h3>
+            <div class="flexbox">
+            <div class="r-stack" style="flex:0 0 330px; margin-right:24px;">
+                <img class="fragment current-visible" data-fragment-index="0" src="images/vertex_extreme_proof_step1.svg" width="330" height="330" alt="Two independent tight boundaries meet at the green vertex." />
+                <img class="fragment current-visible" data-fragment-index="1" src="images/vertex_extreme_proof_step2.svg" width="330" height="330" alt="The intersection of the two tight boundary lines consists of the single green vertex." />
+                <img class="fragment current-visible" data-fragment-index="2" src="images/vertex_extreme_proof_step3.svg" width="330" height="330" alt="A hypothetical segment has the green vertex as its midpoint, with both red endpoints outside the polytope." />
+                <img class="fragment current-visible" data-fragment-index="3" src="images/vertex_extreme_proof_step4.svg" width="330" height="330" alt="Both red endpoints violate tight inequalities, so this segment cannot have both endpoints in the polytope." />
+            </div>
+            <div>
+                <p class="fragment" data-fragment-index="0"><b>Proof of the Theorem:</b> Let $x \in P$ be a vertex, so that $a_1^{\intercal}x = b_1, \dots, a_n^{\intercal}x = b_n$ where $a_1, \dots, a_n$ are linearly independent.</p>
+                <p class="fragment" data-fragment-index="1">We can write this as a square system $A^= x = b^=$, so $x = (A^=)^{-1}b^=$ is the unique solution to this system. </p>
+                <p class="fragment" data-fragment-index="2">If $x = t y + (1-t)z$, where $y, z \in P$ and $0&lt;t&lt;1$.
+                \[
+                b_i = a_i^{\intercal}x = t(a_i^{\intercal} y) + (1-t)(a_i^{\intercal}z).
+                \]
+                <p class="fragment" data-fragment-index="3">Both $a_i^{\intercal}y$ and $a_i^{\intercal}z \le b_i$, so the only way they can average to $b_i$ is if they are both equal to $b_i$! Therefore, $a_i^{\intercal}y = a_i^{\intercal}z = b_i$ for each $i$, so that $A^= y = A^= z = b^=.$ Therefore, $y = z = x$.</p>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Vertices are Extreme Points </h3>
+            <div class="flexbox">
+            <div class="r-stack" style="flex:0 0 330px; margin-right:24px;">
+                <img class="fragment current-visible" data-fragment-index="0" src="images/extreme_vertex_proof_step1.svg" width="330" height="330" alt="The orange point lies on an edge, away from its vertices. The purple line is its tight boundary; the other constraints have slack." />
+                <img class="fragment current-visible" data-fragment-index="1" src="images/extreme_vertex_proof_step2.svg" width="330" height="330" alt="A nonzero direction runs along the tight boundary, preserving its equation. Arrows indicate movement in both directions." />
+                <img class="fragment current-visible" data-fragment-index="2" src="images/extreme_vertex_proof_step3.svg" width="330" height="330" alt="A short segment in that direction stays inside the polytope. Both dark endpoints satisfy all constraints." />
+                <img class="fragment" data-fragment-index="3" src="images/extreme_vertex_proof_step4.svg" width="330" height="330" alt="The orange point is exactly halfway between two distinct feasible endpoints, so it is not extreme." />
+            </div>
+            <div>
+                <p class="fragment" data-fragment-index="0"><b>Proof of the converse:</b> We show that if $x\in P$ is <b>not a vertex</b>, then it is <b>not extreme</b>. There may be tight inequalities at $x$, say $a_1^{\intercal}x = b_1, \dots, a_k^{\intercal}b = b_k$. The span of $a_1, \dots, a_k$ is not all of $\R^n$.</p>
+                <p class="fragment" data-fragment-index="1">There must be some $v \neq 0$ so that $a_i^{\intercal}v = 0$ for each $i$. $a_i^{\intercal}(x + tv) = b_i$ for all $i=1,\dots,k$.</p>
+                <p class="fragment" data-fragment-index="2">Every other inequality has slack: $a_i^{\intercal}x&lt;b_i$ for $i > k$. We can choose $\varepsilon&gt;0$ small enough that <b>both</b> $x+\varepsilon v$ and $x-\varepsilon v$ is still in $P$. Both points lie in $P$.</p>
+                <p class="fragment" data-fragment-index="3">These points are distinct, and $x$ is their midpoint, so $x$ is not extreme:
+                \[x=\tfrac12(x+\varepsilon v)+\tfrac12(x-\varepsilon v).\]
+                </p>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Linear Optimization and Vertices </h3>
+            <p> Extreme points of sets are important because they are often times the maximizers of linear functions on $S$. </p>
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Theorem</b></p>
+                <p>If a linear function $c^{\intercal}x$ has a unique maximum on a set $S \subseteq \R^n$, then that maximizer is an extreme point of $S$.</p>
+            </div>
+            <div class="flexbox">
+            <div>
+                <p class=fragment><b>Proof:</b> Let $x^*$ be the maximizer and suppose that $x^*$ is not an extreme point, so there are $y, z \in S$ with $y,z \neq x^*$ and $\lambda \in [0,1]$ so that $x^* = \lambda y + (1-\lambda)z$.</p>
+                <p class=fragment>Well, then $c^{\intercal}x^* = t c^{\intercal}y + (1-t)c^{\intercal}z$, and since $x^*$ was the unique maximizer, $c^{\intercal}y, c^{\intercal}z < c^{\intercal}x^*$, and we get the contradiction that $c^{\intercal}x^* < c^{\intercal}x^*$. </p>
+            </div>
+            </div>
+            <p class=fragment> If $S$ is compact, then any linear function is maximized at an extreme point of $S$. </p>
+        </section>
+        <section class="fullscreen">
+            <h3> Linear Optimization and Vertices </h3>
+            <p> It is not always true that a bounded linear function on a polytope has an extreme point as a maximizer; for example, consider maximizing $x_1+x_2+x_3$ subject to the constraint that $x_1+x_2+x_3=0$. Every point on this hyperplane is a maximizer, but it has no extreme points. </p>
+            <p> For the feasible set of an LP in standard equality form, though, something stronger holds. </p>
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Theorem</b></p>
+                <p>If $P = \{x \in \R^n : Ax = b, x\ge 0\}$ is a nonempty polytope, and $c^{\intercal}x$ is a linear function that is bounded from above on $P$, then there is a maximizer that is an extreme point.</p>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Geometry and Duality </h3>
+            <p>The most important theorem in convex geometry. </p>
+            <div class=flexbox>
+                <img src="images/separating_hyperplane.svg" width="360" style="flex:0 0 360px; margin-right:24px;" alt="A blue polytope and an orange polytope lie strictly on opposite sides of a dashed separating line; a perpendicular arrow points toward the orange polytope." />
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Separating Hyperplane Theorem</b></p>
+                <p> If $P$ and $Q$ are two convex polytopes in $\R^n$, and $P \cap Q = \varnothing$, then there exists some $z$ so that $z^{\intercal}p < z^{\intercal}q$ for any $p \in P$ and $q \in Q$. </p>
+            </div>
+            </div>
+        </section>
+        <section class="fullscreen" data-auto-animate>
+            <h3>Disjoint Polytopes</h3>
+            <div class="flexbox" style="align-items:center; gap:16px;">
+                <figure style="flex:1 1 0; min-width:0; margin:0;">
+                    <img src="images/separation_example_1.svg" style="width:100%; margin:0;" alt="Example 1: two disjoint polygons." />
+                    <figcaption style="font-size:0.6em;">Two dimensions</figcaption>
+                </figure>
+                <figure style="flex:1 1 0; min-width:0; margin:0;">
+                    <img src="images/separation_example_2.svg" style="width:100%; margin:0;" alt="Example 2: two disjoint polygons." />
+                    <figcaption style="font-size:0.6em;">Two dimensions</figcaption>
+                </figure>
+                <figure style="flex:1 1 0; min-width:0; margin:0;">
+                    <img src="images/separation_example_3.svg" style="width:100%; margin:0;" alt="Example 3: two disjoint cubes." />
+                    <figcaption style="font-size:0.6em;">Three dimensions</figcaption>
+                </figure>
+            </div>
+        </section>
+        <section class="fullscreen" data-auto-animate>
+            <h3>Separating Hyperplanes</h3>
+            <div class="flexbox" style="align-items:center; gap:16px;">
+                <figure style="flex:1 1 0; min-width:0; margin:0;">
+                    <img src="images/separation_example_1_separated.svg" style="width:100%; margin:0;" alt="Example 1: two disjoint polygons with a separating line." />
+                    <figcaption style="font-size:0.6em;">Two dimensions</figcaption>
+                </figure>
+                <figure style="flex:1 1 0; min-width:0; margin:0;">
+                    <img src="images/separation_example_2_separated.svg" style="width:100%; margin:0;" alt="Example 2: two disjoint polygons with a separating line." />
+                    <figcaption style="font-size:0.6em;">Two dimensions</figcaption>
+                </figure>
+                <figure style="flex:1 1 0; min-width:0; margin:0;">
+                    <img src="images/separation_example_3_separated.svg" style="width:100%; margin:0;" alt="Example 3: two disjoint cubes with a separating plane." />
+                    <figcaption style="font-size:0.6em;">Three dimensions</figcaption>
+                </figure>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Geometry and Duality </h3>
+            <p> We can use the separating hyperplane theorem to prove the following result, which essentially shows that any infeasible LP has a certificate of infeasibility. </p>
+            <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                <p><b>Farkas' Lemma</b></p>
+                <p> The set $\{x\in \R^n : Ax = b, x \ge 0\}$ is empty if and only if there exists some $y$ so that $A^{\intercal}y \ge 0$ and $b^{\intercal}y < 0$. </p>
+            </div>
+        </section>
+        <section class="fullscreen">
+            <h3> Farkas' Lemma: Proof </h3>
+            <p>Suppose $\{x:Ax=b,\ x\ge0\}$ is empty. Let
+            \[P=\{x\in\R^n:Ax=b\},\qquad Q=\{x\in\R^n:x\ge0\}.\]
+            These are disjoint polytopes: equations can be written as pairs of inequalities.</p>
+            <p class="fragment"><b>First, what if $P$ is empty?</b> Then $b$ is not in the column space of $A$. By linear algebra, there is a vector $y$ orthogonal to every column of $A$ but not to $b$.</p>
+            <p class="fragment">Scale $y$ so that $b^{\intercal}y=-1$. Then
+            \[A^{\intercal}y=0\ge0,\qquad b^{\intercal}y=-1&lt;0,\]
+            giving the required certificate.</p>
+        </section>
+        <section class="fullscreen">
+            <h3> Farkas' Lemma: Proof </h3>
+            <p>\[P=\{x\in\R^n:Ax=b\},\qquad Q=\{x\in\R^n:x\ge0\}.\]</p>
+            <p>Now suppose $P$ is nonempty. Separation gives $z\in\R^n$ such that
+            \[z^{\intercal}q&lt;z^{\intercal}p\qquad\text{for every }q\in Q,\ p\in P.\]</p>
+            <p class="fragment">We claim that <b>$z\le0$</b>. If $z_i > 0$ for some $i$, then since the vector $te_i$ which is 0 in every entry, except for a t in entry $i$ is in $Q$, $z^{\intercal}(te_i) = t z_i < z^{\intercal}p$ for any $p \in P$, but this fails for $t$ large enough. </p>
+        </section>
+        <section class="fullscreen">
+            <h3> Farkas' Lemma: Proof </h3>
+            <p>\[P=\{x\in\R^n:Ax=b\},\qquad Q=\{x\in\R^n:x\ge0\}, z^{\intercal} q < z^{\intercal}p.\]</p>
+            <p> We now claim that $z = -A^{\intercal}y$ for some $y \in \R^m$. </p>
+            <p class=fragment> To see this, we will show that $z^{\intercal}v = 0$ whenever $v$ is in the kernel of $A$. By linear algebra facts, this implies that $z$ will be in the row span of $A$. </p>
+            <p class=fragment> Suppose that $z^{\intercal}v \neq 0$ for some $v \in \ker(A)$. By replacing $v$ by $-v$ if necessary, we can assume that $z^{\intercal}v < 0$. If we let $p \in P$, then $p + tv \in P$ for all $t > 0$, and so we would again arrive at a contradiction of the fact that $z^{\intercal}p > z^{\intercal}q$.</p>
+        </section>
+        <section class="fullscreen">
+            <h3> Farkas' Lemma: Proof </h3>
+            <p>\[P=\{x\in\R^n:Ax=b\},\qquad Q=\{x\in\R^n:x\ge0\}, z^{\intercal} q < z^{\intercal}p.\]</p>
+            <p> We have seen that $z \le 0$ and $z = -A^{\intercal}y$ for some $y$, and so we have that $Ay \ge 0$. </p>
+            <p class=fragment> To show that $y$ is a valid certificate of infeasiblility, it remains to show that $b^{\intercal}y < 0$.</p>
+            <p class=fragment> To see this, let $x_0$ be be such that $Ax_0 = b$, and note that $-z^{\intercal}x_0 = -y^{\intercal}Ax_0 = y^{\intercal}b$, and that $-z^{\intercal}x_0 < -z^{\intercal}0 = 0$, since $0 \in Q$. </p>
+            <p class=fragment> This concludes the proof. </p>
+        </section>
+        <section class="fullscreen">
+            <h3> Proof Sketch for Separating Hyperplane Theorem </h3>
+            <div class="flexbox" style="align-items:center;">
+            <div class="r-stack" style="flex:0 0 350px; margin-right:24px;">
+                <img class="fragment fade-out" data-fragment-index="0" src="images/separating_hyperplane_proof_step1.svg" width="350" height="320" alt="Two disjoint two-dimensional polygons have a green shortest segment joining the labeled nearest points p and q." />
+                <img class="fragment current-visible" data-fragment-index="0" src="images/separating_hyperplane_proof_step2.svg" width="350" height="320" alt="In two dimensions, green nearest points join a blue polygon to an orange polygon. A dashed violet line bisects the segment; its normal arrow points from the blue set toward the orange set." />
+                <img class="fragment" data-fragment-index="1" src="images/separating_hyperplane_proof_step3.svg" width="350" height="320" alt="For the hypothetical contradiction, the orange polygon reaches a red point whose horizontal projection is left of the blue nearest point. Moving a short distance from the old orange endpoint toward that red point gives a new green endpoint and a shorter green segment. The old distance is dashed gray." />
+            </div>
+            <div>
+            <p> Let $p$ and $q$ be two points minimize the value of $\min_{p \in P, q \in Q} \|p-q\|.^*$ </p>
+            <p class="fragment" data-fragment-index="0"> We claim that $y = q - p$ is a valid separating hyperplane between $p$ and $q$.</p>
+            <p class="fragment" data-fragment-index="1"> Suppose that there were some $p', q'$ so that $y^{\intercal}p' \ge y^{\intercal}q'$, then we could find another pair of points with smaller distance.</p>
+            <small> $*$ Showing such a pair exists requires some work. </small>
+            </div>
+            </div>
+        </section>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="35 50 650 320" width="650" height="320" font-family="Georgia, serif" role="img" aria-labelledby="title desc">
+  <title id="title">The same segment in the intersection</title>
+  <desc id="desc">The endpoints x and y and the whole segment joining them lie in the shaded region.</desc>
+  <defs>
+    <clipPath id="plot"><rect x="50" y="65" width="620" height="290" rx="6" /></clipPath>
+  </defs>
+  <rect x="50" y="65" width="620" height="290" rx="6" fill="#fdf6e3" stroke="#93a1a1" />
+  
+  <g>
+    <g clip-path="url(#plot)">
+      <polygon points="50,320 300,170 670,318 670,355 50,355" fill="#6c71c4" fill-opacity=".26" />
+      <path d="M50 70L670 318" fill="none" stroke="#268bd2" stroke-width="3" />
+      <path d="M50 320L670 -52" fill="none" stroke="#cb4b16" stroke-width="3" />
+    </g>
+    </g>
+  
+  <path d="M200 280L470 250" stroke="#859900" stroke-width="5" stroke-linecap="round" />
+  <g fill="#073642" stroke="#fdf6e3" stroke-width="2">
+    <circle cx="200" cy="280" r="7" />
+    <circle cx="470" cy="250" r="7" />
+  </g>
+  <g font-size="24" font-style="italic" fill="#073642">
+    </g>
+  </svg>

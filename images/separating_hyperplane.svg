@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="320" viewBox="0 0 440 320" role="img" aria-labelledby="title desc">
+  <title id="title">A hyperplane strictly separates two convex polytopes</title>
+  <desc id="desc">A blue convex polygon lies entirely to the left of a sloping violet separating line. An orange convex polygon lies entirely to its right, with a positive gap. A perpendicular arrow points from the blue side toward the orange side, in the direction of increasing inner product with the normal.</desc>
+  <defs>
+    <marker id="normal-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#586e75"/>
+    </marker>
+  </defs>
+  <!-- The separating line is x = 220 + .2(y-160).
+       The normal toward the orange set is proportional to (1,-.2). -->
+  <path d="M40 140L85 65L155 80L185 155L145 225L65 215Z" fill="#268bd2" fill-opacity=".22" stroke="#268bd2" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M285 100L345 65L405 125L390 215L315 235L275 170Z" fill="#cb4b16" fill-opacity=".22" stroke="#cb4b16" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M192 20L248 300" fill="none" stroke="#6c71c4" stroke-width="3" stroke-dasharray="9 6"/>
+  <path d="M240 260L310 246" fill="none" stroke="#586e75" stroke-width="3" marker-end="url(#normal-arrow)"/>
+  <!-- Right-angle mark between the separating line and its normal. -->
+  <path d="M237.6 248L249.6 245.6L252 257.6" fill="none" stroke="#586e75" stroke-width="1.5"/>
+</svg>

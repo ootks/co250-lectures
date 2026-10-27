@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="480" viewBox="0 0 330 480" role="img" aria-labelledby="title desc">
+  <title id="title">An interior point and an extreme point</title>
+  <desc id="desc">Above, an orange point is strictly between two dark endpoints of a segment inside a convex polygon. Below, a green vertex is an endpoint of segments inside the same polygon; dashed extensions through the vertex leave the set, with their outside endpoints marked by crosses.</desc>
+  <defs>
+    <path id="region" d="M45 170L70 65L195 30L285 100L250 190L130 205Z"/>
+  </defs>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <use href="#region" fill="#268bd2" fill-opacity=".16" stroke="#268bd2" stroke-width="2.5"/>
+    <!-- The highlighted point is the midpoint of a segment in the set. -->
+    <path d="M85 150L245 110" fill="none" stroke="#859900" stroke-width="4"/>
+    <g fill="#073642" stroke="#fdf6e3" stroke-width="2">
+      <circle cx="85" cy="150" r="6"/>
+      <circle cx="245" cy="110" r="6"/>
+    </g>
+    <circle cx="165" cy="130" r="8" fill="#cb4b16" stroke="#fdf6e3" stroke-width="2"/>
+    <g transform="translate(0 250)">
+      <use href="#region" fill="#268bd2" fill-opacity=".16" stroke="#268bd2" stroke-width="2.5"/>
+      <!-- Three attempts to put the vertex inside a segment: the opposite
+           endpoint necessarily lies outside a supporting halfspace. -->
+      <g fill="none" stroke="#859900" stroke-width="2.5">
+        <path d="M195 30L100 140M195 30L195 165M195 30L260 125"/>
+      </g>
+      <g fill="#073642" stroke="#fdf6e3" stroke-width="2">
+        <circle cx="100" cy="140" r="5"/>
+        <circle cx="195" cy="165" r="5"/>
+        <circle cx="260" cy="125" r="5"/>
+      </g>
+      <g fill="none" stroke="#cb4b16" stroke-width="2" stroke-dasharray="5 5">
+        <path d="M195 30L224 -4M195 30L195 -14M195 30L166 -12"/>
+      </g>
+      <g fill="none" stroke="#cb4b16" stroke-width="2">
+        <path d="M220 -8L228 0M220 0L228 -8M191 -18L199 -10M191 -10L199 -18M162 -16L170 -8M162 -8L170 -16"/>
+      </g>
+      <circle cx="195" cy="30" r="8" fill="#859900" stroke="#fdf6e3" stroke-width="2"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="330" viewBox="0 0 330 330" role="img" aria-labelledby="title desc">
+<title id="title">Vertex implies extreme point: step 5</title><desc id="desc">Both feasible points must lie on every tight boundary and hence coincide with the green vertex, the unique intersection.</desc>
+<path d="M80 70H270L295 210L80 270Z" fill="#268bd2" fill-opacity=".15" stroke="#268bd2" stroke-width="2"/>
+<path d="M25 70H310M80 20V305" fill="none" stroke="#6c71c4" stroke-width="3"/><circle cx="80" cy="70" r="19" fill="none" stroke="#073642" stroke-width="3"/><circle cx="80" cy="70" r="12" fill="none" stroke="#cb4b16" stroke-width="3"/>
+<circle cx="80" cy="70" r="7" fill="#859900" stroke="#fdf6e3" stroke-width="2"/>
+</svg>

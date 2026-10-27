@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="330" viewBox="0 0 330 330" role="img" aria-labelledby="title desc">
+<title id="title">A nonvertex is not extreme: step 1</title><desc id="desc">The orange point lies on an edge, away from its vertices. The purple line is its tight boundary; the other constraints have slack.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#859900"/></marker></defs>
+<path d="M80 60H260L295 210L80 280Z" fill="#268bd2" fill-opacity=".15" stroke="#268bd2" stroke-width="2.5"/>
+<path d="M80 20V310" stroke="#6c71c4" stroke-width="3"/>
+
+<circle cx="80" cy="165" r="7" fill="#cb4b16" stroke="#fdf6e3" stroke-width="2"/>
+</svg>
