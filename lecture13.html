@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+  <style>
+    .double-dual-matrix-step table td { font-size:24px; }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>Lecture 13</h4>
+        <br>
+        <p class="centered">Kevin Shu</p>
+      </section>
+      <section>
+        <ul>
+          <li>Convexity, vertices, extreme points, and linear optimization</li>
+          <li>Dual LPs</li>
+        </ul>
+      </section>
+      <section>
+        <section>
+          <h3>Convexity and Half-Spaces</h3>
+          <div class="flexbox" style="align-items:center;">
+            <img src="images/halfspace_intersection_scene3.svg" width="430" alt="A segment lies in the intersection of two half-spaces." />
+            <div>
+              <p>A set $S$ is <b>convex</b> if, for any $x,y\in S$ and $0\le t\le1$,
+              \[tx+(1-t)y\in S.\]</p>
+              <p class="fragment">Every half-space $\{x:a^{\intercal}x\le b\}$ is convex.</p>
+              <p class="fragment">Intersections of convex sets are convex. Thus every polytope $P=\{x:Ax\le b\}$ is convex.</p>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h3>Vertices and Equations</h3>
+          <div class="flexbox" style="align-items:center;">
+          <img src="images/vertex_extreme_proof_step1.svg" width="280" height="280" style="flex:0 0 280px;" alt="Two independent purple constraint boundaries intersect at a green vertex of the blue polytope." />
+          <div style="flex:1; min-width:0;">
+          <p> A vertex of a polytope defined by $P = \{x \in \R^n : Ax \le b\}$ is a point $x \in P$ where $n$ linearly independent constraints are tight. </p>
+          <p class=fragment> That is, if we make a matrix $A^=$ by taking rows $a_i$ of $A$ where $a_i^{\intercal}x = b_i$, then $A^=$ is of rank $n$.</p>
+          <p class=fragment> Vertices of polytopes are exactly <b>extreme points</b>. They are elements $x$ of $P$ where for any $y,z \in P$ where $y \neq x$ and $z \neq x$, and any $t \in [0,1]$,
+          \[
+            ty + (1-t)z \neq x.
+          \]
+          </p>
+          </div>
+          </div>
+        </section>
+        <section>
+          <h3>Example: The Cube</h3>
+          <div class="flexbox" style="align-items:center;">
+            <img src="images/cube_vertices.svg" width="330" alt="The six facets of a three-dimensional cube." />
+            <div>
+              <p>The cube is
+              $\left\{x\in\R^3:\begin{aligned}
+                0&\le x_1\le1\\
+                0&\le x_2\le1\\
+                0&\le x_3\le1
+              \end{aligned}\right\}$.</p>
+              <p> Vertices are points where $3$ linearly independent inequalities are tight, i.e. points where each  $x_i$ is equal to either 0 or 1. There are 8 vertices that arise in this way. </p>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h3>Vertices and Basic Feasible Solutions</h3>
+          <div class="flexbox" style="align-items:center;">
+          <img src="images/sef_lift_triangle_noshadow.svg" width="280" style="flex:0 0 280px;" alt="A triangular feasible set in the nonnegative orthant, with vertices on the coordinate axes where the other coordinates are zero." />
+          <div style="flex:1; min-width:0;">
+          <p>For $P=\{x\in\R^n:Ax=b,\ x\ge0\}$, assume $A$ has $m$ independent rows.</p>
+          <p class="fragment">A basis selects $m$ independent columns. Set the other variables to zero and solve
+          \[x_B=A_B^{-1}b,\qquad x_N=0.\]</p>
+          <p class="fragment">If $x_B\ge0$, this is a <b>basic feasible solution</b>. The vertices of $P$ are exactly its basic feasible solutions.</p>
+          <p class="fragment">At least $n-m$ coordinates are zero; a degenerate basic feasible solution can have more.</p>
+          </div>
+          </div>
+        </section>
+        <section>
+          <h3>Linear Optimization and Vertices</h3>
+          <p>A <b>unique maximizer</b> of a linear function on any set must be an extreme point: otherwise it would average two points with smaller objective values.</p>
+          <p class="fragment">A nonempty feasible set in <b>standard equality form</b> has an optimal basic feasible solution whenever the objective is bounded above.</p>
+          <p class="fragment">The assumptions matter: on $\{x\in\R^3:x_1+x_2+x_3=0\}$, the objective $x_1+x_2+x_3$ is constant, yet the feasible set has no extreme points.</p>
+        </section>
+        <section>
+            <ul>
+                <li><div class=flexbox>
+                        <img src="images/separating_hyperplane.svg" width="360" alt="Two disjoint polytopes lie on opposite sides of a separating hyperplane." />
+                        <p> Separating Hyperplane Theorem </p>
+                </div></li>
+                <li> Farkas' Lemma </li>
+            </ul>
+        </section>
+      </section>
+      <section>
+          <section>
+              <h2> Dual Linear Programs </h2>
+          </section>
+          <section>
+              <h3> Certificates of Optimality </h3>
+              <p> Let's remember what a certificate of optimality is for an LP in SEF. </p>
+                  <table>
+                    <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+              <div style="flex:1 1 0; min-width:0; border:2px solid #859900; border-radius:12px; padding:8px 10px;" class=flexbox>
+                <img src="images/outcome_optimal.svg" style="height:200px; display:block;"/>
+                <div>
+                    <p>A feasible $x^*$ and a free $y$ with </p>
+                    <p style="margin:2px 0;">\[\begin{aligned}A^{\intercal} y &\ge c\\b^{\intercal} y &= c^{\intercal} x^*\end{aligned}\]</p>
+                </div>
+              </div>
+              <p> We will want to look at a more general version of a certificate. </p>
+          </section>
+          <section>
+              <h3> Inequality Proofs </h3>
+              <p> We will let $P = \{x \in \R^n : Ax = b, x \ge 0\}$.</p>
+              <p> If we have a candidate $x^*$ for an LP that could be optimal, it is easy to 'check' that $x^*$ is in $P$. </p>
+              <p> The hard thing is to show that the objective cannot be improved. </p>
+              <p class=fragment> This amounts to <b> proving </b> that for any $x$ so that $Ax = b$ and $x \ge 0$, 
+              \[c^{\intercal}x \ge v,\]
+              where $v$ is some constant. </p>
+              <p class=fragment> There might be infinitely many points in $P$, so we want to use the constraints in a more efficient way. </p>
+          </section>
+          <section>
+              <h3> Certificates of Optimality </h3>
+              <p> We have the constraints 
+              \[
+              Ax = b,
+              \]
+              from which we can derive many other equations. For example, we can take the inner product of both sides of this equation with $y \in \R^n$:
+              \[
+              y^{\intercal}Ax =y^{\intercal} b,
+              \]
+              </p>
+              <p class=fragment> 
+                Imagine for a second that we could write $y^{\intercal}A = c^{\intercal}$, then we would have that for any feasible $x$,
+                  \[
+                  c^{\intercal}x = y^{\intercal}Ax =y^{\intercal} b,
+                  \]
+              </p>
+              <p class=fragment> This would be nice, but it would be too strong, as it would imply that the objective is constant on the feasible set. We also do not use the constraint $x \ge 0$. </p>
+          </section>
+          <section>
+              <h3> Certificates of Optimality </h3>
+              <p> 
+                  What we ultimately is to show that 
+                  \[
+                      c^{\intercal}x \ge v.
+                  \]
+              </p>
+              <p class=fragment>
+                  An important fact about nonnegative vectors is that if $a \ge c$, then $a^{\intercal}x \ge c^{\intercal}x$.
+              </p>
+              <p class=fragment>
+                  So if we can find some $y$ so that $A^{\intercal}y \ge c$, then we will get a lower bound
+                  \[
+                      c^{\intercal}x \le y^{\intercal}Ax = y^{\intercal} b.
+                  \]
+              </p>
+          </section>
+          <section>
+              <h3> Certificates of Optimality </h3>
+              <p> 
+                For any $y$ so that $A^{\intercal}y \ge c$, for every $x$ so that $Ax = b$ and $x \ge 0$,
+                \[
+                    c^{\intercal}x \le y^{\intercal}Ax = y^{\intercal} b.
+                \]
+              </p>
+              <p class=fragment>
+                  Note the structure here: any $y$ satisfying the linear inequalities $A^{\intercal}y \ge c$ produces a lower bound that says that the objective value $c^{\intercal}x \le b^{\intercal} y$.
+              </p>
+              <p class=fragment> We can try to compute the best possible upper bound:  this is a linear programs! </p>
+          </section>
+          <section>
+              <h3> Dual Linear Program </h3>
+              <div class=flexbox>
+                  <table>
+                    <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                    <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                </table>
+                  <table class=darkBlueText>
+                    <tr> <td> min </td> <td> $b^{\intercal}x$ </td> </tr>
+                    <tr> <td> such that </td> <td> $A^{\intercal}y \ge c$ </td> </tr>
+                </table>
+              </div>
+              <p> The <span class=darkBlueText>dual linear program </span> is obtained by an explicit transformation of the data for the LP. </p>
+              <p class=fragment> The original linear program is usually called the <b>primal linear program </b>.</p>
+          </section>
+          <section>
+              <h3> Dual Linear Program </h3>
+                <div style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45); display:inline-block;">
+                    <p><b>Theorem (Weak duality) </b></p>
+                    <p> For any linear program in SEF, if the dual linear program is unbounded, then the primal linear program is infeasible. If the primal linear program is unbounded, then the dual linear program is infeasible. If both linear programs are feasibile, then </p>
+
+                      <div class=flexbox>
+                          <table>
+                            <tr> <td> max </td> <td> $c^{\intercal}x$ </td> </tr>
+                            <tr> <td> such that </td> <td> $Ax = b$ </td> </tr>
+                            <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
+                        </table>
+                        <p style="margin-top:40px;">$ \le $</p>
+                          <table class=darkBlueText>
+                            <tr> <td> min </td> <td> $b^{\intercal}y$ </td> </tr>
+                            <tr> <td> such that </td> <td> $A^{\intercal}y \ge c$ </td> </tr>
+                        </table>
+                      </div>
+                </div>
+          </section>
+          <section>
+              <h3> Dual Linear Program </h3>
+              <p> <b>Claim:</b>  More generally, if $y$ is <b>feasible</b> for the dual linear program, and $x$ is feasible for the primal linear program, then </p>
+              <p> \[b^{\intercal}y \ge c^{\intercal}x,\] </p>
+              <p class=fragment> And we can check this by looking at $y^{\intercal}Ax$:</p>
+              <p class=fragment>
+              \[
+                  c^{\intercal}x \le (Ay^{\intercal})^{\intercal}x = y^{\intercal}Ax = y^{\intercal}b.
+              \]
+              </p>
+              <p class=fragment> Note that if $x$ is feasible for the primal LP, then the dual LP is bounded; no dual feasible $y$ can achieve an objective value less than $c^{\intercal}x$.</p>
+              <p class=fragment> Similarly, if $y$ is feasible for the dual LP, then the primal LP is bounded; no primal feasible $x$ can achieve an objective value less than $b^{\intercal}y$.</p>
+          </section>
+          <section>
+              <h3>Example: A Furniture Workshop</h3>
+              <p>A simplified weekly planning problem: how many chairs and tables should a workshop make? Treat production quantities as continuous.</p>
+              <table>
+                  <thead><tr><th></th><th>Chair</th><th>Table</th><th>Available</th></tr></thead>
+                  <tbody>
+                      <tr><td>Wood (metres)</td><td>2</td><td>4</td><td>80</td></tr>
+                      <tr><td>Labor (hours)</td><td>1</td><td>3</td><td>50</td></tr>
+                      <tr><td>Profit (dollars)</td><td>40</td><td>90</td><td></td></tr>
+                  </tbody>
+              </table>
+              <p class="fragment">Let $c,t$ be production quantities. The <b>primal in SEF</b> is
+              \[\begin{aligned}
+                  \max\quad &40c+90t\\
+                  \text{s.t.}\quad &2c+4t+s_1=80,\\
+                  &c+3t+s_2=50,\\
+                  &c,t,s_1,s_2\ge0.
+              \end{aligned}\]</p>
+          </section>
+          <section>
+              <h3>Example: A Furniture Workshop</h3>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &40c+90t\\
+                          \text{s.t.}\quad &2c+4t+s_1=80,\\
+                          &c+3t+s_2=50,\\
+                          &c,t,s_1,s_2\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+                  <div class="darkBlueText" style="flex:1; min-width:0;">
+                      <p class="centered"><b>Dual</b></p>
+                      <p>\[\begin{aligned}
+                          \min\quad &80u+50v\\
+                          \text{s.t.}\quad &2u+v\ge40,\\
+                          &4u+3v\ge90,\\
+                          &u,v\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class="fragment">Note the correspondence between variables in the primal and constraints in the dual and vice-versa.</p>
+              <p class="fragment">Also note that the slack variables in the primal correspond to the dual variables being nonnegative.</p>
+          </section>
+          <section>
+              <h3>The Workshop: Primal and Dual</h3>
+              <div class=flexbox>
+                  <div>
+                  <p class="darkBlueText">
+                  \[\begin{aligned}
+                      \min\quad &80u+50v\\
+                      \text{s.t.}\quad &2u+v\ge40,\\
+                      &4u+3v\ge90,\\
+                      & u,v\ge0.
+                  \end{aligned}\]
+                  </p>
+                  <p> The variable $u$ is associated to the constraint on the amount of wood we have. The variable $v$ corresponds to labor. </p>
+              </div>
+              <div>
+              <p class=fragment> There is an <b>interpretation</b> of this LP: imagine a competitor wanting to buy the wood and labor from us directly instead of our furniture. They offer us a price $u$ for each unit of wood, and $v$ for each unit of labor. </p>
+              <p class=fragment> The objective is the total cost of our resources. The constraints reflect the fact that we wouldn't sell for less than we could make by selling furniture. </p>
+              <p class=fragment> For this reason, dual variables are often called `shadow prices' in economics.</p>
+              </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Dual: Shadow Prices</h3>
+              <p>Choose any furniture plan we can actually make, and any competitor's offer satisfying the dual constraints.</p>
+              <p class="fragment">For each chair, the competitor pays at least $40$ dollars for its wood and labor. For each table, they pay at least $90$ dollars. So selling the resources used by our plan brings in <b>at least as much as making the furniture</b>.</p>
+              <p class="fragment">The competitor is buying <b>all</b> our resources, including any we would leave unused. Since their prices are nonnegative, those leftovers can only increase the offer.</p>
+              <div class="fragment">
+                  <p>Therefore, <b>any feasible production profit is at most any feasible offer</b>:</p>
+                  <p>\[\underbrace{40c+90t}_{\text{furniture profit}}
+                  \le \underbrace{u(2c+4t)+v(c+3t)}_{\text{offer for resources used}}
+                  \le \underbrace{80u+50v}_{\text{offer for all resources}}.\]</p>
+              </div>
+          </section>
+      </section>
+      <section>
+          <section>
+              <h2> Taking the Dual Again </h2>
+          </section>
+          <section>
+              <h3> Taking the Dual Again </h3>
+              <div class=flexbox>
+                  <table>
+                    <tr><td>max</td><td>$c^{\intercal}x$</td></tr>
+                    <tr><td>such that</td><td>$Ax=b$</td></tr>
+                    <tr><td></td><td>$x\ge0$</td></tr>
+                  </table>
+                  <table class=darkBlueText>
+                    <tr><td>min</td><td>$b^{\intercal}y$</td></tr>
+                    <tr><td>such that</td><td>$A^{\intercal}y\ge c$</td></tr>
+                    <tr><td></td><td>$y$ free</td></tr>
+                  </table>
+              </div>
+                        <p> What happens if we take the dual of the dual LP?</p>
+              <p class=fragment> This is hard because the dual LP is not in SEF. Let's fix this</p>
+          </section>
+          <section>
+              <h3> Taking the Dual Again </h3>
+              <div class=flexbox>
+                  <table class=darkBlueText>
+                    <tr><td>min</td><td>$b^{\intercal}y$</td></tr>
+                    <tr><td>such that</td><td>$A^{\intercal}y\ge c$</td></tr>
+                    <tr><td></td><td>$y$ free</td></tr>
+                  </table>
+                  <table class=darkBlueText>
+                    <tr><td>max</td><td>$-b^{\intercal}(y^+-y^-)$</td></tr>
+                    <tr><td>such that</td><td>$A^{\intercal}(y^+-y^-)-s=c$</td></tr>
+                    <tr><td></td><td>$y^+,y^-,s\ge0$</td></tr>
+                  </table>
+              </div>
+                        <p> Here, $y^+$ and $y^-$ have length $m$ and $s$ has length $n$.</p>
+          </section>
+          <section class="fullscreen double-dual-matrix-step">
+              <h3> Taking the Dual Again </h3>
+              <div class="flexbox" style="align-items:center;">
+                  <table class=darkBlueText>
+                    <tr><td>max</td><td>$-b^{\intercal}(y^+-y^-)$</td></tr>
+                    <tr><td>such that</td><td>$A^{\intercal}(y^+-y^-)-s=c$</td></tr>
+                    <tr><td></td><td>$y^+,y^-,s\ge0$</td></tr>
+                  </table>
+                  <table class=darkBlueText>
+                  <tr><td>max</td><td>$\begin{pmatrix}-b\\b\\0\end{pmatrix}^{\intercal}\begin{pmatrix}y^+\\y^-\\s\end{pmatrix}$</td></tr>
+                  <tr><td>such that</td><td>$\begin{pmatrix}A^{\intercal}&-A^{\intercal}&-I\end{pmatrix}\begin{pmatrix}y^+\\y^-\\s\end{pmatrix}=c$</td></tr>
+                  <tr><td></td><td>$y^+,y^-,s\ge0$</td></tr>
+              </table>
+              </div>
+                        <p> Now, we can take the dual. </p>
+          </section>
+          <section class="fullscreen double-dual-matrix-step">
+              <h3> Taking the Dual Again </h3>
+              <div class="flexbox" style="align-items:center;">
+                  <table class=darkBlueText>
+                  <tr><td>max</td><td>$\begin{pmatrix}-b\\b\\0\end{pmatrix}^{\intercal}\begin{pmatrix}y^+\\y^-\\s\end{pmatrix}$</td></tr>
+                  <tr><td>such that</td><td>$\begin{pmatrix}A^{\intercal}&-A^{\intercal}&-I\end{pmatrix}\begin{pmatrix}y^+\\y^-\\s\end{pmatrix}=c$</td></tr>
+                  <tr><td></td><td>$y^+,y^-,s\ge0$</td></tr>
+              </table>
+                  <table>
+                  <tr><td>min</td><td>$c^{\intercal}(-x)$</td></tr>
+                  <tr><td>such that</td><td>$\begin{pmatrix}A\\-A\\-I\end{pmatrix}(-x)\ge\begin{pmatrix}-b\\b\\0\end{pmatrix}$</td></tr>
+                  <tr><td></td><td>$x$ free</td></tr>
+              </table>
+              </div>
+                        <p> Let's massage this a little more. </p>
+          </section>
+          <section class="fullscreen double-dual-matrix-step">
+              <h3> Taking the Dual Again </h3>
+              <div class="flexbox" style="align-items:center;">
+                  <table>
+                  <tr><td>min</td><td>$-c^{\intercal}x$</td></tr>
+                  <tr><td>such that</td><td>$\begin{pmatrix}-A\\A\\I\end{pmatrix}x\ge\begin{pmatrix}-b\\b\\0\end{pmatrix}$</td></tr>
+                  <tr><td></td><td>$x$ free</td></tr>
+              </table>
+                  <table>
+                  <tr><td>min</td><td>$-c^{\intercal}x$</td></tr>
+                  <tr><td>such that</td><td>$Ax\ge b$</td></tr>
+                  <tr><td></td><td>$-Ax\ge-b$</td></tr>
+                  <tr><td></td><td>$x\ge0$</td></tr>
+              </table>
+              </div>
+                        <p> But if we combine the inequalities $Ax \ge b$ and $-Ax \ge -b$, what do we get? </p>
+          </section>
+          <section>
+              <h3> Taking the Dual Again </h3>
+              <div class="flexbox" style="align-items:center;">
+                  <table>
+                  <tr><td>min</td><td>$-c^{\intercal}x$</td></tr>
+                  <tr><td>such that</td><td>$Ax\le b$</td></tr>
+                  <tr><td></td><td>$-Ax\le-b$</td></tr>
+                  <tr><td></td><td>$x\ge0$</td></tr>
+              </table>
+                  <table>
+                      <tr><td>min</td><td>$-c^{\intercal}x$</td></tr>
+                      <tr><td>such that</td><td>$Ax=b$</td></tr>
+                      <tr><td></td><td>$x\ge0$</td></tr>
+                  </table>
+              </div>
+          
+                        <p> This is the original LP! So we get that the dual of the dual LP is equivalent to the original LP.</p>
+          </section>
+          <section>
+              <h3> Taking the Dual Again </h3>
+              <div class=flexbox>
+                  <table>
+                      <tr><td>max</td><td>$c^{\intercal}x$</td></tr>
+                      <tr><td>such that</td><td>$Ax=b$</td></tr>
+                      <tr><td></td><td>$x\ge0$</td></tr>
+                  </table>
+                  <table class=darkBlueText>
+                      <tr><td>min</td><td>$b^{\intercal}y$</td></tr>
+                      <tr><td>such that</td><td>$A^{\intercal}y\ge c$</td></tr>
+                      <tr><td></td><td>$y$ free</td></tr>
+                  </table>
+              </div>
+                        <p> We have seen that if we go through the process of putting things into standard inequality form, then we can also take the dual of the dual and get the same thing back. But we can skip some of these steps when taking the dual of more general LPs.</p>
+          </section>
+      </section>
+      <section>
+          <section>
+              <h2> Duals for LPs not in SEF </h2>
+          </section>
+          <section>
+              <h3>Primal–Dual Correspondences</h3>
+              <p> Any LP can be dualized by putting the LP into SEF then taking the dual. We can go directly to the dual with some extra rules. </p>
+              <p> Coarsely, the corresondence goes like this: </p>
+              <table>
+                  <thead><tr><th>Primal (max)</th><th></th><th class="darkBlueText">Dual (min)</th></tr></thead>
+                  <tbody>
+                      <tr><td>Variables</td><td>$\leftrightarrow$</td><td class="darkBlueText">Constraints</td></tr>
+                      <tr><td>Constraints</td><td>$\leftrightarrow$</td><td class="darkBlueText">Variables</td></tr>
+                      <tr><td>Objective</td><td>$\leftrightarrow$</td><td class="darkBlueText">Constant term of Constraints</td></tr>
+                      <tr><td>Constant term in Constraints</td><td>$\leftrightarrow$</td><td class="darkBlueText">Objective</td></tr>
+                      <tr><td>Coefficients in Constraints</td><td>$\leftrightarrow$</td><td class="darkBlueText">Coefficients in Constraints</td></tr>
+                  </tbody>
+              </table>
+              <p> But usually, nonnegativity constraints on variables are treated differently from other constraints. </p>
+          </section>
+          <section>
+              <h3>Primal–Dual Correspondences</h3>
+              <p> More specifically, the correspondence goes like this: </p>
+              <table>
+                  <thead><tr><th>Primal (max)</th><th></th><th class="darkBlueText">Dual (min)</th></tr></thead>
+                  <tbody>
+                      <tr><td>Free variable</td><td>$\leftrightarrow$</td><td class="darkBlueText">Equality constraint</td></tr>
+                      <tr><td>Nonnegative variable </td><td>$\leftrightarrow$</td><td class="darkBlueText">Inequality constraint</td></tr>
+                      <tr><td>Equality constraint</td><td>$\leftrightarrow$</td><td class="darkBlueText">Free variable</td></tr>
+                      <tr><td>Inequality</td><td>$\leftrightarrow$</td><td class="darkBlueText">Nonnegative variable </td></tr>
+                  </tbody>
+              </table>
+          </section>
+          <section>
+              <h3>Primal–Dual Correspondences</h3>
+              <table>
+                  <thead><tr><th>Primal</th><th></th><th class="darkBlueText">Dual</th></tr></thead>
+                  <tbody>
+                      <tr><td>Maximize</td><td>$\leftrightarrow$</td><td class="darkBlueText">Minimize</td></tr>
+                      <tr><td>$n$ variables, $m$ constraints</td><td>$\leftrightarrow$</td><td class="darkBlueText">$m$ variables, $n$ constraints</td></tr>
+                      <tr><td>Constraint matrix $A$</td><td>$\leftrightarrow$</td><td class="darkBlueText">Constraint matrix $A^{\intercal}$</td></tr>
+                      <tr><td>Objective coefficients $c$</td><td>$\leftrightarrow$</td><td class="darkBlueText">Constraint right-hand sides $c$</td></tr>
+                      <tr><td>Constraint right-hand sides $b$</td><td>$\leftrightarrow$</td><td class="darkBlueText">Objective coefficients $b$</td></tr>
+                  </tbody>
+              </table>
+              <p class="fragment">Taking the dual again returns the original LP. For a <b>minimization primal</b>, read the sign-and-constraint table from the dual column back to the primal column.</p>
+          </section>
+
+
+          <section>
+              <h3>Step 1: Count the Dual Variables</h3>
+              <p>\[\begin{aligned}
+                  \max\quad &5x_1+4x_2-2x_3\\
+                  \text{s.t.}\quad &x_1+2x_2+x_3\le5,\\
+                  &2x_1+x_2-x_3=4,\\
+                  &-x_1+x_2+2x_3\ge1,\\
+                  &x_1\text{ free},\quad x_2,x_3\ge0.
+              \end{aligned}\]</p>
+              <p class="fragment">There are <b>three constraint rows</b>, apart from variable sign restrictions. So the dual has <span class="darkBlueText"><b>three variables: $y_1,y_2,y_3$</b></span>, one for each row.</p>
+              <p class="fragment">Do not count $x_2,x_3\ge0$ as additional rows: these will determine the directions of the dual constraints.</p>
+          </section>
+          <section>
+              <h3>Step 2: Determine Their Signs</h3>
+              <p>The primal is a <b>maximization</b> problem. Each constraint row determines the sign of its dual variable.</p>
+              <table>
+                  <thead><tr><th>Primal row</th><th class="darkBlueText">Dual variable</th></tr></thead>
+                  <tbody>
+                      <tr class="fragment"><td>$x_1+2x_2+x_3\le5$</td><td class="darkBlueText">$y_1\ge0$</td></tr>
+                      <tr class="fragment"><td>$2x_1+x_2-x_3=4$</td><td class="darkBlueText">$y_2$ is free</td></tr>
+                      <tr class="fragment"><td>$-x_1+x_2+2x_3\ge1$</td><td class="darkBlueText">$y_3\le0$</td></tr>
+                  </tbody>
+              </table>
+              <p class="fragment">So $y_1$ is nonnegative, $y_2$ has no sign restriction, and $y_3$ is nonpositive.</p>
+          </section>
+          <section>
+              <h3>Step 3: Build the Dual Constraints</h3>
+              <p>There are <b>three more constraints</b>, one per primal variable. Read each <b>column</b> of the primal matrix to obtain their coefficients.</p>
+              <p>\[A=\begin{pmatrix}1&2&1\\2&1&-1\\-1&1&2\end{pmatrix}.\]</p>
+              <table>
+                  <thead><tr><th>Primal variable / column</th><th class="darkBlueText">Dual left side / relation</th></tr></thead>
+                  <tbody>
+                      <tr class="fragment"><td>$x_1$ free: $(1,2,-1)$</td><td class="darkBlueText">$y_1+2y_2-y_3$; equality</td></tr>
+                      <tr class="fragment"><td>$x_2\ge0$: $(2,1,1)$</td><td class="darkBlueText">$2y_1+y_2+y_3$; $\ge$</td></tr>
+                      <tr class="fragment"><td>$x_3\ge0$: $(1,-1,2)$</td><td class="darkBlueText">$y_1-y_2+2y_3$; $\ge$</td></tr>
+                  </tbody>
+              </table>
+          </section>
+          <section>
+              <h3>Step 4: Objective and Right-Hand Sides</h3>
+              <p>The primal maximizes, so the dual <b>minimizes</b>.</p>
+              <div class="fragment">
+                  <p>The primal right-hand sides $(5,4,1)$ become the <b>dual objective coefficients</b>:</p>
+                  <p class="darkBlueText">\[\min\quad 5y_1+4y_2+y_3.\]</p>
+              </div>
+              <div class="fragment">
+                  <p>The primal objective coefficients $(5,4,-2)$ become the <b>dual constraint right-hand sides</b>, in variable order:</p>
+                  <p class="darkBlueText">\[\begin{aligned}
+                      y_1+2y_2-y_3&=5,\\
+                      2y_1+y_2+y_3&\ge4,\\
+                      y_1-y_2+2y_3&\ge-2.
+                  \end{aligned}\]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Step 5: Assemble the Dual</h3>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &5x_1+4x_2-2x_3\\
+                          \text{s.t.}\quad &x_1+2x_2+x_3\le5,\\
+                          &2x_1+x_2-x_3=4,\\
+                          &-x_1+x_2+2x_3\ge1,\\
+                          &x_1\text{ free},\quad x_2,x_3\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+                  <div class="darkBlueText" style="flex:1; min-width:0;">
+                      <p class="centered"><b>Dual</b></p>
+                      <p>\[\begin{aligned}
+                          \min\quad &5y_1+4y_2+y_3\\
+                          \text{s.t.}\quad &y_1+2y_2-y_3=5,\\
+                          &2y_1+y_2+y_3\ge4,\\
+                          &y_1-y_2+2y_3\ge-2,\\
+                          &y_1\ge0,\quad y_2\text{ free},\quad y_3\le0.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class="fragment">Check: $x=(1,2,0)$ and $y=(2,1,-1)$ are feasible and both have objective value $13$. Thus both are optimal.</p>
+          </section>
+
+      </section>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>
