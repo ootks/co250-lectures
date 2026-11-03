@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -68,7 +68,7 @@
             <p> A matching in a graph is a collection of edges in that graph so that no two edges in the collection share a vertex.</p>
             <div class="flexbox">
               <img src="images/bipartite_matching.svg" />
-              <p class=fragment> A maximum matching is a matching with as many edges as any other matching. A perfect matching is a matching where every vertex has a matched vertex. </p>
+              <p class=fragment> A maximum matching is a matching with at least as many edges as any other matching. A perfect matching is a matching where every vertex has a matched vertex. </p>
             </div>
           </section>
           <section>
@@ -256,7 +256,7 @@
                 \sum_i p_if_i - \sum_j c_j r_j.
               \]
             </p>
-            <p> First term is the total profit from selling $f_i$ of food $i$ at price $p_i$, and second term is the cost of buying ingredients. </p>
+            <p> First term is the total revenue from selling $f_i$ of food $i$ at price $p_i$, and second term is the cost of buying ingredients. </p>
           </section>
           <section>
             <h3> Nonlinear Programs </h3>
@@ -348,7 +348,7 @@
                   <tr> <td> such that </td> <td> $\|\theta\|_1 \le k$ </td> </tr>
               </table>
             </p>
-            <p class=fragment> LASSO is more often written in its `penalty formulation', which is just to minimize $\sum_{i=1}^D (\langle \theta, x_i\rangle - y_i)^2 + \lambda \|\theta\|_1$ for some $\lambda \in \R$. </p>
+            <p class=fragment> LASSO is more often written in its `penalty formulation', which is just to minimize $\sum_{i=1}^D (\langle \theta, x_i\rangle - y_i)^2 + \lambda \|\theta\|_1$ for some $\lambda \ge 0$. </p>
             <p class=fragment> We will talk about how to solve this kind of (convex) problem later. </p>
           </section>
           <section>
@@ -414,7 +414,7 @@
             \[
               \{(x,y) : x+y \ge 1, x \ge 1, y \ge 1\}.
             \]
-            Note that every vector of the form $(x,0)$ with $x \ge 1$ is in this set.
+            Note that every vector of the form $(x,1)$ with $x \ge 1$ is in this set.
           </p>
           <p class=fragment> A polytope is compact if it is neither empty or unbounded. </p>
           <p class=fragment> We will discuss these different examples in greater detail next lecture. </p>

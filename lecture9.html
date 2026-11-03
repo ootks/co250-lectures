@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -446,7 +446,7 @@
                   </table>
                 </div>
             </div>
-            <p> We again eliminate coefficient 3 in the objective by subtracting a multiple of row 2 from the objective.</p>
+            <p> We again eliminate coefficient 3 in the objective by subtracting a multiple of row 1 from the objective.</p>
         </section>
         <section data-auto-animate>
             <h3>A Simplex Iteration</h3>
@@ -546,7 +546,7 @@
             <p> $x_4$ entered and $x_1$ left. $\{1,3,5\} \setminus \{1\} \cup \{4\} = \{3,4,5\}$. Put the system back in RREF with respect to $\{3,4,5\}$.</p>
             <p>\[\begin{pmatrix} \color{orange}1 & 0 & \color{blue}0 & \color{red}1 & \color{blue}0 \\ \color{orange}0 & -1 & \color{blue}1 & \color{red}2 & \color{blue}0 \\ \color{orange}0 & -1 & \color{blue}0 & \color{red}{-1} & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 2 \\ 6 \\ 4\end{pmatrix}\]</p>
             <p class=fragment>We would like the final matrix to look like 
-            \[\begin{pmatrix} ? & ? & \color{blue}1 & \color{red}0 & \color{blue}0 \\ ? & ? & \color{blue}0 & \color{red}1 & \color{blue}0 \\ ? & ? & \color{blue}0 & \color{red}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} 6 \\ 2 \\ 4\end{pmatrix}\]
+            \[\begin{pmatrix} ? & ? & \color{blue}1 & \color{red}0 & \color{blue}0 \\ ? & ? & \color{blue}0 & \color{red}1 & \color{blue}0 \\ ? & ? & \color{blue}0 & \color{red}0 & \color{blue}1\end{pmatrix} x = \begin{pmatrix} ? \\ ? \\ ?\end{pmatrix}\]
             </p>
             <p class=fragment> If we swap rows 1 and 2, then the blue are already done (the swapping is because the leaving variable was the first variable in the basis, and the entering variable will be the second).</p>
         </section>
@@ -864,7 +864,7 @@
           </p>
           <p class=fragment> The termination condition is that $c \le 0$ and the fact that the LP is in canonical form imply that $c_i x_i^* = 0$ for each $i$, and in particular $c^{\intercal}x^* = 0$.</p>
           <p class=fragment> Letting $y = 0$, we get that
-            \[Ay = 0 \ge c\qquad b^{\intercal}y = 0 = c^{\intercal}x^*. \]
+            \[A^{\intercal}y = 0 \ge c\qquad b^{\intercal}y = 0 = c^{\intercal}x^*. \]
           </p>
         </section>
         <section>
@@ -877,7 +877,7 @@
             </table>
           <p> We have that $c_i = 0$ if $i$ is in the basis and $c_i \le 0$ if $i$ is not in the basis.</p>
           <p class=fragment> Any feasible point has all entries being nonnegative, and so $c^{\intercal}x \le 0$ for all $x \ge 0$.</p>
-          <p class=fragment> On the other hand, at the basic feasible solution, $c^{\intercal}x^* = 0$, so every other feasible point has a smaller objective value than this one.</p>
+          <p class=fragment> On the other hand, at the basic feasible solution, $c^{\intercal}x^* = 0$, so every other feasible point has an objective value that is no larger value than this one.</p>
         </section>
         <section>
           <h3> Termination </h3>

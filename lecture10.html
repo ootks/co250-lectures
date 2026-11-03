@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -72,7 +72,7 @@
         </section>
         <section>
             <h3> The Simplex Algorithm </h3>
-            <p> Last week, we showed that if the simplex algorithm terminates (either by outputting an optimal point or declaring the LP infeasible), then it will be correct.</p>
+            <p> Last week, we showed that if the simplex algorithm terminates (either by outputting an optimal point or declaring the LP unbounded), then it will be correct.</p>
             <p class="fragment"> What if the simplex method never terminates? </p>
             <p class="fragment"> There are only finitely many bases (each basis is a subset of the columns, and there are only $2^n$ of these). So we can only increase the objective finitely many times before terminating. </p>
             <p class="fragment"> Are there situations in which the objective does not increase in the simplex method? </p>
@@ -85,7 +85,7 @@
                 <div class="program">
                   <table>
                     <tr> <td> max </td> <td> $\begin{pmatrix} \color{blue}0 & 1 & \color{blue}0 & -1\end{pmatrix} x + 1$ </td> </tr>
-                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & 0 & \color{blue}0 & 1 \\ \color{blue}0 & 1 & \color{blue}1 & -2 \end{pmatrix} x = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$ </td> </tr>
+                    <tr> <td> such that </td> <td> $\begin{pmatrix} \color{blue}1 & -1 & \color{blue}0 & 1 \\ \color{blue}0 & 1 & \color{blue}1 & -2 \end{pmatrix} x = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$ </td> </tr>
                     <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
                   </table>
                 </div>
@@ -602,7 +602,7 @@
             <h3>Infeasibility Certificates</h3>
             <p>Let's say that we have an auxilliary LP </p>
             <table>
-            <tr> <td>maximize </td> <td> $-\sum_{i=1}^m s$ </td> </tr>
+            <tr> <td>maximize </td> <td> $-\sum_{i=1}^m s_i$ </td> </tr>
             <tr>  <td> such that </td><td> $Ax + s = b$ </td> </tr>
             <tr>  <td></td> <td> $x, s \ge 0$ </td> </tr>
             </table>
@@ -612,13 +612,13 @@
             <h3>Infeasibility Certificates</h3>
             <p>We discussed last time how we can use the simplex method to construct a certificate of optimality once we find an optimal solution</p>
             <table>
-                <tr> <td>maximize </td> <td> $-\sum_{i=1}^m s$ </td> </tr>
+                <tr> <td>maximize </td> <td> $-\sum_{i=1}^m s_i$ </td> </tr>
                 <tr>  <td> such that </td><td> $Ax + s = b$ </td> </tr>
                 <tr>  <td></td> <td> $x, s \ge 0$ </td> </tr>
             </table>
             <p> A certificate of optimality consists of some $y$ so that
                 \[
-                    \begin{pmatrix}A & I \end{pmatrix}^{\intercal}y \ge -\begin{pmatrix} 0 \\ 1 \\ 1 \\ \dots \\ 1 \end{pmatrix} \qquad 
+                    \begin{pmatrix}A & I \end{pmatrix}^{\intercal}y \ge -\begin{pmatrix} \mathbf{0}_n \\ \mathbf{1}_m \end{pmatrix} \qquad 
                     b^{\intercal}y = -\sum_{i=1}^m s_i^* < 0.
                 \]
             </p>

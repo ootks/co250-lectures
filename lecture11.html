@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -49,7 +49,7 @@
             <div class=flexbox>
             <img src="images/simplex_flowchart.svg" height="600px" />
             <div>
-            <p class=fragment><b>Ratio test</b>: look at the column of $A$ associated to the entering variable, and find the positive entries in it (if there are none, then the LP is infeasible). For each positive entry, look at the corresponding entry of $b$, divide it by the entry of $A$ and then take some$^*$ row with the minimum ratio. That row corresponds to the leaving basic variable. </p>
+            <p class=fragment><b>Ratio test</b>: look at the column of $A$ associated to the entering variable, and find the positive entries in it (if there are none, then the LP is unbounded). For each positive entry, look at the corresponding entry of $b$, divide it by the entry of $A$ and then take some$^*$ row with the minimum ratio. That row corresponds to the leaving basic variable. </p>
             <p class=fragment>If there are multiple rows which have the same minimum ratio, any of them could potentially leave; Bland's rule says to take the one of them that has the smallest index.</p></div></div>
         </section>
 
@@ -501,9 +501,9 @@ $ </td> </tr>
             <div>
                 <p><b>Proof of the Theorem:</b> Suppose that $x \in P$ is a vertex, and let's say that $a_1^{\intercal}x = b_1, a_2^{\intercal}x = b_2,\dots, a_n^{\intercal}x = b_n$ where $a_1, \dots, a_n$ are linearly independent.</p>
                 <p class=fragment>We can write this as a square system $A^= x = b^=$. Note that this implies that $x = (A^=)^{-1}b^=$ is the unique solution to this system. </p>
-                <p class=fragment>Suppose that $x = t y + (1-t)z$, where $y, z \in P$, so that $a_i^{\intercal} y, a_i^{\intercal} z \le b_i$ for each $i$. Suppose that $a_i^{\intercal}y < b_i$ for some $i$ (or symmetrically that $a_i^{\intercal}z \le b_i$).</p>
-                <p class=fragment>Then $a_i^{\intercal}x_i = ta_i^{\intercal}y + (1-t)a_i^{\intercal}z < t b_i + (1-t)b_i < b_i$, a contradiction.</p>
-                <p class=fragment>Therefore, $A^= y = A^= z = b$, and so $y = z = x$.</p>
+                <p class=fragment>Suppose that $x = t y + (1-t)z$, where $y, z \in P$, so that $a_i^{\intercal} y, a_i^{\intercal} z \le b_i$ for each $i$. Suppose that $a_i^{\intercal}y < b_i$ for some $i \in \{1,\dots,n\}$ (or symmetrically that $a_i^{\intercal}z < b_i$).</p>
+                <p class=fragment>Then $a_i^{\intercal}x = ta_i^{\intercal}y + (1-t)a_i^{\intercal}z < t b_i + (1-t)b_i = b_i$, contradicting $a_i^{\intercal}x = b_i$.</p>
+                <p class=fragment>Therefore, $A^= y = A^= z = b^=$, and so $y = z = x$.</p>
             </div>
             </div>
         </section>
@@ -523,13 +523,13 @@ $ </td> </tr>
             <h3> Linear Programs and Vertices </h3>
             <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
                 <p><b>Theorem</b></p>
-                <p>Claim: Every linear function that has a maximum on a set $S \subseteq \R^n$ is maximized at some extreme point of $S$.</p>
+                <p>Claim: Every linear function that has a maximum on a polyhedron $S \subseteq \R^n$ containing no line (e.g. $S = \{x : Ax = b, x \ge 0\}$) is maximized at some extreme point of $S$.</p>
             </div>
             <div class="flexbox">
             <img src="images/sef_lift_triangle_noshadow.svg" height="300px" />
             <div>
-                <p><b>Proof:</b>Let $c^{\intercal}x$ be this linear function. Let's start by assuming that there is a unique maximizer of the linear function on $S$, $x^*$. Suppose that $x^*$ is not an extreme point, so there are $y, z \in S$ with $y,z \neq x^*$ and $\lambda \in [0,1]$ so that $x^* = \lambda y + (1-\lambda)z$.</p>
-                <p class=fragment>Well, then $c^{\intercal}x^* = t c^{\intercal}y + (1-t)c^{\intercal}z$, and since $x^*$ was the unique minimizer, $c^{\intercal}y, c^{\intercal}z < c^{\intercal}x^*$, and we get the contradiction that $c^{\intercal}x^* < c^{\intercal}x^*$. </p>
+                <p><b>Proof:</b>Let $c^{\intercal}x$ be this linear function. Let's start by assuming that there is a unique maximizer of the linear function on $S$, $x^*$. Suppose that $x^*$ is not an extreme point, so there are $y, z \in S$ with $y,z \neq x^*$ and $\lambda \in (0,1)$ so that $x^* = \lambda y + (1-\lambda)z$.</p>
+                <p class=fragment>Well, then $c^{\intercal}x^* = \lambda c^{\intercal}y + (1-\lambda)c^{\intercal}z$, and since $x^*$ was the unique maximizer, $c^{\intercal}y, c^{\intercal}z < c^{\intercal}x^*$, and we get the contradiction that $c^{\intercal}x^* < c^{\intercal}x^*$. </p>
             </div>
             </div>
         </section>
@@ -572,7 +572,7 @@ $ </td> </tr>
                 <p><b>Lemma</b></p>
                 <p> If $P$ and $Q$ are disjoint convex polytopes in $\R^n$, then there exists a pair of points $(p,q)$ with the smallest possible distance from $p$ to $q$. </p>
             </div>
-            <p>Let $(p,q)$ be this distance minimizing pair, and let $y = p - q$. We claim that this $y$ satisfies the conditions of the theorem.</p>
+            <p>Let $(p,q)$ be this distance minimizing pair, and let $y = q - p$. We claim that this $y$ satisfies the conditions of the theorem.</p>
             <p>Suppose that there were some $p', q'$ so that $y^{\intercal}p < y^{\intercal}q$, and consider 
             \[
             \]
@@ -588,7 +588,7 @@ $ </td> </tr>
         <section class="fullscreen">
             <h3> Geometry and Duality </h3>
             <p><b>Proof:</b> Since $\{x\in \R^n : Ax = b, x \ge 0\}$ is empty, the two sets $P = \{x \in \R^n : Ax = b\}$ and $Q = \{x \in \R^n : x \ge 0\}$ are disjoint.</p>
-            <p>Let's first consider the possibility htat $P$ is empty. Linear algebra implies that there must exist some $y$ so that $A^{\intercal}y = 0$ and $b^{\intercal}y = -1$, which supplies the needed contradiction.</p>
+            <p>Let's first consider the possibility htat $P$ is empty. Linear algebra implies that there must exist some $y$ so that $A^{\intercal}y = 0$ and $b^{\intercal}y = -1$, which supplies the needed certificate $y$ (so $A^{\intercal}y \ge 0$ and $b^{\intercal}y < 0$).</p>
                 
             <p>
             If $P$ is nonempty, then the separating hyperplane theorem states that there exists some $y$ so that 

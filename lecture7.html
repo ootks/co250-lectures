@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -1046,7 +1046,7 @@
             \]
             </p>
             <p class=fragment> Its objective value is $1+1+1+2 = 5$. In fact the first equation forces $x_1+x_2+x_3+x_4 = 5$ for <b>every</b> feasible point, so $x^*$ is <b>optimal</b>. </p>
-            <p class=fragment> But $x^*$ has <b>four</b> nonzero entries, while $\rank(A) = 3$, so $x$ is not a basic solution. </p>
+            <p class=fragment> But $x^*$ has <b>four</b> nonzero entries, while $\rank(A) = 3$, so $x^*$ is not a basic solution. </p>
             <p class=fragment> Can we correct $x^*$ so that it has fewer nonzero entries? </p>
         </section>
         <section>
@@ -1095,7 +1095,7 @@
             <p>$x^* = (1, 1, 1, 2)^{\intercal}$</p>
             <p>$v = (1, 0, 0, -1)^{\intercal}$ solves $Av = 0$</p>
             <p> Choose $t$ so that $t c^{\intercal}v \ge 0$ and also $x^*+tv$ has <b> fewer nonzero enties</b>.</p>
-            <p class=fragment> x^* - v = (0, 1, 1, 3) is another feasible point with the same objective value. Now the number of nonzero entries is equal to $\rank(A)$, so we are done.</p>
+            <p class=fragment> $x^* - v = (0, 1, 1, 3)^{\intercal}$ is another feasible point with the same objective value. Now the number of nonzero entries is equal to $\rank(A)$, so we are done.</p>
         </section>
         <section>
             <h3> Basic Solutions </h3>
@@ -1108,7 +1108,7 @@
             <p class=fragment> Let $S \subseteq \{1,\dots, n\}$ be the set of entries which are nonzero in $x^*$. </p>
             <p class=fragment> If $S$ has fewer than $\rank(A)$ elements, then we are done, as $x^*$ would be a basic solution. </p>
             <p class=fragment> Otherwise, we can look at a `reduced' linear program where all of the entries of $x$ that are not in $S$ deleted. </p>
-            <p class=fragment> A basic solution for this new LP will still be a basic solution for the original one. We have reduced to the case where $x^*$ has only positive entries, and where $\rank(A) > n$. </p>
+            <p class=fragment> A basic solution for this new LP will still be a basic solution for the original one. We have reduced to the case where $x^*$ has only positive entries, and where $n > \rank(A)$ (more variables than constraints). </p>
         </section>
         <section>
             <h3> Basic Solutions </h3>

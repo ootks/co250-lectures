@@ -25,7 +25,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
       </section>
 
@@ -565,7 +565,7 @@
               <p> Note that any procedure for determining if an LP is feasible can be used to solve an LP. The optimal value for an LP is at most $t$ if and only if the constraints
               \[
               \begin{align}
-                Ax &\ge b\\
+                Ax &\le b\\
                 c^{\intercal}x &\le t
               \end{align}
               \]
@@ -841,7 +841,7 @@
             
           <table> 
               <tr> <td> max </td> <td> $\sum_{t=1}^T \left(\sum_{i=1}^2v_{it} q_{it} - \sum_{i=1}^3 (c_{it} p_{it} + r_{it} s_{it})  \right)$ </td> <td>(Profit)</td></tr>
-              <tr> <td> such that </td> <td> $\\sum_{j=1}^2n_{ij} q_{jt} \le p_{it} + s_{it} \text{ for }i=1,2,3;t=1,\dots,T$ </td><td>(Ingredients required) </td> </tr>
+              <tr> <td> such that </td> <td> $\sum_{j=1}^2n_{ij} q_{jt} \le p_{it} + s_{it} \text{ for }i=1,2,3;t=1,\dots,T$ </td><td>(Ingredients required) </td> </tr>
               <tr> <td> </td> <td> $q_{it} \le D_{it}\text{ for }j=1,2;T=1,\dots,T$ </td><td> (Demand constraint)</td> </tr>
               <tr> <td> </td> <td> $s_{i\;t+1} \le p_{it} + s_{it} - \sum_{j=1}^2 n_{ij} q_{jt}\text{ for }i=1,2,3;T=1,\dots,T$ </td><td>(Storage conservation)</td> </tr>
               <tr> <td> </td> <td> $\forall i\le 3, j \le 2, t \le T,p_{it}, q_{jt}, s_{it} \ge 0.$ </td><td>(Nonnegativity)</td> </tr>

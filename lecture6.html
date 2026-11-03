@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -329,7 +329,7 @@
             <h3 data-id="seform-title">Standard Equality Form</h3>
             <p> <b>Example:</b> Consider the following LP, not in SEF. </p>
             <table class="darkGreenText"> 
-                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1+x_2+x_3$ </td> </tr>
+                <tr data-id="sef-obj-maxdist"> <td> max </td> <td> $-x_1-x_2-x_3$ </td> </tr>
                 <tr data-id="sef-c1-le"> <td> such that </td> <td> $x_1+x_2+x_3 \le 1$ </td> </tr>
                 <tr data-id="sef-c2-le"> <td> </td> <td> $x_1-x_2+x_3 \le 2$ </td> </tr>
                 <tr data-id="sef-c3-dist"> <td> </td> <td> $-x_1-2x_2 \le -3$ </td> </tr>
@@ -393,11 +393,11 @@
             <h3 data-id="seform-title">Standard Equality Form</h3>
             <p> <b>Example:</b> This LP is now in SEF (and equivalent to the original)</p>
             <table class="darkBlueText"> 
-                <tr> <td> max </td> <td> <span data-id="o-x1p">$-x_1^+-x_1^-$</span><span data-id="o-x2p">$+x_2^+-x_2^-$</span><span data-id="o-x3p">$+x_3^+-x_3^-$</span> </td> </tr>
+                <tr> <td> max </td> <td> <span data-id="o-x1p">$-x_1^++x_1^-$</span><span data-id="o-x2p">$-x_2^++x_2^-$</span><span data-id="o-x3p">$-x_3^++x_3^-$</span> </td> </tr>
                 <tr> <td> such that </td> <td> <span data-id="c1-x1p">$x_1^+-x_1^-$</span><span data-id="c1-x2p">$+x_2^+-x_2^-$</span><span data-id="c1-x3p">$+x_3^+-x_3^-$</span> <span data-id="slk-c1">$+\, s_1$</span> <span data-id="rel-c1-eq">$= 1$</span> </td> </tr>
-                <tr> <td> </td> <td> <span data-id="c2-x1p">$x_1^+-x_1^-$</span><span data-id="c2-x2p">$-x_2^+-x_2^-$</span><span data-id="c2-x3p">$+x_3^+-x_3^-$</span> <span data-id="slk-c2">$+\, s_2$</span> <span data-id="rel-c2-eq">$= 2$</span> </td> </tr>
-                <tr> <td> </td> <td> <span data-id="c3-x1p">$-x_1^+-x_1^-$</span><span data-id="c3-x2p">$-2x_2^+-x_2^-$</span> <span data-id="slk-c3">$+\, s_3$</span> <span data-id="rel-c3-eq">$= -3$</span> </td> </tr>
-                <tr> <td> </td> <td> <span data-id="c4-x1p">$-x_1^+-x_1^-$</span><span data-id="c4-x2p">$+3x_2^+-x_2^-$</span> <span data-id="slk-c4">$+\, s_4$</span> <span data-id="rel-c4-eq">$= 0$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="c2-x1p">$x_1^+-x_1^-$</span><span data-id="c2-x2p">$-x_2^++x_2^-$</span><span data-id="c2-x3p">$+x_3^+-x_3^-$</span> <span data-id="slk-c2">$+\, s_2$</span> <span data-id="rel-c2-eq">$= 2$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="c3-x1p">$-x_1^++x_1^-$</span><span data-id="c3-x2p">$-2x_2^++2x_2^-$</span> <span data-id="slk-c3">$+\, s_3$</span> <span data-id="rel-c3-eq">$= -3$</span> </td> </tr>
+                <tr> <td> </td> <td> <span data-id="c4-x1p">$-x_1^++x_1^-$</span><span data-id="c4-x2p">$+3x_2^+-3x_2^-$</span> <span data-id="slk-c4">$+\, s_4$</span> <span data-id="rel-c4-eq">$= 0$</span> </td> </tr>
                 <tr data-id="sef-nn-split"> <td> </td> <td> $x_i^+, x_i^-, s_j \ge 0$ </td> </tr>
             </table>
         </section>
@@ -495,8 +495,8 @@
             <h3 data-id="seform-title2">Standard Equality Form</h3>
             <p> This LP is now in SEF. </p>
             <table class="darkBlueText"> 
-                <tr data-id="ex2-obj-split"> <td> max </td> <td> $-2x_1^+-x_1^- + 3x_2$ </td> </tr>
-                <tr data-id="ex2-c1-split"> <td> such that </td> <td> $-x_1^+-x_1^- - x_2 + s_1 = -4$ </td> </tr>
+                <tr data-id="ex2-obj-split"> <td> max </td> <td> $-2x_1^++2x_1^- - 3x_2$ </td> </tr>
+                <tr data-id="ex2-c1-split"> <td> such that </td> <td> $-x_1^++x_1^- - x_2 + s_1 = -4$ </td> </tr>
                 <tr data-id="ex2-c2-split"> <td> </td> <td> $x_1^+-x_1^- - x_2 + s_2 = 6$ </td> </tr>
                 <tr data-id="ex2-c3-split"> <td> </td> <td> $x_1^+-x_1^- + 2x_2 = 5$ </td> </tr>
                 <tr data-id="ex2-nn-final"> <td> </td> <td> $x_1^+, x_1^-, x_2, s_1, s_2 \ge 0$ </td> </tr>

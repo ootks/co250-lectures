@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -392,9 +392,9 @@
           <section>
             <h3>ILP Examples </h3>
             <h4> Cookie Assembly Constraints</h4>
-            <p> We must put each cookie in exactly one location, so for each $i \le K$,
+            <p> We must put each cookie in exactly one location, so for each $i \le B$,
               \[
-              \sum_{k=1}^C \sum_{r = 1}^{\ell - a_i + 1}\sum_{c = 1}^{w - b_i + 1} x_{ikrc} = 1.
+              \sum_{k=1}^K \sum_{r = 1}^{\ell - a_i + 1}\sum_{c = 1}^{w - b_i + 1} x_{ikrc} = 1.
               \]
             </p>
             <p class="fragment centered"> <b>What keeps two cookies from overlapping?</b> </p>
@@ -457,7 +457,7 @@
           <section>
             <h3>Packing vs Covering </h3>
             <p class="centered"> <b>Which of today's examples were packing, and which were covering?</b> </p>
-            <p class=fragment> The knapsack and cookie problems are packing: $Ax \le b$, maximizing. </p>
+            <p class=fragment> The knapsack problem is packing: $Ax \le b$, maximizing. The warehouse and cookie formulations are neither (they minimize, and use equality constraints). </p>
             <p class=fragment> The diet problem is covering: $Ax \ge b$, minimizing. </p>
           </section>
           <section>

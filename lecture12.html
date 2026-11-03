@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -48,13 +48,13 @@
         </section>
         <section>
             <h3> Half-Spaces</h3>
-            <p> Every polytope is built out of inequalities of the form $a^{\intercal}x \le b$, which defines a half-space</p>
+            <p> Every polytope is built out of inequalities of the form $a^{\intercal}x \le b$, each of which defines a half-space.</p>
             <img src="images/halfspace_2d.svg" height="260px" />
         </section>
         <section>
             <h3> Half-Spaces</h3>
-            <p> A half space has the property of being <b>convex</b>. </p>
-            <p> A set of points $S \subseteq \R^n$ is convex when the line segment containing any two points in a set is contained in the set. </p>
+            <p> A half-space has the property of being <b>convex</b>. </p>
+            <p> A set of points $S \subseteq \R^n$ is convex when the line segment joining any two points in the set is contained in the set. </p>
             <div class=fragment>
                 <p> Algebraically, this means the set is closed under taking averages: if $x,y \in S$ and $t \in [0,1]$, then</p>
                 <p>\[tx + (1-t)y \in S.\]</p>
@@ -85,9 +85,9 @@
             <div class="flexbox" style="align-items:center;">
                 <img src="images/polytope_dimensions.svg" height="600px" style="flex:0 0 auto;" />
                 <div style="flex:1 1 auto; min-width:0;">
-                    <p>For a polytope defined by $P = \{x \in \R^n : Ax \le b\}$, where $A$ has rows $a_1, \dots, a_m$, we will let the set of <b>implicit equations</b> be $S = \{i : \forall x \in P, a_i^{\intercal}x = b_i\}$.</p>
-                    <p>The affine hull is defined as $\{x \in \R^n : \forall i \in S, a_i^{\intercal}x = b_i\}.^*$</p>
-                    <p>The <b>dimension</b> of the polytope is defined to be the dimension of this affine hull, which is the same as the rank of the matrix whose rows are the implicit equations.</p>
+                    <p>For a nonempty polytope defined by $P = \{x \in \R^n : Ax \le b\}$, where $A$ has rows $a_1, \dots, a_m$, we will let the set of <b>implicit equations</b> be $S = \{i : \forall x \in P, a_i^{\intercal}x = b_i\}$.</p>
+                    <p>The affine hull is defined as $\{x \in \R^n : \forall i \in S, a_i^{\intercal}x = b_i\}$.<sup>*</sup></p>
+                    <p>The <b>dimension</b> of the polytope is defined to be the dimension of this affine hull, which is $n$ minus the rank of the matrix whose rows are the normals of the implicit equations.</p>
                     <small>* This is not the most general definition of the affine hull.</small>
                 </div>
             </div>
@@ -166,7 +166,7 @@
                 <img src="images/cube_faces.svg" height="400px" style="margin-top:-100px;" />
             </div>
             <p> What are the 2 dimensional faces of the cube? </p>
-            <p class=fragment> The 6 faces that are 2-dimensional (one for each inequality in its description). In a polytope, faces of dimension $\dim(P)-1$ are called <b>facets</b>, and they correspond to nonredundant constraints in the inequality description.</p>
+            <p class=fragment> There are 6 faces that are 2-dimensional (one for each inequality in its description). In a polytope, faces of dimension $\dim(P)-1$ are called <b>facets</b>, and they correspond to nonredundant constraints in the inequality description.</p>
         </section>
         <section class=fullscreen data-auto-animate>
             <h3> Faces of Polytopes </h3>
@@ -211,8 +211,8 @@
                         x &\ge 0
                     \end{aligned}\right\}$?
                 </p>
-                <p> Let's assume that $A \in \R^{m \times n}$ is full rank. This means that there are $n-m$ implicit equalities for this polytope; how many of the remaining inequalities should be made equalities to find a vertex?</p>
-                <p class="fragment"> Thus, the vertices should correspond to points in $P$ where $n-m$ of the inequalities $x_i \ge 0$ are tight. These are points where at least $n-m$ entries are 0.</p>
+                <p> Let's assume that $A \in \R^{m \times n}$ has full row rank. This gives $m$ independent equations; how many additional independent tight constraints are needed to find a vertex?</p>
+                <p class="fragment"> Thus, the vertices should correspond to points in $P$ where $n-m$ of the inequalities $x_i \ge 0$, together with $Ax=b$, give $n$ independent tight constraints. These are points where at least $n-m$ entries are 0.</p>
                 <p class="fragment"> These are exactly the basic feasible solutions! </p>
             </div>
             </div>
@@ -226,7 +226,7 @@
             </figure>
             <div>
                 <p>An <b>extreme point</b> of a set $S \subseteq \R^n$ is a point in $S$ not contained in the interior of any line segment joining two points in $S$.</p>
-                <p class=fragment> Algebraically, $x \in S$ is an extreme point if for any $y, z \in S$ so that $x \neq y, z$, and any $t \in (0,1)$.
+                <p class=fragment> Algebraically, $x \in S$ is an extreme point if for any $y, z \in S$ so that $x \neq y, z$, and any $t \in (0,1)$,
                 \[
                     x \neq t y + (1-t)z
                 \]
@@ -250,10 +250,11 @@
             <div>
                 <p class="fragment" data-fragment-index="0"><b>Proof of the Theorem:</b> Let $x \in P$ be a vertex, so that $a_1^{\intercal}x = b_1, \dots, a_n^{\intercal}x = b_n$ where $a_1, \dots, a_n$ are linearly independent.</p>
                 <p class="fragment" data-fragment-index="1">We can write this as a square system $A^= x = b^=$, so $x = (A^=)^{-1}b^=$ is the unique solution to this system. </p>
-                <p class="fragment" data-fragment-index="2">If $x = t y + (1-t)z$, where $y, z \in P$ and $0&lt;t&lt;1$.
+                <p class="fragment" data-fragment-index="2">If $x = t y + (1-t)z$, where $y, z \in P$ and $0&lt;t&lt;1$, then
                 \[
                 b_i = a_i^{\intercal}x = t(a_i^{\intercal} y) + (1-t)(a_i^{\intercal}z).
                 \]
+                </p>
                 <p class="fragment" data-fragment-index="3">Both $a_i^{\intercal}y$ and $a_i^{\intercal}z \le b_i$, so the only way they can average to $b_i$ is if they are both equal to $b_i$! Therefore, $a_i^{\intercal}y = a_i^{\intercal}z = b_i$ for each $i$, so that $A^= y = A^= z = b^=.$ Therefore, $y = z = x$.</p>
             </div>
             </div>
@@ -268,9 +269,9 @@
                 <img class="fragment" data-fragment-index="3" src="images/extreme_vertex_proof_step4.svg" width="330" height="330" alt="The orange point is exactly halfway between two distinct feasible endpoints, so it is not extreme." />
             </div>
             <div>
-                <p class="fragment" data-fragment-index="0"><b>Proof of the converse:</b> We show that if $x\in P$ is <b>not a vertex</b>, then it is <b>not extreme</b>. There may be tight inequalities at $x$, say $a_1^{\intercal}x = b_1, \dots, a_k^{\intercal}b = b_k$. The span of $a_1, \dots, a_k$ is not all of $\R^n$.</p>
-                <p class="fragment" data-fragment-index="1">There must be some $v \neq 0$ so that $a_i^{\intercal}v = 0$ for each $i$. $a_i^{\intercal}(x + tv) = b_i$ for all $i=1,\dots,k$.</p>
-                <p class="fragment" data-fragment-index="2">Every other inequality has slack: $a_i^{\intercal}x&lt;b_i$ for $i > k$. We can choose $\varepsilon&gt;0$ small enough that <b>both</b> $x+\varepsilon v$ and $x-\varepsilon v$ is still in $P$. Both points lie in $P$.</p>
+                <p class="fragment" data-fragment-index="0"><b>Proof of the converse:</b> We show that if $x\in P$ is <b>not a vertex</b>, then it is <b>not extreme</b>. There may be tight inequalities at $x$, say $a_1^{\intercal}x = b_1, \dots, a_k^{\intercal}x = b_k$. The span of $a_1, \dots, a_k$ is not all of $\R^n$.</p>
+                <p class="fragment" data-fragment-index="1">There must be some $v \neq 0$ so that $a_i^{\intercal}v = 0$ for each $i=1,\dots,k$. $a_i^{\intercal}(x + tv) = b_i$ for all $i=1,\dots,k$.</p>
+                <p class="fragment" data-fragment-index="2">Every other inequality has slack: $a_i^{\intercal}x&lt;b_i$ for $i > k$. We can choose $\varepsilon&gt;0$ small enough that <b>both</b> $x+\varepsilon v$ and $x-\varepsilon v$ are still in $P$.</p>
                 <p class="fragment" data-fragment-index="3">These points are distinct, and $x$ is their midpoint, so $x$ is not extreme:
                 \[x=\tfrac12(x+\varepsilon v)+\tfrac12(x-\varepsilon v).\]
                 </p>
@@ -279,18 +280,18 @@
         </section>
         <section class="fullscreen">
             <h3> Linear Optimization and Vertices </h3>
-            <p> Extreme points of sets are important because they are often times the maximizers of linear functions on $S$. </p>
+            <p> Extreme points of sets are important because they are often the maximizers of linear functions on $S$. </p>
             <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
                 <p><b>Theorem</b></p>
                 <p>If a linear function $c^{\intercal}x$ has a unique maximum on a set $S \subseteq \R^n$, then that maximizer is an extreme point of $S$.</p>
             </div>
             <div class="flexbox">
             <div>
-                <p class=fragment><b>Proof:</b> Let $x^*$ be the maximizer and suppose that $x^*$ is not an extreme point, so there are $y, z \in S$ with $y,z \neq x^*$ and $\lambda \in [0,1]$ so that $x^* = \lambda y + (1-\lambda)z$.</p>
-                <p class=fragment>Well, then $c^{\intercal}x^* = t c^{\intercal}y + (1-t)c^{\intercal}z$, and since $x^*$ was the unique maximizer, $c^{\intercal}y, c^{\intercal}z < c^{\intercal}x^*$, and we get the contradiction that $c^{\intercal}x^* < c^{\intercal}x^*$. </p>
+                <p class=fragment><b>Proof:</b> Let $x^*$ be the maximizer and suppose that $x^*$ is not an extreme point, so there are $y, z \in S$ with $y,z \neq x^*$ and $\lambda \in (0,1)$ so that $x^* = \lambda y + (1-\lambda)z$.</p>
+                <p class=fragment>Well, then $c^{\intercal}x^* = \lambda c^{\intercal}y + (1-\lambda)c^{\intercal}z$, and since $x^*$ was the unique maximizer, $c^{\intercal}y, c^{\intercal}z < c^{\intercal}x^*$, and we get the contradiction that $c^{\intercal}x^* < c^{\intercal}x^*$. </p>
             </div>
             </div>
-            <p class=fragment> If $S$ is compact, then any linear function is maximized at an extreme point of $S$. </p>
+            <p class=fragment> If $S$ is nonempty, compact, and convex, then any linear function is maximized at an extreme point of $S$. </p>
         </section>
         <section class="fullscreen">
             <h3> Linear Optimization and Vertices </h3>
@@ -369,7 +370,7 @@
             <p>\[P=\{x\in\R^n:Ax=b\},\qquad Q=\{x\in\R^n:x\ge0\}.\]</p>
             <p>Now suppose $P$ is nonempty. Separation gives $z\in\R^n$ such that
             \[z^{\intercal}q&lt;z^{\intercal}p\qquad\text{for every }q\in Q,\ p\in P.\]</p>
-            <p class="fragment">We claim that <b>$z\le0$</b>. If $z_i > 0$ for some $i$, then since the vector $te_i$ which is 0 in every entry, except for a t in entry $i$ is in $Q$, $z^{\intercal}(te_i) = t z_i < z^{\intercal}p$ for any $p \in P$, but this fails for $t$ large enough. </p>
+            <p class="fragment">We claim that <b>$z\le0$</b>. If $z_i > 0$ for some $i$, then since the vector $te_i$ which is 0 in every entry, except for a $t\ge0$ in entry $i$, is in $Q$, $z^{\intercal}(te_i) = t z_i < z^{\intercal}p$ for any $p \in P$, but this fails for $t$ large enough. </p>
         </section>
         <section class="fullscreen">
             <h3> Farkas' Lemma: Proof </h3>
@@ -381,10 +382,10 @@
         <section class="fullscreen">
             <h3> Farkas' Lemma: Proof </h3>
             <p>\[P=\{x\in\R^n:Ax=b\},\qquad Q=\{x\in\R^n:x\ge0\}, z^{\intercal} q < z^{\intercal}p.\]</p>
-            <p> We have seen that $z \le 0$ and $z = -A^{\intercal}y$ for some $y$, and so we have that $Ay \ge 0$. </p>
-            <p class=fragment> To show that $y$ is a valid certificate of infeasiblility, it remains to show that $b^{\intercal}y < 0$.</p>
-            <p class=fragment> To see this, let $x_0$ be be such that $Ax_0 = b$, and note that $-z^{\intercal}x_0 = -y^{\intercal}Ax_0 = y^{\intercal}b$, and that $-z^{\intercal}x_0 < -z^{\intercal}0 = 0$, since $0 \in Q$. </p>
-            <p class=fragment> This concludes the proof. </p>
+            <p> We have seen that $z \le 0$ and $z = -A^{\intercal}y$ for some $y$, and so we have that $A^{\intercal}y \ge 0$. </p>
+            <p class=fragment> To show that $y$ is a valid certificate of infeasibility, it remains to show that $b^{\intercal}y < 0$.</p>
+            <p class=fragment> To see this, let $x_0$ be such that $Ax_0 = b$, and note that $-z^{\intercal}x_0 = y^{\intercal}Ax_0 = y^{\intercal}b$, and that $-z^{\intercal}x_0 < -z^{\intercal}0 = 0$, since $0 \in Q$. </p>
+            <p class=fragment> Conversely, if $Ax=b$, $x\ge0$, and such a $y$ exists, then $0&gt;b^{\intercal}y=x^{\intercal}A^{\intercal}y\ge0$, a contradiction. This concludes the proof. </p>
         </section>
         <section class="fullscreen">
             <h3> Proof Sketch for Separating Hyperplane Theorem </h3>
@@ -395,8 +396,8 @@
                 <img class="fragment" data-fragment-index="1" src="images/separating_hyperplane_proof_step3.svg" width="350" height="320" alt="For the hypothetical contradiction, the orange polygon reaches a red point whose horizontal projection is left of the blue nearest point. Moving a short distance from the old orange endpoint toward that red point gives a new green endpoint and a shorter green segment. The old distance is dashed gray." />
             </div>
             <div>
-            <p> Let $p$ and $q$ be two points minimize the value of $\min_{p \in P, q \in Q} \|p-q\|.^*$ </p>
-            <p class="fragment" data-fragment-index="0"> We claim that $y = q - p$ is a valid separating hyperplane between $p$ and $q$.</p>
+            <p> Let $p$ and $q$ be two points that minimize the value of $\min_{p \in P, q \in Q} \|p-q\|.^*$ </p>
+            <p class="fragment" data-fragment-index="0"> We claim that $y = q - p$ is a normal vector for a separating hyperplane between $P$ and $Q$.</p>
             <p class="fragment" data-fragment-index="1"> Suppose that there were some $p', q'$ so that $y^{\intercal}p' \ge y^{\intercal}q'$, then we could find another pair of points with smaller distance.</p>
             <small> $*$ Showing such a pair exists requires some work. </small>
             </div>

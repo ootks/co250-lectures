@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -191,7 +191,7 @@
           </section>
           <section>
               <h2>Checking Unboundedness</h2>
-              <p> A linear program is unbounded if it has solutions which become arbitrarily large. How can we check that this is the case?  </p>
+              <p> A linear program is unbounded if it has feasible points whose objective values become arbitrarily small. How can we check that this is the case?  </p>
               <p class=fragment> We can solve another LP! </p>
           </section>
           <section>
@@ -305,7 +305,7 @@
                       <tr> <td>+</td><td> $(x_{21}$ </td> <td> $= 1)$ </td> </tr>
                       <tr> <td>+</td><td> $(x_{31}$ </td> <td> $\ge 0)$ </td>  </tr>
                       <tr style="border-bottom: 2px solid #000000;"> <td>-</td><td> $(x_{11} + x_{21} + x_{31}$ </td> <td> $= 1)$ </td>  </tr>
-                      <tr class=fragment> <td>=</td><td> $0$ </td> <td> $\ge 2$ </td>  </tr>
+                      <tr class=fragment> <td>=</td><td> $0$ </td> <td> $\ge 1$ </td>  </tr>
                   </table>
                 </div>
               </div>
@@ -395,7 +395,7 @@
                     A^{\intercal}y + c^{\intercal}y_0 = 0,
                 \]
                 \[
-                    b^{\intercal}y + (c^{\intercal}x^* - \epsilon)y_0 > 0,
+                    b^{\intercal}y + (c^{\intercal}x^* - \epsilon)y_0 < 0,
                 \]
                 and where $y, y_0 \ge 0$ 
               </p> 
@@ -408,7 +408,7 @@
                     A^{\intercal}y = -c^{\intercal},
                 \]
                 \[
-                    b^{\intercal}y \ge -c^{\intercal}x^*.
+                    b^{\intercal}y \le -c^{\intercal}x^*.
                 \]
               </p>
               <p> If such a thing exists, then our earlier work on infeasibility certificates implies that $x^*$ is optimal.</p>

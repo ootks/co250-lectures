@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -609,7 +609,7 @@
                     </div>
                 </div>
                 <p> The objective value of $x^{(t)}$ will be $6t + 5$. For which values of $t$ does $x^{(t)}$ stop being feasible?</p>
-                <p class=fragment>In this, case, $x^{(t)}$ stops being feasible when the first entry becomes 0. This happens when $t = \frac{2}{1}$. Note that we can see this as a ratio between an entry on the third column and the corresponding entry on the right side. </p>
+                <p class=fragment>In this, case, $x^{(t)}$ stops being feasible when the first entry becomes 0. This happens when $t = \frac{2}{1}$. Note that we can see this as a ratio between an entry of the entering variable's column (here column $4$) and the corresponding entry on the right side. </p>
         </section>
         <section data-auto-animate>
             <h3>A Simplex Iteration</h3>
@@ -687,7 +687,7 @@
             </div>
             <p> Let's try doing this update with $x_3$ entering. </p>
             <p class="fragment"> We can make $t$ arbitrarily large without making the solution infeasible! This makes $v$ a recession direction.</p>
-            <p class="fragment"> This happens whenever the column of $A$ associated with the entering variable has only negative entries.</p>
+            <p class="fragment"> This happens whenever the column of $A$ associated with the entering variable has only nonpositive entries.</p>
         </section>
         <section>
           <h3> Which one is unbounded? </h3>
@@ -733,7 +733,7 @@
         </section>
         <section data-auto-animate>
             <h3>Returning to the Same Point</h3>
-            <p> The update direction is $(-1, 1, -1, 0)$. The ratios of the entries in the $3^{rd}$ column with the right side are $1$ and $0$. </p>
+            <p> The update direction is $(-1, 1, -1, 0)$. Only row $2$ has a positive entry in the $3^{rd}$ column, so the ratio test gives just $0/1 = 0$ (row $1$ has entry $-1$ and imposes no limit). </p>
             <p> So the step length is $t = 0$: $x_2$ leaves and $x_3$ enters, but <b>the point does not move</b>. </p>
             <div class="canonical-cell label-left">
                 <span class="basis-label" style="color:red"> $\{1,3\}$<br><p> $x_b = \begin{pmatrix} 1 \\ 0 \\ 0 \\ 0\end{pmatrix}$ </p></span>
@@ -878,7 +878,7 @@
           </p>
           <p class=fragment> The termination condition is that $c \le 0$ and the fact that the LP is in canonical form imply that $c_i x_i^* = 0$ for each $i$, and in particular $c^{\intercal}x^* = 0$.</p>
           <p class=fragment> Letting $y = 0$, we get that
-            \[Ay = 0 \ge c\qquad b^{\intercal}y = 0 = c^{\intercal}x^*. \]
+            \[A^{\intercal}y = 0 \ge c\qquad b^{\intercal}y = 0 = c^{\intercal}x^*. \]
           </p>
         </section>
         <section>
@@ -891,7 +891,7 @@
             </table>
           <p> We have that $c_i = 0$ if $i$ is in the basis and $c_i \le 0$ if $i$ is not in the basis.</p>
           <p class=fragment> Any feasible point has all entries being nonnegative, and so $c^{\intercal}x \le 0$ for all $x \ge 0$.</p>
-          <p class=fragment> On the other hand, at the basic feasible solution, $c^{\intercal}x^* = 0$, so every other feasible point has a smaller objective value than this one.</p>
+          <p class=fragment> On the other hand, at the basic feasible solution, $c^{\intercal}x^* = 0$, so no feasible point has a larger objective value than this one.</p>
         </section>
         <section>
           <h3> Termination </h3>

@@ -26,7 +26,7 @@
         </h4>
         <br>
         <p class=centered>
-          Kevin Shu
+          <a href="?view=scroll">Scroll view</a>
         </p>
         <aside class="notes">
           Add private speaker notes here. Press S during the presentation to open speaker view.
@@ -101,14 +101,14 @@
             <h4> Cookie Assembly Decision Variables</h4>
             <p> Second, we decide where each cookie goes. </p>
             <embed src="demos/CookiePlacementSweep.html" style="width:500px; height:300px;">
-            <p class="fragment">The fact that we have assumed that everything is a rectangle means that the top left corner of cookie $i$ can be anywhere in the top left $(\ell - a_i + 1) \times (r-b_i + 1)$ block.</p>
+            <p class="fragment">The fact that we have assumed that everything is a rectangle means that the top left corner of cookie $i$ can be anywhere in the top left $(\ell - a_i + 1) \times (w-b_i + 1)$ block.</p>
           </section>
           <section data-auto-animate>
             <h3>ILP Examples </h3>
             <h4> Cookie Assembly Decision Variables</h4>
             <p> Cookie $i$ can be located on many different places. </p>
             <embed src="demos/CookiePlacementSweep.html" style="width:500px; height:300px;">
-            <p> For each cookie $i$, and <b>each possible placement</b>, we introduce a variable, $x_{irck}$.</p>
+            <p> For each cookie $i$, and <b>each possible placement</b>, we introduce a variable, $x_{ikrc}$.</p>
           </section>
           <section>
             <h3>ILP Examples </h3>
@@ -273,7 +273,7 @@
             <h4> Some Familiar Graphs </h4>
             <div class=flexbox>
               <div>
-                <p> In the cycle $C_n$, every edge forms a clique, but no set of 3 vertices form a clique. </p>
+                <p> In the cycle $C_n$ with $n \ge 4$, every edge forms a clique, but no set of 3 vertices form a clique. </p>
                 <p class=fragment> The maximum clique then consists of any edge. </p>
               </div>
               <img src="images/graph_cycle_c6.svg" height=320px />

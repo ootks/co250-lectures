@@ -26,7 +26,7 @@
         <br>
         <h4>Lecture 13</h4>
         <br>
-        <p class="centered">Kevin Shu</p>
+        <p class="centered"><a href="?view=scroll">Scroll view</a></p>
       </section>
       <section>
         <ul>
@@ -65,7 +65,7 @@
         <section>
           <h3>Example: The Cube</h3>
           <div class="flexbox" style="align-items:center;">
-            <img src="images/cube_vertices.svg" width="330" alt="The six facets of a three-dimensional cube." />
+            <img src="images/cube_vertices.svg" width="330" alt="The eight vertices of a three-dimensional cube." />
             <div>
               <p>The cube is
               $\left\{x\in\R^3:\begin{aligned}
@@ -133,7 +133,7 @@
               <p> If we have a candidate $x^*$ for an LP that could be optimal, it is easy to 'check' that $x^*$ is in $P$. </p>
               <p> The hard thing is to show that the objective cannot be improved. </p>
               <p class=fragment> This amounts to <b> proving </b> that for any $x$ so that $Ax = b$ and $x \ge 0$, 
-              \[c^{\intercal}x \ge v,\]
+              \[c^{\intercal}x \le v,\]
               where $v$ is some constant. </p>
               <p class=fragment> There might be infinitely many points in $P$, so we want to use the constraints in a more efficient way. </p>
           </section>
@@ -143,7 +143,7 @@
               \[
               Ax = b,
               \]
-              from which we can derive many other equations. For example, we can take the inner product of both sides of this equation with $y \in \R^n$:
+              from which we can derive many other equations. For example, we can take the inner product of both sides of this equation with $y \in \R^m$:
               \[
               y^{\intercal}Ax =y^{\intercal} b,
               \]
@@ -159,16 +159,16 @@
           <section>
               <h3> Certificates of Optimality </h3>
               <p> 
-                  What we ultimately is to show that 
+                  What we ultimately want is to show that 
                   \[
-                      c^{\intercal}x \ge v.
+                      c^{\intercal}x \le v.
                   \]
               </p>
               <p class=fragment>
-                  An important fact about nonnegative vectors is that if $a \ge c$, then $a^{\intercal}x \ge c^{\intercal}x$.
+                  An important fact about nonnegative vectors is that if $a \ge c$ and $x \ge 0$, then $a^{\intercal}x \ge c^{\intercal}x$.
               </p>
               <p class=fragment>
-                  So if we can find some $y$ so that $A^{\intercal}y \ge c$, then we will get a lower bound
+                  So if we can find some $y$ so that $A^{\intercal}y \ge c$, then we will get an upper bound
                   \[
                       c^{\intercal}x \le y^{\intercal}Ax = y^{\intercal} b.
                   \]
@@ -183,9 +183,9 @@
                 \]
               </p>
               <p class=fragment>
-                  Note the structure here: any $y$ satisfying the linear inequalities $A^{\intercal}y \ge c$ produces a lower bound that says that the objective value $c^{\intercal}x \le b^{\intercal} y$.
+                  Note the structure here: any $y$ satisfying the linear inequalities $A^{\intercal}y \ge c$ produces an upper bound that says that the objective value $c^{\intercal}x \le b^{\intercal} y$.
               </p>
-              <p class=fragment> We can try to compute the best possible upper bound:  this is a linear programs! </p>
+              <p class=fragment> We can try to compute the best possible upper bound:  this is a linear program! </p>
           </section>
           <section>
               <h3> Dual Linear Program </h3>
@@ -196,8 +196,9 @@
                     <tr> <td> </td> <td> $x \ge 0$ </td> </tr>
                 </table>
                   <table class=darkBlueText>
-                    <tr> <td> min </td> <td> $b^{\intercal}x$ </td> </tr>
+                    <tr> <td> min </td> <td> $b^{\intercal}y$ </td> </tr>
                     <tr> <td> such that </td> <td> $A^{\intercal}y \ge c$ </td> </tr>
+                    <tr> <td> </td> <td> $y$ free </td> </tr>
                 </table>
               </div>
               <p> The <span class=darkBlueText>dual linear program </span> is obtained by an explicit transformation of the data for the LP. </p>
@@ -207,7 +208,7 @@
               <h3> Dual Linear Program </h3>
                 <div style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45); display:inline-block;">
                     <p><b>Theorem (Weak duality) </b></p>
-                    <p> For any linear program in SEF, if the dual linear program is unbounded, then the primal linear program is infeasible. If the primal linear program is unbounded, then the dual linear program is infeasible. If both linear programs are feasibile, then </p>
+                    <p> For any linear program in SEF, if the dual linear program is unbounded, then the primal linear program is infeasible. If the primal linear program is unbounded, then the dual linear program is infeasible. If both linear programs are feasible, then </p>
 
                       <div class=flexbox>
                           <table>
@@ -219,6 +220,7 @@
                           <table class=darkBlueText>
                             <tr> <td> min </td> <td> $b^{\intercal}y$ </td> </tr>
                             <tr> <td> such that </td> <td> $A^{\intercal}y \ge c$ </td> </tr>
+                            <tr> <td> </td> <td> $y$ free </td> </tr>
                         </table>
                       </div>
                 </div>
@@ -230,11 +232,11 @@
               <p class=fragment> And we can check this by looking at $y^{\intercal}Ax$:</p>
               <p class=fragment>
               \[
-                  c^{\intercal}x \le (Ay^{\intercal})^{\intercal}x = y^{\intercal}Ax = y^{\intercal}b.
+                  c^{\intercal}x \le (A^{\intercal}y)^{\intercal}x = y^{\intercal}Ax = y^{\intercal}b.
               \]
               </p>
-              <p class=fragment> Note that if $x$ is feasible for the primal LP, then the dual LP is bounded; no dual feasible $y$ can achieve an objective value less than $c^{\intercal}x$.</p>
-              <p class=fragment> Similarly, if $y$ is feasible for the dual LP, then the primal LP is bounded; no primal feasible $x$ can achieve an objective value less than $b^{\intercal}y$.</p>
+              <p class=fragment> Note that if $x$ is feasible for the primal LP, then the dual LP is bounded below; no dual feasible $y$ can achieve an objective value less than $c^{\intercal}x$.</p>
+              <p class=fragment> Similarly, if $y$ is feasible for the dual LP, then the primal LP is bounded above; no primal feasible $x$ can achieve an objective value greater than $b^{\intercal}y$.</p>
           </section>
           <section>
               <h3>Example: A Furniture Workshop</h3>
@@ -405,12 +407,12 @@
               <div class="flexbox" style="align-items:center;">
                   <table>
                   <tr><td>min</td><td>$-c^{\intercal}x$</td></tr>
-                  <tr><td>such that</td><td>$Ax\le b$</td></tr>
-                  <tr><td></td><td>$-Ax\le-b$</td></tr>
+                  <tr><td>such that</td><td>$Ax\ge b$</td></tr>
+                  <tr><td></td><td>$-Ax\ge-b$</td></tr>
                   <tr><td></td><td>$x\ge0$</td></tr>
               </table>
                   <table>
-                      <tr><td>min</td><td>$-c^{\intercal}x$</td></tr>
+                      <tr><td>max</td><td>$c^{\intercal}x$</td></tr>
                       <tr><td>such that</td><td>$Ax=b$</td></tr>
                       <tr><td></td><td>$x\ge0$</td></tr>
                   </table>
@@ -432,7 +434,7 @@
                       <tr><td></td><td>$y$ free</td></tr>
                   </table>
               </div>
-                        <p> We have seen that if we go through the process of putting things into standard inequality form, then we can also take the dual of the dual and get the same thing back. But we can skip some of these steps when taking the dual of more general LPs.</p>
+                        <p> We have seen that if we go through the process of putting things into standard equality form, then we can also take the dual of the dual and get the same thing back. But we can skip some of these steps when taking the dual of more general LPs.</p>
           </section>
       </section>
       <section>
@@ -442,7 +444,7 @@
           <section>
               <h3>Primal–Dual Correspondences</h3>
               <p> Any LP can be dualized by putting the LP into SEF then taking the dual. We can go directly to the dual with some extra rules. </p>
-              <p> Coarsely, the corresondence goes like this: </p>
+              <p> Coarsely, the correspondence goes like this: </p>
               <table>
                   <thead><tr><th>Primal (max)</th><th></th><th class="darkBlueText">Dual (min)</th></tr></thead>
                   <tbody>
@@ -462,9 +464,9 @@
                   <thead><tr><th>Primal (max)</th><th></th><th class="darkBlueText">Dual (min)</th></tr></thead>
                   <tbody>
                       <tr><td>Free variable</td><td>$\leftrightarrow$</td><td class="darkBlueText">Equality constraint</td></tr>
-                      <tr><td>Nonnegative variable </td><td>$\leftrightarrow$</td><td class="darkBlueText">Inequality constraint</td></tr>
+                      <tr><td>Nonnegative variable </td><td>$\leftrightarrow$</td><td class="darkBlueText">$\ge$ inequality constraint</td></tr>
                       <tr><td>Equality constraint</td><td>$\leftrightarrow$</td><td class="darkBlueText">Free variable</td></tr>
-                      <tr><td>Inequality</td><td>$\leftrightarrow$</td><td class="darkBlueText">Nonnegative variable </td></tr>
+                      <tr><td>$\le$ inequality constraint</td><td>$\leftrightarrow$</td><td class="darkBlueText">Nonnegative variable </td></tr>
                   </tbody>
               </table>
           </section>
