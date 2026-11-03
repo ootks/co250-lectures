@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+  <style>
+    .strong-duality-diagram p { font-size:22px; margin:8px 0; }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+        <h2>Introduction to Optimization</h2>
+        <h3>CO 250</h3>
+        <br>
+        <h4>Lecture 14</h4>
+        <br>
+        <p class="centered"><a href="?view=scroll">Scroll view</a></p>
+        <p class="centered"><a href="beamer/lecture14.pdf">PDF version of these slides</a> <em>(demo: this PDF version is experimental and may contain errors or differ from the slides)</em></p>
+      </section>
+      <section>
+        <ul>
+          <li>Review of Dual Linear Programs</li>
+          <li>Strong Duality</li>
+        </ul>
+      </section>
+      <section>
+        <section>
+          <h3>The Dual of an LP in SEF</h3>
+          <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+            <div>
+              <p class="centered"><b>Primal</b></p>
+              <p>\[\begin{aligned}
+                \max\quad &c^{\intercal}x\\
+                \text{s.t.}\quad &Ax=b,\\
+                &x\ge0.
+              \end{aligned}\]</p>
+            </div>
+            <div class="darkBlueText">
+              <p class="centered"><b>Dual</b></p>
+              <p>\[\begin{aligned}
+                \min\quad &b^{\intercal}y\\
+                \text{s.t.}\quad &A^{\intercal}y\ge c,\\
+                &y\text{ free}.
+              \end{aligned}\]</p>
+            </div>
+          </div>
+          <p class="fragment">If $A$ has $m$ rows and $n$ columns, the dual has $m$ variables and $n$ constraints.</p>
+        </section>
+        <section>
+          <h3>Weak Duality</h3>
+          <p>If $x$ is primal feasible and $y$ is dual feasible, then</p>
+          <p>\[\boxed{c^{\intercal}x\le b^{\intercal}y.}\]</p>
+          <p class="fragment" data-fragment-index="0">We can see this by looking at $y^{\intercal}Ax$, and expanding this expression in two different ways using the constraints. </p>
+          <div class="fragment" data-fragment-index="1">
+          <p class="fragment" data-fragment-index="2" style="text-align:center;">
+              <span style="display:inline-grid; vertical-align:top; align-items:start;">
+                  <span class="fragment fade-out" data-fragment-index="3" style="grid-area:1 / 1;">$(y^{\intercal}A)x =$</span>
+                  <span class="fragment fade-out" data-fragment-index="4" style="grid-area:1 / 1;">
+                      <span class="fragment" data-fragment-index="3">$(A^{\intercal}y)^{\intercal}x =$</span>
+                  </span>
+                  <span class="fragment" data-fragment-index="4" style="grid-area:1 / 1;">$\underbrace{c^{\intercal}x}_{\color{#1f6fd6}{A^{\intercal}y\ge c},\;x\ge0}\le$</span>
+              </span>$y^{\intercal}Ax =$
+              <span style="display:inline-grid; vertical-align:top; align-items:start;">
+                  <span class="fragment fade-out" data-fragment-index="5" style="grid-area:1 / 1;">$y^{\intercal}(Ax)$</span>
+                  <span class="fragment" data-fragment-index="5" style="grid-area:1 / 1;">$\underbrace{b^{\intercal}}_{Ax=b}y$</span>
+              </span>.
+          </p>
+          </div>
+        </section>
+        <section>
+          <h3>Consequences of Weak Duality</h3>
+          <ul>
+              <li> If $c^{\intercal}x^*=b^{\intercal}y^*,$ for dual feasible $y^*$ and primal feasible $x^*$, then both are optimal.</li>
+              <li class=fragment> In this case, $y^*$ is a certificate of optimality for the primal LP.</li>
+              <li class=fragment> If the primal is unbounded above, the dual is infeasible.</li>
+              <li class="fragment">If the dual is unbounded below, the primal is infeasible.</li>
+              <li class="fragment"><b>Note:</b> both LPs can be infeasible; see the assignment for examples.</li>
+          </ul>
+        </section>
+        <section>
+            <h3>Duals of LPs Not in SEF </h3>
+            <p> If an LP is not in SEF, we can take its dual by first giving an equivalent LP in SEF, and then taking the dual of the SEF LP. </p>
+          <p>\[\begin{aligned}
+              \max\quad &x_1+2x_2\\
+              \text{s.t.}\quad &x_1 - x_2 = 1,\\
+              &x_1 + x_2 \ge 3,\\
+              &x_1 \ge 0,\\
+              &x_2\text{ free}.
+          \end{aligned}\]</p>
+        </section>
+        <section>
+            <h3>Duals of LPs Not in SEF </h3>
+            <p> If an LP is not in SEF, we can take its dual by first giving an equivalent LP in SEF, and then taking the dual of the SEF LP. </p>
+          <p>\[\begin{aligned}
+              \max\quad &x_1+2x_2^+ - 2 x_2^-\\
+              \text{s.t.}\quad &x_1 - x_2^+ + x_2^- = 1,\\
+              &x_1 + x_2^+-x_2^- - s_1 = 3,\\
+              &x_1, x_2^+, x_2^-, s_1 \ge 0
+          \end{aligned}\]</p>
+        </section>
+        <section>
+            <h3>Duals of LPs Not in SEF </h3>
+            <p> If an LP is not in SEF, we can take its dual by first giving an equivalent LP in SEF, and then taking the dual of the SEF LP. </p>
+          <p style="margin-top:-20px;">\[\begin{aligned}
+          \max\quad &\begin{pmatrix}1\\2\\-2\\0\end{pmatrix}^{\intercal}\begin{pmatrix}x_1\\x_2^+\\x_2^-\\s_1\end{pmatrix}\\
+              \text{s.t.}\quad & \begin{pmatrix} 1 & -1 & 1 & 0\\
+              1 & 1  & -1 & -1\end{pmatrix}\begin{pmatrix}x_1\\x_2^+\\x_2^-\\s_1\end{pmatrix} = \begin{pmatrix}1\\3\end{pmatrix}\\
+              &x_1, x_2^+, x_2^-, s_1 \ge 0
+          \end{aligned}\]</p>
+          <p class=fragment>How many dual variables will there be? How many dual constraints? </p>
+        </section>
+        <section class="fullscreen">
+            <h3>Duals of LPs Not in SEF </h3>
+            <p> If an LP is not in SEF, we can take its dual by first giving an equivalent LP in SEF, and then taking the dual of the SEF LP. </p>
+            <div class="flexbox" style="justify-content:center; align-items:center; gap:40px;">
+          <p style="margin:0; font-size:22px;">\[\begin{aligned}
+          \max\quad &\begin{pmatrix}1\\2\\-2\\0\end{pmatrix}^{\intercal}\begin{pmatrix}x_1\\x_2^+\\x_2^-\\s_1\end{pmatrix}\\
+              \text{s.t.}\quad & \begin{pmatrix} 1 & -1 & 1 & 0\\
+              1 & 1  & -1 & -1\end{pmatrix}\begin{pmatrix}x_1\\x_2^+\\x_2^-\\s_1\end{pmatrix} = \begin{pmatrix}1\\3\end{pmatrix}\\
+              &x_1, x_2^+, x_2^-, s_1 \ge 0
+          \end{aligned}\]</p>
+          <p class=darkBlueText style="margin:0; font-size:22px;">\[\begin{aligned}
+          \min\quad &\begin{pmatrix}1\\3\end{pmatrix}^{\intercal}\begin{pmatrix}y_1\\y_2\end{pmatrix}\\
+          \text{s.t.}\quad & \begin{pmatrix} 1 & 1  \\ -1 & 1 \\ 1 & -1 \\ 0 & -1 \end{pmatrix}
+           \begin{pmatrix}y_1\\y_2\end{pmatrix} \ge \begin{pmatrix}1\\2\\-2\\0\end{pmatrix}
+          \end{aligned}\]</p>
+            </div>
+        </section>
+        <section>
+            <h3>Duals of LPs Not in SEF </h3>
+            <p> If an LP is not in SEF, we can take its dual by first giving an equivalent LP in SEF, and then taking the dual of the SEF LP. </p>
+          <p class=darkBlueText>\[\begin{aligned}
+          \min\quad &\begin{pmatrix}1\\3\end{pmatrix}^{\intercal}\begin{pmatrix}y_1\\y_2\end{pmatrix}\\
+          \text{s.t.}\quad & \begin{pmatrix} 1 & 1  \\ -1 & 1 \\ 1 & -1 \\ 0 & -1 \end{pmatrix}
+           \begin{pmatrix}y_1\\y_2\end{pmatrix} \ge \begin{pmatrix}1\\2\\-2\\0\end{pmatrix}
+          \end{aligned}\]</p>
+          <p class=fragment> We can simplify the dual constraints though; note that the last row amounts to saying that $y_2 \le 0$ and the second and third inequalities amount to $y_1 - y_2 = -2$. </p>
+        </section>
+        <section>
+            <h3>Duals of LPs Not in SEF </h3>
+            <p> If an LP is not in SEF, we can take its dual by first giving an equivalent LP in SEF, and then taking the dual of the SEF LP. </p>
+        <div class=flexbox style="justify-content:center; align-items:flex-start; gap:60px;">
+          <p>\[\begin{aligned}
+              \max\quad &x_1+2x_2\\
+              \text{s.t.}\quad &x_1 - x_2 = 1,\\
+              &x_1 + x_2 \ge 3,\\
+              &x_1 \ge 0,\\
+              &x_2\text{ free}.
+          \end{aligned}\]</p>
+          <p>\[\begin{aligned}
+          \min\quad &y_1 + 3y_2\\
+          \text{s.t.}\quad & y_1 + y_2 \ge 1\\
+          & y_1 - y_2 = -2 \\ 
+          & y_1\text{ free}\\
+          & y_2 \le 0.
+          \end{aligned}\]</p>
+          <p> Note that the dual is infeasible; what does this imply about the primal? </p>
+        </div>
+        </section>
+        <section>
+            <h3>Duals of LPs Not in SEF </h3>
+            <p> Note that we have the following correspondence between variables/constraints in the primal/dual. </p>
+        <div id="primal-dual-correspondence" class="flexbox" style="position:relative; justify-content:center; align-items:flex-start; gap:140px;">
+          <p class="correspondence-primal" style="margin:0; text-align:center;">\[\begin{aligned}
+              \max\quad &x_1+2x_2\\
+              \text{s.t.}\quad &{\color{#1f6fd6}{x_1-x_2=1}},\\
+              &{\color{#cb4b16}{x_1+x_2\ge3}},\\
+              &{\color{#708400}{x_1\ge0}},\\
+              &{\color{#8b4bad}{x_2\text{ free}}}.
+          \end{aligned}\]</p>
+          <p class="correspondence-dual" style="margin:0; text-align:center;">\[\begin{aligned}
+              \min\quad &y_1+3y_2\\
+              \text{s.t.}\quad &{\color{#708400}{y_1+y_2\ge1}}\\
+              &{\color{#8b4bad}{y_1-y_2=-2}}\\
+              &{\color{#1f6fd6}{y_1\text{ free}}}\\
+              &{\color{#cb4b16}{y_2\le0}}.
+          \end{aligned}\]</p>
+          <svg aria-hidden="true" style="position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none;">
+            <defs>
+              <marker id="correspondence-arrow-0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1f6fd6"/></marker>
+              <marker id="correspondence-arrow-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#cb4b16"/></marker>
+              <marker id="correspondence-arrow-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#708400"/></marker>
+              <marker id="correspondence-arrow-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#8b4bad"/></marker>
+            </defs>
+            <path class="fragment" data-fragment-index="0" data-correspondence="0" fill="none" stroke="#1f6fd6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#correspondence-arrow-0)"/>
+            <path class="fragment" data-fragment-index="1" data-correspondence="1" fill="none" stroke="#cb4b16" stroke-width="2.5" stroke-linecap="round" marker-end="url(#correspondence-arrow-1)"/>
+            <path class="fragment" data-fragment-index="2" data-correspondence="2" fill="none" stroke="#708400" stroke-width="2.5" stroke-linecap="round" marker-end="url(#correspondence-arrow-2)"/>
+            <path class="fragment" data-fragment-index="3" data-correspondence="3" fill="none" stroke="#8b4bad" stroke-width="2.5" stroke-linecap="round" marker-end="url(#correspondence-arrow-3)"/>
+          </svg>
+        </div>
+        <p class=fragment> <b>General Rule:</b> For each variable in the primal, there should be a constraint in the dual. <span class=fragment>For each constraint in the primal <b>other than a variable sign restriction</b>, there should be a variable in the dual.</span> <span class=fragment>Nonnegative variables in the primal correspond to inequality constraints. </span> <span class=fragment>Free variables correspond to equality constraints, and vice versa.</span> </p>
+        </section>
+        <section>
+          <h3>Mixed Constraints and Variable Types</h3>
+          <p>For a <b>maximization primal</b> and a <span class="darkBlueText"><b>minimization dual</b></span>:</p>
+          <table>
+            <thead><tr><th>Primal</th><th></th><th class="darkBlueText">Dual</th></tr></thead>
+            <tbody>
+              <tr><td>$\le$ constraint</td><td>$\leftrightarrow$</td><td class="darkBlueText">Nonnegative variable</td></tr>
+              <tr><td>Equality constraint</td><td>$\leftrightarrow$</td><td class="darkBlueText">Free variable</td></tr>
+              <tr><td>$\ge$ constraint</td><td>$\leftrightarrow$</td><td class="darkBlueText">Nonpositive variable</td></tr>
+              <tr><td>Nonnegative variable</td><td>$\leftrightarrow$</td><td class="darkBlueText">$\ge$ constraint</td></tr>
+              <tr><td>Free variable</td><td>$\leftrightarrow$</td><td class="darkBlueText">Equality constraint</td></tr>
+              <tr><td>Nonpositive variable</td><td>$\leftrightarrow$</td><td class="darkBlueText">$\le$ constraint</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <h3>Steps to Taking a Dual</h3>
+          <ul>
+              <li> Identify the number of dual variables and constraints. </li>
+              <li> For each nonnegative primal variable, the dual constraint is an inequality. </li>
+              <li> For each free primal variable, the dual constraint is an equality. </li>
+              <li> For each primal equality constraint, the dual variable is free. </li>
+              <li> For each primal $\le$ constraint, the dual variable is nonnegative. </li>
+          </ul>
+        </section>
+      </section>
+      <section>
+          <section>
+              <h3>Step 1: Count the Dual Variables</h3>
+              <p>\[\begin{aligned}
+                  \max\quad &4x_1+2x_2-2x_3\\
+                  \text{s.t.}\quad &2x_1+x_2+x_3\le4,\\
+                  &x_1+3x_2-x_3=7,\\
+                  &-x_1+2x_2+x_3\ge3,\\
+                  &x_1\text{ free},\quad x_2,x_3\ge0.
+              \end{aligned}\]</p>
+              <p class="fragment">There are <b>three constraints</b> (apart from variable sign restrictions). So the dual has <span class="darkBlueText"><b>three variables: $y_1,y_2,y_3$</b></span>.</p>
+              <p class="fragment">For now, don't count $x_2,x_3\ge0$ as additional constraints: these will determine the directions of the dual constraints.</p>
+          </section>
+          <section>
+              <h3>Step 2: Determine Their Signs</h3>
+              <p>The primal is a <b>maximization</b> problem. Each constraint row determines the sign of its dual variable.</p>
+              <table>
+                  <thead><tr><th>Primal row</th><th class="darkBlueText">Dual variable</th></tr></thead>
+                  <tbody>
+                      <tr class="fragment"><td>$2x_1+x_2+x_3\le4$</td><td class="darkBlueText">$y_1\ge0$</td></tr>
+                      <tr class="fragment"><td>$x_1+3x_2-x_3=7$</td><td class="darkBlueText">$y_2$ is free</td></tr>
+                      <tr class="fragment"><td>$-x_1+2x_2+x_3\ge3$</td><td class="darkBlueText">$y_3\le0$</td></tr>
+                  </tbody>
+              </table>
+              <p class="fragment">So $y_1$ is nonnegative, $y_2$ has no sign restriction, and $y_3$ is nonpositive.</p>
+          </section>
+          <section>
+              <h3>Step 3: Build the Dual Constraints</h3>
+              <p>For each primal variable, find the dual constraint. The coefficients in that constraint are the coefficients of that primal variable. The sense of the constraint is determined by the sign of the variable.</p>
+              <p>\[A=\begin{pmatrix}2&1&1\\1&3&-1\\-1&2&1\end{pmatrix}.\]</p>
+              <table>
+                  <thead><tr><th>Primal variable / column</th><th class="darkBlueText">Dual left side / relation</th></tr></thead>
+                  <tbody>
+                      <tr class="fragment"><td>$x_1$ free: $(2,1,-1)$</td><td class="darkBlueText">$2y_1+y_2-y_3$; equality</td></tr>
+                      <tr class="fragment"><td>$x_2\ge0$: $(1,3,2)$</td><td class="darkBlueText">$y_1+3y_2+2y_3$; $\ge$</td></tr>
+                      <tr class="fragment"><td>$x_3\ge0$: $(1,-1,1)$</td><td class="darkBlueText">$y_1-y_2+y_3$; $\ge$</td></tr>
+                  </tbody>
+              </table>
+          </section>
+          <section>
+              <h3>Step 4: Objective and Right-Hand Sides</h3>
+              <p>The primal maximizes, so the dual <b>minimizes</b>.</p>
+              <div class="fragment">
+                  <p>The primal right-hand sides $(4,7,3)$ become the <b>dual objective coefficients</b>:</p>
+                  <p class="darkBlueText">\[\min\quad 4y_1+7y_2+3y_3.\]</p>
+              </div>
+              <div class="fragment">
+                  <p>The primal objective coefficients $(4,2,-2)$ become the <b>dual constraint right-hand sides</b>, in variable order:</p>
+                  <p class="darkBlueText">\[\begin{aligned}
+                      2y_1+y_2-y_3&=4,\\
+                      y_1+3y_2+2y_3&\ge2,\\
+                      y_1-y_2+y_3&\ge-2.
+                  \end{aligned}\]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Step 5: Assemble the Dual</h3>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &4x_1+2x_2-2x_3\\
+                          \text{s.t.}\quad &2x_1+x_2+x_3\le4,\\
+                          &x_1+3x_2-x_3=7,\\
+                          &-x_1+2x_2+x_3\ge3,\\
+                          &x_1\text{ free},\quad x_2,x_3\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+                  <div class="darkBlueText" style="flex:1; min-width:0;">
+                      <p class="centered"><b>Dual</b></p>
+                      <p>\[\begin{aligned}
+                          \min\quad &4y_1+7y_2+3y_3\\
+                          \text{s.t.}\quad &2y_1+y_2-y_3=4,\\
+                          &y_1+3y_2+2y_3\ge2,\\
+                          &y_1-y_2+y_3\ge-2,\\
+                          &y_1\ge0,\quad y_2\text{ free},\quad y_3\le0.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class="fragment">Check: $x=(1,2,0)$ and $y=(1,1,-1)$ are feasible and both have objective value $8$. Thus both are optimal.</p>
+          </section>
+
+      </section>
+      <section>
+          <section>
+              <h3>Another Primal–Dual Pair</h3>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &4x_1+5x_2\\
+                          \text{s.t.}\quad &2x_1+x_2+x_3=8,\\
+                          &x_1+2x_2+x_4=10,\\
+                          &x_1,x_2,x_3,x_4\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+                  <div class="darkBlueText" style="flex:1; min-width:0;">
+                      <p class="centered"><b>Dual</b></p>
+                      <p>\[\begin{aligned}
+                          \min\quad &8y_1+10y_2\\
+                          \text{s.t.}\quad &2y_1+y_2\ge4,\\
+                          &y_1+2y_2\ge5,\\
+                          &y_1,y_2\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Optimal Solutions</h3>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &4x_1+5x_2\\
+                          \text{s.t.}\quad &2x_1+x_2+x_3=8,\\
+                          &x_1+2x_2+x_4=10,\\
+                          &x_1,x_2,x_3,x_4\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+                  <div class="darkBlueText" style="flex:1; min-width:0;">
+                      <p class="centered"><b>Dual</b></p>
+                      <p>\[\begin{aligned}
+                          \min\quad &8y_1+10y_2\\
+                          \text{s.t.}\quad &2y_1+y_2\ge4,\\
+                          &y_1+2y_2\ge5,\\
+                          &y_1,y_2\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+              <p>Optimal solutions are $x^*=(2,4,0,0)$ and <span class="darkBlueText">$y^*=(1,2)$</span>.</p>
+              <p class="fragment">Both are feasible, and their objective values agree:</p>
+              <p class="fragment">\[4(2)+5(4)=28=8(1)+10(2).\]</p>
+              <p class="fragment">By weak duality, both solutions are optimal.</p>
+          </section>
+      </section>
+      <section>
+          <section>
+              <h3>A Diet Problem</h3>
+              <p>Choose the cheapest mixture of three foods meeting three nutrient minimums. We also want exactly <b>600 g of food</b>.</p>
+              <p>Use these illustrative values per <b>100 g portion</b>, with prices in whole <b>cents</b>:</p>
+              <table>
+                  <thead><tr><th></th><th>Oats</th><th>Lentils</th><th>Almonds</th><th>Minimum</th></tr></thead>
+                  <tbody>
+                      <tr><td>Protein (g)</td><td>13</td><td>9</td><td>21</td><td>74</td></tr>
+                      <tr><td>Fibre (g)</td><td>10</td><td>8</td><td>12</td><td>55</td></tr>
+                      <tr><td>Iron (mg)</td><td>4</td><td>3</td><td>4</td><td>21</td></tr>
+                      <tr><td>Price (cents)</td><td>60</td><td>30</td><td>100</td><td></td></tr>
+                  </tbody>
+              </table>
+              <p class="fragment">Let $x_1,x_2,x_3$ be the numbers of 100 g portions of oats, lentils, and almonds. Portions can be fractional.</p>
+          </section>
+          <section>
+              <h3>The Diet LP</h3>
+                <p>\[\begin{aligned}
+                    \min\quad &60x_1+30x_2+100x_3\\
+                    \text{s.t.}\quad &13x_1+9x_2+21x_3\ge74 &\text{ (Protein)}\\
+                    &10x_1+8x_2+12x_3\ge55 &\text{ (Fibre)}\\
+                    &4x_1+3x_2+4x_3\ge21 &\text{ (Iron)}\\
+                    &x_1+x_2+x_3=6 &\text{ (Total)}\\
+                    &x_1,x_2,x_3\ge0.
+                \end{aligned}\]</p>
+              <p class="fragment">The objective is the cost in cents. The first three constraints are nutrient minimums. The equality fixes the total amount of food.</p>
+          </section>
+          <section>
+              <h3>Step 1: Dual Variables and Signs</h3>
+              <p>There are <b>four dual variables</b>: one per constraint row, excluding variable nonnegativity.</p>
+              <table>
+                  <thead><tr><th>Primal constraint</th><th class="darkBlueText">Dual variable</th></tr></thead>
+                  <tbody>
+                      <tr><td>Protein $\ge74$</td><td class="darkBlueText">$u\ge0$</td></tr>
+                      <tr><td>Fibre $\ge55$</td><td class="darkBlueText">$v\ge0$</td></tr>
+                      <tr><td>Iron $\ge21$</td><td class="darkBlueText">$w\ge0$</td></tr>
+                      <tr><td>Total portions $=6$</td><td class="darkBlueText">$z$ free</td></tr>
+                  </tbody>
+              </table>
+              <p class="fragment">This primal <b>minimizes</b>: $\ge$ rows give nonnegative dual variables, while an equality gives a free variable.</p>
+          </section>
+          <section>
+              <h3>Step 2: Dual Constraints</h3>
+              <p>Three primal variables give <b>three dual constraints</b>, one per food. All three variables are nonnegative, so the dual constraints are $\le$.</p>
+              <p>Read the food's nutrient column, then include its coefficient $1$ from the total-food equality:</p>
+              <table>
+                  <thead><tr><th>Food</th><th class="darkBlueText">Dual constraint</th></tr></thead>
+                  <tbody>
+                      <tr><td>Oats</td><td class="darkBlueText">$13u+10v+4w+z\le60$</td></tr>
+                      <tr><td>Lentils</td><td class="darkBlueText">$9u+8v+3w+z\le30$</td></tr>
+                      <tr><td>Almonds</td><td class="darkBlueText">$21u+12v+4w+z\le100$</td></tr>
+                  </tbody>
+              </table>
+          </section>
+          <section>
+              <h3>Step 3: Objective and Right-Hand Sides</h3>
+              <p>The primal minimizes, so the dual <b>maximizes</b>.</p>
+              <p class="fragment">The nutrient minimums and total portions become the dual objective coefficients:</p>
+              <p class="fragment darkBlueText">\[\max\quad74u+55v+21w+6z.\]</p>
+              <p class="fragment">The three food prices become the right-hand sides of the dual constraints: $60$, $30$, and $100$ cents.</p>
+          </section>
+          <section class="fullscreen">
+              <h3>The Diet Primal and Dual</h3>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div style="flex:1; min-width:0;"><p class="centered"><b>Primal</b></p><p>\[\begin{aligned}
+    \min\quad &60x_1+30x_2+100x_3\\
+    \text{s.t.}\quad &13x_1+9x_2+21x_3\ge74,\\
+    &10x_1+8x_2+12x_3\ge55,\\
+    &4x_1+3x_2+4x_3\ge21,\\
+    &x_1+x_2+x_3=6,\\
+    &x_1,x_2,x_3\ge0.
+\end{aligned}\]</p></div>
+                  <div style="flex:1; min-width:0;"><p class="centered darkBlueText"><b>Dual</b></p><p class="darkBlueText">\[\begin{aligned}
+    \max\quad &74u+55v+21w+6z\\
+    \text{s.t.}\quad &13u+10v+4w+z\le60,\\
+    &9u+8v+3w+z\le30,\\
+    &21u+12v+4w+z\le100,\\
+    &u,v,w\ge0,\quad z\text{ free}.
+\end{aligned}\]</p></div>
+              </div>
+          </section>
+          <section>
+              <h3>Interpreting the Diet Dual: Pricing Nutrients</h3>
+              <p>The dual variables associated to nutrients can be interpreted as the price of that nutrient, i.e. how much it costs to feed someone one gram of protein, fibre, etc. </p>
+              <p class=fragment>Imagine that instead of buying food to give people nutrients, we could just buy nutrients directly; the constraints say that the value of each food is at least the total value of its component nutrients.</p>
+              <p class=fragment> The value of $z$ represents the marginal cost of weight; this value can be positive or negative, depending on whether taking up more weight helps meet the requirement or makes the requirement harder to meet. </p>
+          </section>
+          <section>
+              <h3>Interpreting the Diet Dual: Pricing Nutrients</h3>
+              <p>The optimal solutions to this primal/dual pair are</p>
+              <div class="flexbox" style="justify-content:center; align-items:flex-start; gap:60px;">
+                  <p>\[x^*=(2,3,1),\]</p>
+                  <p class="darkBlueText">\[(u^*,v^*,w^*,z^*)=(5,0,10,-45).\]</p>
+              </div>
+              <p class="fragment">Both have objective value 310 cents:\[60(2)+30(3)+100(1)=310={\color{#1f6fd6}{74(5)+55(0)+21(10)+6(-45)}}.\]</p>
+              <p class="fragment">Protein is worth 5 cents per gram and iron 10 cents per mg. Fibre is worth nothing, because the diet has 56 g, more than the 55 g required. Weight costs 45 cents per 100 g; if we had more room for food, we could use more of the cheaper food items.</p>
+          </section>
+      </section>
+      <section>
+          <iframe src="demos/PrimalDual3D.html?embed=1" title="Interactive three-variable primal and dual LP explorer with 3D feasible regions" style="width:100%; height:580px; border:1px solid #93a1a1; border-radius:10px;" data-preload></iframe>
+          <p style="font-size:18px; margin:4px 0;"><a href="demos/PrimalDual3D.html" target="_blank" rel="noopener">Open the demo in its own tab</a></p>
+      </section>
+      <section>
+          <h3>Strong Duality</h3>
+          <div style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45);">
+              <p><b>Theorem (Strong duality).</b> If a linear program is feasible and its objective is bounded in the direction of optimization, then its dual also has an optimal solution, and their optimal objective values are equal.</p>
+              <p>For a maximization primal and its minimization dual, there are optimal solutions $x^*,y^*$ with</p>
+              <p>\[\boxed{c^{\intercal}x^*=b^{\intercal}y^*.}\]</p>
+          </div>
+          <p class="fragment">Weak duality says every primal value is at most every dual value. Strong duality says that when a finite optimum exists, the best values <b>meet</b>.</p>
+      </section>
+      
+      <section>
+          <section>
+              <h3>Strong Duality: Start with Simplex</h3>
+              <p>Assume the primal LP has an optimal solution. Work in SEF, with redundant equations removed:</p>
+              <p>\[\max\{c^{\intercal}x:Ax=b,\ x\ge0\}.\]</p>
+              <p class="fragment">Run the simplex method with a terminating pivot rule, such as Bland's rule. Since an optimum exists, simplex terminates at an <b>optimal basic feasible solution</b> $x^*$, with some basis $B$.</p>
+              <p class="fragment">Put the LP into canonical form for this final basis $B$. Write its parameters as $c',A',b'$ and let $v=c^{\intercal}x^*$.</p>
+          </section>
+          <section>
+              <h3>The Final Canonical Form</h3>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Original primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &c^{\intercal}x\\
+                          \text{s.t.}\quad &Ax=b,\\
+                          &x\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Canonical primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &(c')^{\intercal}x+v\\
+                          \text{s.t.}\quad &A'x=b',\\
+                          &x\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class="fragment">At the final simplex basis, $A'_B=I$, $b'\ge0$, $c'_B=0$, and <b>$c'\le0$</b>: there is no entering variable that can improve the objective.</p>
+              <p class="fragment">The basic solution has $x_B^*=b'$ and $x_N^*=0$, so $(c')^{\intercal}x^*=0$. Its objective value is $v$.</p>
+          </section>
+          <section>
+              <h3>Strong Duality in Canonical Form</h3>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Canonical primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &(c')^{\intercal}x+v\\
+                          \text{s.t.}\quad &A'x=b',\\
+                          &x\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+                  <div class="darkBlueText" style="flex:1; min-width:0;">
+                      <p class="centered"><b>Its dual</b></p>
+                      <p>\[\begin{aligned}
+                          \min\quad &(b')^{\intercal}y+v\\
+                          \text{s.t.}\quad &(A')^{\intercal}y\ge c',\\
+                          &y\text{ free}.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class="fragment">Because $c'\le0$, <span class="darkBlueText"><b>$y=0$ is dual feasible</b></span>. Its objective value is $v$, exactly the value of $x^*$.</p>
+              <p class="fragment">By weak duality, both are optimal. We have proved <b>strong duality for the canonical LP and its dual</b>.</p>
+              <p class="fragment">The constant $v$ is carried into the dual objective; it does not change the dual constraints.</p>
+          </section>
+          <section class="fullscreen strong-duality-diagram">
+              <h3>Four LPs: What Have We Shown?</h3>
+              <div style="display:grid; grid-template-columns:1fr 100px 1fr; gap:8px 16px; align-items:center;">
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x\\&Ax=b,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <p class="centered">$\longleftrightarrow$<br>dual</p>
+                  <div class="darkBlueText" style="border:2px solid currentColor; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &b^{\intercal}y\\&A^{\intercal}y\ge c,\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+                  <p class="centered">$\Updownarrow$ equivalent</p>
+                  <div></div>
+                  <p class="centered darkBlueText">$\Updownarrow$ equivalent?</p>
+                  <div style="border:2px solid #859900; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Canonical primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &(c')^{\intercal}x+v\\&A'x=b',\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <p class="centered">$\longleftrightarrow$<br>strong duality</p>
+                  <div class="darkBlueText" style="border:2px solid #859900; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Canonical dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &(b')^{\intercal}y+v\\&(A')^{\intercal}y\ge c',\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+              </div>
+              <p> While the original LP is &lsquo;equivalent&rsquo; to its canonical form, it is not clear that the canonical dual is equivalent in the same way to the original dual. </p>
+              <p class=fragment> Note that while $y = 0$ is an optimal solution to the canonical dual, it is not usually feasible for the original dual. </p>
+          </section>
+          <section>
+              <h3>Completing the Proof of Strong Duality</h3>
+              <p> How does the original LP differ from the canonical form LP? </p>
+              <div style="display:grid; grid-template-columns:1fr 100px 1fr; gap:8px 16px; align-items:center;">
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x\\&Ax=b,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <div></div>
+                  <div style="border:2px solid #859900; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Canonical primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &(c')^{\intercal}x+v\\&A'x=b',\quad x\ge0\end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class=fragment> They differ by <b> row operations on $A$</b> and <b>changing $c$ by an element of the row space of $A$</b>. </p>
+              <p class=fragment> That is, we have that $A' = EA$ and $b' = Eb$ for some invertible matrix $E$, and $c' = c - A^{\intercal}w$ and $v = b^{\intercal}w$ for some vector $w$. </p>
+          </section>
+          <section>
+              <h3>Transformations of LPs and Duality</h3>
+              <p> How does rewriting the equations in the primal affect the dual? </p>
+              <div style="display:grid; grid-template-columns:1fr 100px 1fr; gap:8px 16px; align-items:center;">
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x\\&Ax=b,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <div></div>
+                  <div class="darkBlueText" style="border:2px solid currentColor; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &b^{\intercal}y\\&A^{\intercal}y\ge c,\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Transformed primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x\\&EAx=Eb,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <div></div>
+                  <div class="darkBlueText" style="border:2px solid currentColor; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Transformed dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &(Eb)^{\intercal}y\\&(EA)^{\intercal}y\ge c,\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class=fragment> The primals are &lsquo;obviously equivalent&rsquo; because the feasible sets for both are identical, but this is less clear for the dual. </p>
+          </section>
+          <section>
+              <h3>Transformations of LPs and Duality</h3>
+              <p> How does rewriting the equations in the primal affect the dual? </p>
+              <div style="display:grid; grid-template-columns:1fr 100px 1fr; gap:8px 16px; align-items:center;">
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x\\&Ax=b,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <div></div>
+                  <div class="darkBlueText" style="border:2px solid currentColor; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &b^{\intercal}y\\&A^{\intercal}y\ge c,\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Transformed primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x\\&EAx=Eb,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <div></div>
+                  <div class="darkBlueText" style="border:2px solid currentColor; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Transformed dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &b^{\intercal}(E^{\intercal}y)\\&A^{\intercal}(E^{\intercal}y)\ge c,\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class=fragment> This says that if $y$ is a feasible point for the transformed dual, then $E^{\intercal}y$ is feasible for the original dual with the same objective! </p>
+          </section>
+          <section>
+              <h3>Transformations of LPs and Duality</h3>
+              <p> We can also look at what happens when we modify the objective.</p>
+              <div style="display:grid; grid-template-columns:1fr 100px 1fr; gap:8px 16px; align-items:center;">
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x\\&Ax=b,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <div></div>
+                  <div class="darkBlueText" style="border:2px solid currentColor; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &b^{\intercal}y\\&A^{\intercal}y\ge c,\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Transformed primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x - w^{\intercal}(Ax - b)\\&Ax=b,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <div></div>
+                  <div class="darkBlueText" style="border:2px solid currentColor; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Transformed dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &b^{\intercal}y + w^{\intercal}b\\&A^{\intercal}y\ge (c - A^{\intercal}w),\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class=fragment> Now, what do we need to do to $y$ to transform an original dual solution to a transformed dual solution?</p>
+          </section>
+          <section>
+              <h3>Transformations of LPs and Duality</h3>
+              <p> We can also look at what happens when we modify the objective.</p>
+              <div style="display:grid; grid-template-columns:1fr 100px 1fr; gap:8px 16px; align-items:center;">
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x\\&Ax=b,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <div></div>
+                  <div class="darkBlueText" style="border:2px solid currentColor; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &b^{\intercal}y\\&A^{\intercal}y\ge c,\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Transformed primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x - w^{\intercal}(Ax - b)\\&Ax=b,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <div></div>
+                  <div class="darkBlueText" style="border:2px solid currentColor; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Transformed dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &b^{\intercal}(y + w)\\&A^{\intercal}(y + w)\ge c,\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class=fragment> So, if $y$ is an optimal solution to the transformed dual, then $y + w$ will be an optimal solution to the original dual.</p>
+          </section>
+          <section class="fullscreen strong-duality-diagram">
+              <h3>Putting It Together</h3>
+              <div style="display:grid; grid-template-columns:1fr 100px 1fr; gap:8px 16px; align-items:center;">
+                  <div style="border:2px solid #93a1a1; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &c^{\intercal}x\\&Ax=b,\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <p class="centered">$\longleftrightarrow$<br>dual</p>
+                  <div class="darkBlueText" style="border:2px solid currentColor; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Original dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &b^{\intercal}y\\&A^{\intercal}y\ge c,\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+                  <p class="centered">$\Updownarrow$ equivalent</p>
+                  <div></div>
+                  <p class="centered darkBlueText">$\Updownarrow$ equivalent</p>
+                  <div style="border:2px solid #859900; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Canonical primal</b></p>
+                      <p>\[\begin{aligned}\max\quad &(c')^{\intercal}x+v\\&A'x=b',\quad x\ge0\end{aligned}\]</p>
+                  </div>
+                  <p class="centered">$\longleftrightarrow$<br>strong duality</p>
+                  <div class="darkBlueText" style="border:2px solid #859900; border-radius:12px; padding:8px;">
+                      <p class="centered"><b>Canonical dual</b></p>
+                      <p>\[\begin{aligned}\min\quad &(b')^{\intercal}y+v\\&(A')^{\intercal}y\ge c',\quad y\text{ free}\end{aligned}\]</p>
+                  </div>
+              </div>
+              <p> We have seen that the transformations taking the primal to its canonical form also can be applied to the dual.</p>
+              <p class=fragment> The homework will go into more details about the exact calculations. </p>
+          </section>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+  <script src="scripts/primal-dual-correspondence.js"></script>
+</body>
+</html>

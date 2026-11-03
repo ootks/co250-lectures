@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Primal–Dual 3D Explorer</title>
+<style>
+:root{color-scheme:light;--paper:#fdf6e3;--panel:#fffaf0;--line:#d6cfbd;--ink:#073642;--muted:#586e75;--primal:#6b7e00;--dual:#164b78;--orange:#cb4b16;--red:#c32c2b}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.4 system-ui,-apple-system,sans-serif}button,input,select{font:inherit;color:inherit}button,select,input{border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:5px}button{cursor:pointer}button:hover{border-color:#268bd2}input[type=number]{width:66px;min-width:0;font-variant-numeric:tabular-nums}input:invalid{outline:2px solid var(--red)}h1{font-size:21px;margin:0}h2{font-size:18px;margin:0}h3{font-size:14px;margin:0}.shell{padding:12px;max-width:1600px;margin:auto}.top{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:10px}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.workspace{display:grid;grid-template-columns:310px minmax(0,1fr);gap:12px}.card{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.26);padding:11px}.editor table{width:100%;border-collapse:collapse;margin:6px 0 10px}.editor th{font-weight:500;color:var(--muted);font-size:12px}.editor td{padding:2px}.editor td input{width:100%;min-width:0;padding:5px 3px}.editor td select{width:51px;padding:5px 0}.editor .signs{display:flex;gap:6px;margin-top:8px}.signs label{flex:1}.signs select{width:100%;margin-top:3px}.editor p{margin:8px 0}.small{font-size:12px;color:var(--muted)}.views{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0}.view{min-width:0;padding:10px}.view header{display:flex;align-items:center;justify-content:space-between;gap:8px}.primal h2{color:var(--primal)}.dual h2,.dual .lp{color:var(--dual)}.lp{font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;overflow-x:auto;margin:8px 0;min-height:126px}.lp .objective{font-weight:700}.lp .tight{color:var(--red);font-weight:700}.lp .tag{display:inline-block;width:31px}.plot{position:relative;margin:8px 0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}canvas{display:block;width:100%;height:290px;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}.badge{border-radius:20px;background:#eee8d5;padding:3px 8px;font-size:12px;white-space:nowrap}.badge.optimal{color:#506000;background:#e9edce}.badge.infeasible{color:var(--red);background:#f6e1d9}.badge.unbounded{color:#9c3e13;background:#f9e8d6}.status{min-height:61px;font-size:13px;margin-top:6px}.status p{margin:3px 0}.pair-status{margin-top:10px;padding:8px 11px;border-left:3px solid #268bd2;background:#eee8d5;font-size:13px}.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}.swatch{width:12px;height:10px;display:inline-block;vertical-align:middle;margin-right:4px}.key-point{display:inline-block;color:#859900;font-size:16px;line-height:10px}.error{color:var(--red);min-height:18px}.note{margin-top:8px}.preset{max-width:190px}.view-range input{width:64px}.legend .dash{border-top:2px dashed #93a1a1;width:18px;display:inline-block;vertical-align:middle;margin-right:4px}a{color:var(--dual)}
+@media(max-width:1000px){.workspace{grid-template-columns:270px minmax(0,1fr)}.views{gap:8px}.lp{font-size:12px}.card{padding:8px}canvas{height:260px}}
+@media(max-width:760px){.workspace{grid-template-columns:1fr}.editor table{max-width:480px}.editor .signs{max-width:480px}.views{grid-template-columns:1fr 1fr}canvas{height:250px}.top h1{font-size:18px}}
+@media(max-width:540px){.views{grid-template-columns:1fr}canvas{height:300px}}
+body.embedded{font-size:12px}body.embedded .workspace{grid-template-columns:260px minmax(0,1fr)}body.embedded .shell{padding:8px}body.embedded h1{font-size:18px}body.embedded h2{font-size:16px}body.embedded canvas{height:225px}body.embedded .card{padding:8px}body.embedded .lp{font-size:12px;min-height:112px}body.embedded .small{font-size:11px}body.embedded .status{min-height:50px;font-size:12px}body.embedded .note{margin-bottom:0}body.embedded .top{margin-bottom:8px}body.embedded .editor-tip,body.embedded .editor-help,body.embedded .legend,body.embedded .note{display:none}
+@media(max-width:760px){body.embedded .workspace{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="shell">
+ <div class="top"><h1>Primal–Dual 3D Explorer</h1><div class="toolbar"><label>Example <select id="preset" class="preset"><option value="bounded">Bounded pair</option><option value="mixed">Mixed types (lecture 14)</option><option value="plane">Equality + free variables</option><option value="unbounded">Unbounded primal</option><option value="both">Both infeasible</option></select></label><button id="reset" type="button">Reset example</button></div></div>
+ <div class="workspace">
+  <section class="editor card" aria-labelledby="editor-heading">
+   <h2 id="editor-heading">Edit the primal</h2>
+   <p><label>Objective <select id="sense"><option value="max">Maximize</option><option value="min">Minimize</option></select></label></p>
+   <table aria-label="Objective coefficients"><thead><tr><th>x₁</th><th>x₂</th><th>x₃</th></tr></thead><tbody><tr id="objective-inputs"></tr></tbody></table>
+   <h3>Three constraints</h3>
+   <table aria-label="Constraint coefficients, relation, and right-hand side"><thead><tr><th>x₁</th><th>x₂</th><th>x₃</th><th>Type</th><th>RHS</th></tr></thead><tbody id="constraint-inputs"></tbody></table>
+   <h3>Variable signs</h3><div class="signs" id="sign-inputs"></div>
+   <div id="error" class="error" role="alert"></div>
+   <p class="small editor-tip">Every change updates the dual, both solutions, and both pictures. Coefficients may be negative or fractional.</p>
+   <hr style="border:0;border-top:1px solid var(--line)">
+   <label class="view-range">Viewing box: −R to R, R = <input id="range" type="number" min="0.1" max="10000" value="5" step="any"></label>
+   <p><button id="fit" type="button">Fit solution points</button> <button id="camera" type="button">Reset cameras</button></p>
+   <p class="small"><b>Viewing box only.</b> The solver ignores this box. Dashed edges mark clipped faces; the region may continue beyond them.</p>
+   <p class="small editor-help">Drag to rotate. Scroll over a plot to zoom.</p>
+  </section>
+  <div>
+   <div class="views">
+    <section class="card view primal"><header><h2>Primal</h2><span class="badge" id="p-badge"></span></header><div class="lp" id="p-lp" aria-label="Primal linear program"></div><div class="plot"><canvas id="p-canvas" aria-label="Rotatable 3D primal feasible region, objective direction, and solution point" role="img"></canvas></div><div id="p-status" class="status" aria-live="polite"></div></section>
+    <section class="card view dual"><header><h2>Dual</h2><span class="badge" id="d-badge"></span></header><div class="lp" id="d-lp" aria-label="Automatically derived dual linear program"></div><div class="plot"><canvas id="d-canvas" aria-label="Rotatable 3D dual feasible region, objective direction, and solution point" role="img"></canvas></div><div id="d-status" class="status" aria-live="polite"></div></section>
+   </div>
+   <div id="pair-status" class="pair-status" aria-live="polite"></div>
+   <p class="small"><strong style="color:var(--red);">Red constraints</strong> are tight at the displayed optimal solution (including variable sign constraints).</p>
+   <div class="legend"><span><i class="swatch" style="background:#85990088"></i>Primal feasible region</span><span><i class="swatch" style="background:#268bd288"></i>Dual feasible region</span><span><b class="key-point">●</b> One optimal point (or a feasible point if unbounded)</span><span><i class="dash"></i>Viewing-box cut</span></div>
+   <p class="small note">The arrow points in the direction of objective improvement. Only the region inside the viewing box is drawn. Equalities may give a plane, line, or point. Numerical results use floating-point tolerances.</p>
+  </div>
+ </div>
+</main>
+<script src="lib/lp3-core.js"></script>
+<script>
+'use strict';
+document.body.classList.toggle('embedded',new URLSearchParams(location.search).has('embed'));
+const $=id=>document.getElementById(id),{dot,norm,add,sub,mul,cross}=LP3;
+const presets={
+ bounded:{sense:'max',A:[[1,1,1],[2,1,0],[0,1,2]],b:[6,8,6],c:[3,2,4],rel:['<=','<=','<='],signs:['nonnegative','nonnegative','nonnegative']},
+ mixed:{sense:'max',A:[[2,1,1],[1,3,-1],[-1,2,1]],b:[4,7,3],c:[4,2,-2],rel:['<=','=','>='],signs:['free','nonnegative','nonnegative']},
+ plane:{sense:'max',A:[[1,1,1],[0,0,0],[0,0,0]],b:[0,0,0],c:[1,1,1],rel:['=','<=','<='],signs:['free','free','free']},
+ unbounded:{sense:'max',A:[[1,0,0],[0,1,0],[0,0,1]],b:[1,1,1],c:[1,1,1],rel:['>=','>=','>='],signs:['nonnegative','nonnegative','nonnegative']},
+ both:{sense:'max',A:[[1,0,0],[1,0,0],[0,0,0]],b:[1,0,1],c:[0,1,0],rel:['>=','<=','<='],signs:['free','free','free']}
+};
+function numeric(id,label){return `<input type="number" id="${id}" step="any" min="-1000000" max="1000000" aria-label="${label}">`;}
+for(let j=0;j<3;j++)$('objective-inputs').insertAdjacentHTML('beforeend',`<td>${numeric('c'+j,'Objective coefficient of x'+(j+1))}</td>`);
+for(let i=0;i<3;i++){
+ const tr=document.createElement('tr');
+ tr.innerHTML=[0,1,2].map(j=>`<td>${numeric('a'+i+j,'Row '+(i+1)+' coefficient of x'+(j+1))}</td>`).join('')+`<td><select id="r${i}" aria-label="Constraint ${i+1} type"><option value="<=">≤</option><option value="=">=</option><option value=">=">≥</option></select></td><td>${numeric('b'+i,'Right hand side '+(i+1))}</td>`;
+ $('constraint-inputs').append(tr);
+ $('sign-inputs').insertAdjacentHTML('beforeend',`<label>x${['₁','₂','₃'][i]}<select id="s${i}"><option value="nonnegative">≥ 0</option><option value="free">Free</option><option value="nonpositive">≤ 0</option></select></label>`);
+}
+const fmt=x=>{if(Math.abs(x)<1e-8)return '0';return Number(x.toPrecision(5)).toString().replace('-', '−');};
+const vector=x=>'('+x.map(fmt).join(', ')+')';
+function expression(coeff,name){
+ let out='';coeff.forEach((v,j)=>{if(Math.abs(v)<1e-12)return;const mag=Math.abs(v),term=(mag===1?'':fmt(mag))+name+'<sub>'+(j+1)+'</sub>';out+=(out?(v<0?' − ':' + '):(v<0?'−':''))+term;});return out||'0';
+}
+function showLP(el,p,name,result){
+ const sym=r=>r==='>='?'≥':r==='<='?'≤':'=';
+ const tight=LP3.tightConstraints(p,result);
+ el.innerHTML='<div class="objective"><span class="tag">'+p.sense+'</span>'+expression(p.c,name)+'</div>'+p.A.map((a,i)=>'<div'+(tight.rows[i]?' class="tight" title="Tight at the displayed optimum"':'')+'><span class="tag">'+(i===0?'s.t.':'')+'</span>'+expression(a,name)+' '+sym(p.rel[i])+' '+fmt(p.b[i])+'</div>').join('')+'<div>'+p.signs.map((s,i)=>'<span'+(tight.signs[i]?' class="tight" title="Tight at the displayed optimum"':'')+'>'+name+'<sub>'+(i+1)+'</sub> '+(s==='free'?'free':s==='nonnegative'?'≥ 0':'≤ 0')+'</span>').join(', ')+'</div>';
+}
+function read(){
+ const val=id=>{const e=$(id);if(!e.checkValidity()||e.value.trim()===''||!Number.isFinite(e.valueAsNumber))throw Error('Enter a finite number between −1,000,000 and 1,000,000 in every coefficient field.');return e.valueAsNumber;};
+ return {sense:$('sense').value,A:[0,1,2].map(i=>[0,1,2].map(j=>val('a'+i+j))),b:[0,1,2].map(i=>val('b'+i)),c:[0,1,2].map(j=>val('c'+j)),rel:[0,1,2].map(i=>$('r'+i).value),signs:[0,1,2].map(i=>$('s'+i).value)};
+}
+class View{
+ constructor(prefix,color,name){
+  this.id=prefix;this.color=color;this.name=name;this.canvas=$(prefix+'-canvas');this.ctx=this.canvas.getContext('2d');this.reset();
+  const canvas=this.canvas;let drag=null;
+  canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);});
+  canvas.addEventListener('pointermove',e=>{if(!drag)return;this.yaw+=(e.clientX-drag.x)*.009;this.pitch=Math.max(-1.45,Math.min(1.45,this.pitch+(e.clientY-drag.y)*.009));drag={x:e.clientX,y:e.clientY};this.draw();});
+  const end=()=>drag=null;canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);canvas.addEventListener('lostpointercapture',end);
+  canvas.addEventListener('wheel',e=>{e.preventDefault();this.zoom=Math.max(.3,Math.min(4,this.zoom*Math.exp(-e.deltaY*.001)));this.draw();},{passive:false});
+  new ResizeObserver(()=>this.draw()).observe(canvas);
+ }
+ reset(){this.yaw=-.65;this.pitch=.48;this.zoom=1;}
+ update(p,solution){this.problem=p;this.solution=solution;this.rebuild();this.draw();}
+ rebuild(){this.R=Number($('range').value)||8;this.faces=this.solution&&this.solution.status==='infeasible'?[]:LP3.mesh(this.problem,this.R);}
+ project(v){
+  const co=Math.cos(this.yaw),si=Math.sin(this.yaw),cp=Math.cos(this.pitch),sp=Math.sin(this.pitch);
+  const x=co*v[0]-si*v[1],y=si*v[0]+co*v[1],z=cp*v[2]-sp*y;
+  const scale=Math.min(this.width,this.height)*.29*this.zoom/this.R;
+  return [this.width/2+x*scale,this.height/2-z*scale,cp*y+sp*v[2]];
+ }
+ path(points){const c=this.ctx;if(!points.length)return;c.beginPath();points.forEach((v,i)=>{const p=this.project(v);i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]);});}
+ label(v,label,color='#586e75',offset=[5,-5]){const p=this.project(v),c=this.ctx;c.font='12px system-ui';c.lineWidth=3;c.strokeStyle='#fffaf0';c.strokeText(label,p[0]+offset[0],p[1]+offset[1]);c.fillStyle=color;c.fillText(label,p[0]+offset[0],p[1]+offset[1]);}
+ segment(a,b,color,dash=[]){const c=this.ctx;this.path([a,b]);c.strokeStyle=color;c.setLineDash(dash);c.stroke();c.setLineDash([]);}
+ arrow(a,b,color){
+  this.segment(a,b,color);const p=this.project(a),q=this.project(b),angle=Math.atan2(q[1]-p[1],q[0]-p[0]),c=this.ctx;c.beginPath();c.moveTo(q[0],q[1]);c.lineTo(q[0]-8*Math.cos(angle-.4),q[1]-8*Math.sin(angle-.4));c.lineTo(q[0]-8*Math.cos(angle+.4),q[1]-8*Math.sin(angle+.4));c.closePath();c.fillStyle=color;c.fill();
+ }
+ draw(){
+  if(!this.problem)return;
+  const canvas=this.canvas,rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(rect.width===0||rect.height===0)return;
+  canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);this.width=rect.width;this.height=rect.height;
+  const c=this.ctx;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,this.width,this.height);c.lineWidth=1;
+  const R=this.R;
+  // Grid on the coordinate plane x3=0.
+  for(let i=-2;i<=2;i++){
+   this.segment([-R,i*R/2,0],[R,i*R/2,0],'#e7e0cf');this.segment([i*R/2,-R,0],[i*R/2,R,0],'#e7e0cf');
+  }
+  const faces=(this.faces||[]).map(f=>({...f,depth:f.points.reduce((s,v)=>s+this.project(v)[2],0)/f.points.length}));
+  const cn=norm(this.problem.c),solution=this.solution;
+  faces.sort((a,b)=>a.depth-b.depth);
+  for(const f of faces){
+   this.path(f.points);if(f.points.length>=3){c.closePath();c.fillStyle=this.id==='p'?'rgba(133,153,0,.15)':'rgba(38,139,210,.14)';c.fill();}
+   c.strokeStyle=f.box?'#93a1a1':this.color;c.lineWidth=1;c.setLineDash(f.box?[4,4]:[]);c.stroke();c.setLineDash([]);
+  }
+  // Axes and labels, with signed tick values at their visible ends.
+  for(let i=0;i<3;i++){
+   const a=[0,0,0],b=[0,0,0];a[i]=-R;b[i]=R;this.segment(a,b,'#93a1a1');this.label(b,this.name+['₁','₂','₃'][i]);this.label(a,'−'+fmt(R),'#93a1a1',[3,12]);
+  }
+  this.label([0,0,0],'0','#93a1a1',[3,13]);
+  if(cn>1e-12){const direction=mul(this.problem.c,(this.problem.sense==='max'?1:-1)/cn),start=[0,0,0],end=mul(direction,R*.65);c.lineWidth=2;this.arrow(start,end,'#cb4b16');this.label(end,this.problem.sense+' improves','#cb4b16',[5,12]);}
+  if(solution&&solution.x){
+   if(solution.x.every(v=>Math.abs(v)<=R+1e-7)){
+    const q=this.project(solution.x);c.beginPath();c.arc(q[0],q[1],5,0,2*Math.PI);c.fillStyle='#859900';c.fill();c.strokeStyle='#073642';c.lineWidth=1.5;c.stroke();this.label(solution.x,solution.status==='optimal'?this.name+'*':'feasible','#506000',[8,-8]);
+    if(solution.ray&&norm(solution.ray)>1e-12){
+     let length=R;solution.ray.forEach((v,i)=>{if(v>1e-9)length=Math.min(length,(R-solution.x[i])/v);if(v< -1e-9)length=Math.min(length,(-R-solution.x[i])/v);});
+     this.arrow(solution.x,add(solution.x,mul(solution.ray,Math.max(0,length*.85))),'#cb4b16');
+    }
+   }else{c.fillStyle='#9c3e13';c.font='12px system-ui';c.fillText('Solution outside view — use Fit solution points',8,this.height-27);}
+  }
+  c.fillStyle='#586e75';c.font='12px system-ui';
+  c.fillText('Drag to rotate · scroll to zoom',8,this.height-9);
+  c.fillText(cn>1e-12?'Arrow: direction of objective improvement':'Zero objective: constant value 0',8,18);
+  if(solution&&solution.status==='infeasible'){c.fillStyle='#c32c2b';c.fillText('Empty feasible region',8,36);}
+  else if(!this.faces.length){c.fillText('No feasible region inside this viewing box',8,36);}
+ }
+}
+const views=[new View('p','#859900','x'),new View('d','#268bd2','y')];
+let current=null,results=null,timer;
+function resultText(prefix,p,r){
+ const badge=$(prefix+'-badge');badge.textContent=r.status==='numerical'?'Numerical difficulty':r.status;badge.className='badge '+r.status;
+ const el=$(prefix+'-status');
+ if(r.status==='optimal')el.innerHTML='<p><b>Optimal value: '+fmt(r.value)+'</b></p><p>One optimal solution: '+(prefix==='p'?'x':'y')+'* = '+vector(r.x)+'</p>';
+ else if(r.status==='unbounded')el.innerHTML='<p><b>Unbounded '+(p.sense==='max'?'above':'below')+'</b></p><p>Feasible point '+vector(r.x)+'; improving ray '+vector(r.ray)+'.</p>';
+ else if(r.status==='infeasible')el.textContent='No point satisfies all constraints and variable sign restrictions.';
+ else el.textContent='The solver could not certify a result at this numerical scale. Try rescaling the coefficients.';
+}
+function update(){
+ let p;try{p=read();$('error').textContent='';}catch(e){$('error').textContent=e.message;$('pair-status').textContent='Input incomplete: the plots and solutions below still show the last valid LP.';return;}
+ const d=LP3.dual(p),rs=[LP3.solve(p),LP3.solve(d)];current=[p,d];results=rs;
+ showLP($('p-lp'),p,'x',rs[0]);showLP($('d-lp'),d,'y',rs[1]);
+ [p,d].forEach((model,i)=>{resultText(i?'d':'p',model,rs[i]);views[i].update(model,rs[i]);});
+ if(rs.every(r=>r.status==='optimal')){
+  const gap=Math.abs(rs[0].value-rs[1].value),scale=Math.max(1,...rs.map(r=>Math.abs(r.value)));
+  $('pair-status').textContent=gap<1e-6*scale?'Both LPs attain the same optimal value: '+fmt((rs[0].value+rs[1].value)/2)+'. Duality gap ≈ 0.':'Numerical warning: primal and dual values disagree. Try rescaling the input.';
+ }else if(rs.every(r=>r.status==='infeasible'))$('pair-status').textContent='Both LPs are infeasible. Infeasibility of one LP does not force the other to be unbounded.';
+ else if(rs.some(r=>r.status==='unbounded'))$('pair-status').textContent='An unbounded objective on one side rules out a feasible solution on the other side (weak duality).';
+ else $('pair-status').textContent='Primal: '+rs[0].status+' · Dual: '+rs[1].status+'.';
+}
+function loadPreset(){
+ const p=presets[$('preset').value];$('sense').value=p.sense;
+ for(let i=0;i<3;i++){$('c'+i).value=p.c[i];$('b'+i).value=p.b[i];$('r'+i).value=p.rel[i];$('s'+i).value=p.signs[i];for(let j=0;j<3;j++)$('a'+i+j).value=p.A[i][j];}
+ $('range').value=5;views.forEach(v=>v.reset());update();
+}
+$('preset').addEventListener('change',loadPreset);$('reset').addEventListener('click',loadPreset);
+document.querySelector('.editor').addEventListener('input',e=>{if(e.target.id==='range')return;clearTimeout(timer);timer=setTimeout(update,100);});
+$('range').addEventListener('input',()=>{if(!$('range').checkValidity()||!$('range').value)return;views.forEach(v=>{if(v.problem){v.rebuild();v.draw();}});});
+$('fit').addEventListener('click',()=>{if(!results)return;const coordinates=results.flatMap(r=>r.x||[]);const extent=Math.max(2,...coordinates.map(Math.abs))*1.35;$('range').value=Math.min(10000,Math.ceil(extent*10)/10);views.forEach(v=>{v.rebuild();v.draw();});});
+$('camera').addEventListener('click',()=>views.forEach(v=>{v.reset();v.draw();}));
+loadPreset();
+</script>
+</body>
+</html>
