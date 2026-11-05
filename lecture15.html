@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+          <h2>Introduction to Optimization</h2>
+          <h3>CO 250</h3>
+          <br>
+          <h4>Lecture 15</h4>
+          <br>
+          <p class="centered"><a href="?view=scroll">Scroll view</a></p>
+          <p class="centered"><a href="beamer/lecture15.pdf">PDF version of these slides</a> <em>(demo: this PDF version is experimental and may contain errors or differ from the slides)</em></p>
+      </section>
+      <section>
+          <h2>Lecture Outline</h2>
+          <ul>
+              <li>Review of strong duality</li>
+              <li>Recovering a dual solution from a primal optimum</li>
+              <li>Complementary slackness</li>
+              <li>Complementary slackness for LPs not in SEF</li>
+          </ul>
+      </section>
+      <section>
+          <section>
+              <h3>Review: Strong Duality</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal</b></p><p>\[\max\{c^{\intercal}x:Ax=b,\ x\ge0\}.\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\min\{b^{\intercal}y:A^{\intercal}y\ge c\}.\]</p></div>
+              </div>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45);" class=fragment>
+                  <p><b>Theorem (Strong duality).</b> If a linear program is feasible and bounded, then its dual also has an optimal solution, and their optimal objective values are equal.</p>
+                  <p>That is, if both primal/dual LPs are feasible, then there are optimal solutions $x^*,y^*$ with</p>
+                  <p>\[\boxed{c^{\intercal}x^*=b^{\intercal}y^*.}\]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Review: Strong Duality</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal</b></p><p>\[\max\{c^{\intercal}x:Ax=b,\ x\ge0\}.\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\min\{b^{\intercal}y:A^{\intercal}y\ge c\}.\]</p></div>
+              </div>
+              <p> Proof of strong duality </p>
+              <ul>
+                  <li class=fragment> If the primal LP is bounded, then the simplex method terminates. </li>
+                  <li class=fragment> When it terminates, the LP will be in canonical form with objective vector $\le 0$. </li>
+                  <li class=fragment> For such an LP, $y = \vec{0}$ is an optimal solution to its dual.</li>
+                  <li class=fragment> From this, we get that strong duality holds for the canonical form LP.  </li>
+                  <li class=fragment> Because the canonical form of the primal LP is obtained from <b>row operations</b>, we can recover strong duality for the original LP. </li>
+              </ul>
+          </section>
+          <section>
+              <h3>Review: Strong Duality</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal</b></p><p>\[\max\{c^{\intercal}x:Ax=b,\ x\ge0\}.\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\min\{b^{\intercal}y:A^{\intercal}y\ge c\}.\]</p></div>
+              </div>
+              <p> We've seen that if we have an optimal solution to the primal, then there is an optimal solution to the dual (and one construction for such a dual solution).</p>
+              <p class=fragment> Can we recover the dual solution in an easier way? </p>
+          </section>
+          <section>
+              <iframe src="demos/PrimalDualSEF.html?embed=1" title="Interactive three-variable primal and dual LP explorer with 3D feasible regions" style="width:100%; height:580px; border:1px solid #93a1a1; border-radius:10px;" data-preload></iframe>
+              <p style="font-size:18px; margin:4px 0;"><a href="demos/PrimalDual3D.html" target="_blank" rel="noopener">Open the demo in its own tab</a></p>
+          </section>
+          <section>
+              <h3> Complementary Slackness </h3>
+              <p> Let $x^*$ and $y^*$ be optimal solutions for the primal/dual LPs, where the primal is in SEF.</p>
+              <p class=fragment> Recall that each primal variable $x_i \ge 0$ is associated to a dual constraint that \[(A^{\intercal}y^*)_i \ge c_i.\]</p>
+              <p class=fragment> <b>Observation: </b> For each primal variable, if $x^*_i$ is not 0 (i.e. $x^*_i > 0$), then the dual constraint is tight: 
+              \[
+              (A^{\intercal}y^*)_i = c_i.
+              \]</p>
+              <p class=fragment> We will first prove this, then we'll use this to find the value of $y^*$ given $x^*.$</p>
+          </section>
+          <section>
+              <h3> Proof of Complementary Slackness </h3>
+              <p>Let's recall the proof of <b>weak duality</b>, we looked at 
+              \[
+                  y^{\intercal}Ax,
+              \]
+              and we showed that 
+              \[
+                  c^{\intercal} x \le y^{\intercal}Ax = b^{\intercal}y.
+              \]
+              </p>
+              <p class=fragment> If $x^*$ and $y^*$ are primal/dual optimal, then the inequality on the left must be an equality (so that the whole inequality is an equality). </p>
+              <p class=fragment> So we have that 
+              \[
+                  c^{\intercal} x = (A^{\intercal}y)^{\intercal}x.
+              \]
+              </p>
+          </section>
+          <section>
+              <h3> Proof of Complementary Slackness </h3>
+              <p> Rewriting the previous equation gives
+              \[
+                  (A^{\intercal}y - c)^{\intercal}x = 0
+              \]
+              </p>
+              <p class=fragment> Let's expand the inner product:
+              \[
+                  \sum_{i=1}^n (A^{\intercal}y - c)_i x_i = 0.
+              \]
+              What do we notice about the terms in this sum?
+              </p>
+              <p class=fragment>
+              Both $(A^{\intercal}y - c)_i \ge 0$ and $x_i \ge 0$ (by primal/dual feasibility). The only way a sum of nonnegative terms can be 0 is if every term is 0.
+              </p>
+              <p class=fragment>
+                  Therefore, $(A^{\intercal}y - c)_i x_i = 0$ for each $i$. If $x_i > 0$, then this implies that $(A^{\intercal}y - c)_i = 0$.
+              </p>
+          </section>
+          <section>
+              <h3> Complementary Slackness </h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45);" class=fragment>
+                  <p><b>Theorem (Complementary Slackness).</b> Let $x^*$ be an optimal solution for a primal linear program in SEF and let $y^*$ be the optimal solution to its dual linear program.</p>
+                  <p>For each $i$, either $x_i^* = 0$, or $(A^{\intercal} y)_i = c_i$.</p>
+                  <p class=fragment>Conversely, if $x^*$ is an optimal solution for the primal linear program, and $y^*$ is feasible for the dual program, and it satisfies the property that $(A^{\intercal} y^*)_i = c_i$ whenever $x_i^* > 0$, then $y^*$ is optimal for the dual program.</p>
+              </div>
+          </section>
+          <section>
+              <h3> Complementary Slackness Example</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal</b></p><p>\[\begin{aligned}\max\quad &amp;2x_1+3x_2\\ &amp;x_1+x_2+x_3=4\\ &amp;x_1+3x_2+x_4=6\\ &amp;x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &amp;4y_1+6y_2\\ &amp;y_1+y_2\ge2\\ &amp;y_1+3y_2\ge3\\ &amp;y_1\ge0,\ y_2\ge0\end{aligned}\]</p></div>
+              </div>
+              <p class="fragment">The optimal solutions are 
+              \[ x^*=(3,1,0,0), \qquad y^* = \left(\frac{3}{2}, \frac{1}{2}\right),\]
+              with objective values both equal to 9.
+              </p>
+          </section>
+          <section>
+              <h3> Complementary Slackness Example</h3>
+              <p> Data: $c = (2,3,0,0)$, $b = (4,6)$, $A = \begin{pmatrix}1 & 1 & 1 & 0 \\ 1 & 3 & 0 & 1\end{pmatrix}$, $x^*=(3,1,0,0)$ and $y^*=(\tfrac32,\tfrac12)$:</p>
+              <p>\[ c^{\intercal}x^* \;\le\; (A^{\intercal}y^*)^{\intercal}x^* \;=\; b^{\intercal}y^*. \]</p>
+              <p class="fragment">Here $c^{\intercal}x^*=9=b^{\intercal}y^*$, so the inequality on the left <b>must</b> be an equality: $(A^{\intercal}y^*)^{\intercal}x^*=c^{\intercal}x^*$.</p>
+              <p class="fragment">We get from this that $(A^{\intercal}y^* - c)^{\intercal}x^*=0$.</p>
+          </section>
+          <section>
+              <h3> Complementary Slackness Example</h3>
+              <p> Data: $c = (2,3,0,0)$, $b = (4,6)$, $A = \begin{pmatrix}1 & 1 & 1 & 0 \\ 1 & 3 & 0 & 1\end{pmatrix}$, $x^*=(3,1,0,0)$ and $y^*=(\tfrac32,\tfrac12)$:</p>
+              <p> Let's look at the terms in $(A^{\intercal}y^* - c)^{\intercal}x^*=0$.</p>
+              <p>
+              \[
+              \begin{aligned}
+              A^{\intercal}y^* - c = \begin{pmatrix}\color{red}{0}\\\color{red}{0}\\\tfrac32\\\tfrac12\end{pmatrix}.
+              \end{aligned}
+              \qquad
+              \begin{aligned}
+              x^* = \begin{pmatrix} 3 \\ 1 \\ \color{red}{0} \\ \color{red}{0}\end{pmatrix}.
+              \end{aligned}
+              \]
+              </p>
+              <p> This is what complementary slackness means: if an entry of $x^*$ is nonzero, then the corresponding entry of $A^{\intercal}y - c$ must be 0. </p>
+          </section>
+          <section>
+              <h3> Furniture Workshop </h3>
+              <table>
+                  <thead><tr><th></th><th>Chair</th><th>Table</th><th>Available</th></tr></thead>
+                  <tbody>
+                      <tr><td>Wood (metres)</td><td>2</td><td>4</td><td>80</td></tr>
+                      <tr><td>Labor (hours)</td><td>1</td><td>3</td><td>50</td></tr>
+                      <tr><td>Profit (dollars)</td><td>40</td><td>90</td><td></td></tr>
+                  </tbody>
+              </table>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &40c+90t\\
+                          \text{s.t.}\quad &2c+4t+s_1=80,\\
+                          &c+3t+s_2=50,\\
+                          &c,t,s_1,s_2\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+                  <div class="darkBlueText" style="flex:1; min-width:0;">
+                      <p class="centered"><b>Dual</b></p>
+                      <p>\[\begin{aligned}
+                          \min\quad &80u+50v\\
+                          \text{s.t.}\quad &2u+v\ge40,\\
+                          &4u+3v\ge90,\\
+                          &u,v\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+              <p>Optimal primal: $(c,t,s_1,s_2)=(20,10,0,0)$, Optimal dual : $(u,v)=(15,10)$.</p>
+          </section>
+          <section>
+              <h3> Why is complementary slackness useful? </h3>
+              <p> Let's say we have an LP in SEF, where $A \in \R^{m \times n}$.
+              \[\max\{c^{\intercal}x:Ax=b,\ x\ge0\}.\]</p>
+              <p> We saw from our simplex method discussion that an optimal solution to this LP is a basic feasible solution with respect to some basis. How many nonzero entries do we expect that such a solution should have? </p>
+              <p class=fragment>Every basis in of $A$ has $m$ entries, so every BFS has at most $m$ nonzero entries. A nondegenerate BFS has exactly $m$ nonzero entries (we'll talk about degenerate solutions in a second.)</p>
+              <p class=fragment>What does complementary slackness imply in this case?</p>
+          </section>
+          <section>
+              <h3> Recovering a Dual Solution </h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &7x_1+4x_2\\ &x_1+2x_2+x_3=8\\ &3x_1+x_2+x_4=9\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &8y_1+9y_2\\ &y_1+3y_2\ge7\\ &2y_1+y_2\ge4\\ &y_1\ge0,\ y_2\ge0\end{aligned}\]</p></div>
+              </div>
+              <p class="fragment">Let's take an optimal solution to the primal LP:
+              \[ x^*=(2,3,0,0), \qquad c^{\intercal}x^*=26. \]</p>
+              <p class="fragment">It is <b>nondegenerate</b> because it has exactly $m=2$ nonzero entries.</p>
+          </section>
+          <section>
+              <h3>Recovering a Dual Solution</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &7x_1+4x_2\\ &x_1+2x_2+x_3=8\\ &3x_1+x_2+x_4=9\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &8y_1+9y_2\\ &y_1+3y_2\ge7\\ &2y_1+y_2\ge4\\ &y_1\ge0,\ y_2\ge0\end{aligned}\]</p></div>
+              </div>
+              <p>Since $x_1^*=2>0$ and $x_2^*=3>0$, complementary slackness implies that the dual constraints are tight:
+              \[ y_1+3y_2=7, \qquad 2y_1+y_2=4. \]</p>
+              <p class="fragment">This has a unique solution $y = (1,2)$.  <span class="fragment"> Complementary slackness implies that any optimal dual solution must satisfy these constraints, so $(1,2)$ must be an optimal dual solution!</span></p>
+          </section>
+          <section>
+              <h3>Recovering a Dual Solution</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &7x_1+4x_2\\ &x_1+2x_2+x_3=8\\ &3x_1+x_2+x_4=9\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &8y_1+9y_2\\ &y_1+3y_2\ge7\\ &2y_1+y_2\ge4\\ &y_1\ge0,\ y_2\ge0\end{aligned}\]</p></div>
+              </div>
+              <p>Let's check for $y = (1,2)$:
+              $
+              \begin{aligned}y_1+3y_2 = 7 \ge7\\ 2y_1+y_2 = 4\ge4\\ y_1 = 1\ge0\\ y_2 = 2\ge0 \\ 8y_1 + 9 y_2 = 26 = c^{\intercal}x^*\end{aligned}.
+              $
+              </p>
+          </section>
+          <section>
+              <h3>Recovering a Dual Solution II</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &3x_1+3x_2+2x_3+5x_4\\ &x_1+x_2+2x_4=3\\ &x_2+x_3+x_4=4\\ &x_1+x_3+x_4=5\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &3y_1+4y_2+5y_3\\ &y_1+y_3\ge3\\ &y_1+y_2\ge3\\ &y_2+y_3\ge2\\ &2y_1+y_2+y_3\ge5\end{aligned}\]</p></div>
+              </div>
+              <p class="fragment">Let's take an optimal solution to the primal LP:
+              \[ x^*=(2,1,3,0), \qquad c^{\intercal}x^*=15. \]</p>
+              <p class="fragment">It is <b>nondegenerate</b> because it has exactly $m=3$ nonzero entries.</p>
+          </section>
+          <section>
+              <h3>Recovering a Dual Solution II</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &3x_1+3x_2+2x_3+5x_4\\ &x_1+x_2+2x_4=3\\ &x_2+x_3+x_4=4\\ &x_1+x_3+x_4=5\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &3y_1+4y_2+5y_3\\ &y_1+y_3\ge3\\ &y_1+y_2\ge3\\ &y_2+y_3\ge2\\ &2y_1+y_2+y_3\ge5\end{aligned}\]</p></div>
+              </div>
+              <p>Since $x_1^*,x_2^*,x_3^*>0$, complementary slackness implies that the first three dual constraints are tight:
+              \[ y_1+y_3=3, \qquad y_1+y_2=3, \qquad y_2+y_3=2. \]</p>
+              <p class="fragment">This has a unique solution $y = (2,1,1)$.  <span class="fragment"> Complementary slackness implies that any optimal dual solution must satisfy these constraints, so $(2,1,1)$ must be an optimal dual solution!</span></p>
+          </section>
+          <section>
+              <h3>Recovering a Dual Solution II</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &3x_1+3x_2+2x_3+5x_4\\ &x_1+x_2+2x_4=3\\ &x_2+x_3+x_4=4\\ &x_1+x_3+x_4=5\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &3y_1+4y_2+5y_3\\ &y_1+y_3\ge3\\ &y_1+y_2\ge3\\ &y_2+y_3\ge2\\ &2y_1+y_2+y_3\ge5\end{aligned}\]</p></div>
+              </div>
+              <p>Let's check for $y = (2,1,1)$:
+              $
+              \begin{aligned}y_1+y_3 = 3 \ge3\\ y_1+y_2 = 3\ge3\\ y_2+y_3 = 2\ge2\\ 2y_1+y_2+y_3 = 6\ge5 \\ 3y_1 + 4 y_2 + 5y_3 = 15 = c^{\intercal}x^*\end{aligned}.
+              $
+              </p>
+          </section>
+          <section>
+              <h3>Finding the Dual Solution</h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding:14px 22px; background:rgba(238,232,213,0.45);">
+                  <p><b>Theorem.</b> Let $x^*$ be an optimal solution of $\max\{c^{\intercal}x:Ax=b,\ x\ge0\}$ that is a nondegenerate (i.e. having $m$ nonzero entries) basic feasible solution with basis $B$. Then the dual $\min\{b^{\intercal}y:A^{\intercal}y\ge c\}$ has a <b>unique</b> optimal solution $y^*$, which is the solution of
+                  \[ A_B^{\intercal}y=c_B, \qquad\text{i.e.}\qquad y^*=(A_B^{\intercal})^{-1}c_B. \]</p>
+              </div>
+              <p> The proof is just that complementary slackness implies that $ A_B^{\intercal}y=c_B$ and the fact that $x^*$ is nondegenerate implies that this matrix is in fact full rank. </p>
+          </section>
+          <section>
+              <h3>Degenerate Optimal Solutions</h3>
+              <p> What happens when the optimal solution to an LP is degenerate?</p>
+              <p class=fragment> One possibility is that there are <b>multiple optimal dual solutions</b>; this implies that there won't be a simple formula for the value of $y^*$ just from complementary slackness considerations. </p>
+              <p class=fragment> This is not the only possibility; there may be just one optimal dual solution and the primal might just have a degenerate optimum. </p>
+          </section>
+          <section>
+              <h3>Degenerate Example: Many Dual Solutions</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &2x_1+x_2\\ &x_1+x_2+x_3=4\\ &x_1+3x_2+x_4=4\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &4y_1+4y_2\\ &y_1+y_2\ge2\\ &y_1+3y_2\ge1\\ &y_1\ge0,\ y_2\ge0\end{aligned}\]</p></div>
+              </div>
+              <p class="fragment">Let's take an optimal solution to the primal LP:
+              \[ x^*=(4,0,0,0), \qquad c^{\intercal}x^*=8. \]</p>
+              <p class="fragment">It is <b>degenerate</b> because it has only $1$ nonzero entry, which is fewer than $m=2$.</p>
+          </section>
+          <section>
+              <h3>Degenerate Example: Many Dual Solutions</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &2x_1+x_2\\ &x_1+x_2+x_3=4\\ &x_1+3x_2+x_4=4\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &4y_1+4y_2\\ &y_1+y_2\ge2\\ &y_1+3y_2\ge1\\ &y_1\ge0,\ y_2\ge0\end{aligned}\]</p></div>
+              </div>
+              <p>Since $x_1^*>0$, complementary slackness says that the first dual constraint is tight: $y_1+y_2=2$.</p>
+              <p>Letting $y=(2-t,\,t)$, the remaining dual constraints hold as long as $0 \le t \le 2$, so there are infinitely many $y$ optimizing the dual program. </p>
+          </section>
+          <section data-auto-animate>
+              <h3> What to do with a degenerate primal solution </h3>
+              <p> Unfortunately, for a degenerate primal solution, there is no easy way to extract an optimal dual solution. </p>
+              <ol>
+                  <li class=fragment> <p>We can run the simplex method on a smaller linear programming feasibility problem. </p>
+                                      <p> 
+                                      \[
+                                        \begin{aligned}
+                                            A_T^{\intercal} y = c_T\\
+                                            A_S^{\intercal}y \ge c_S,
+                                        \end{aligned}
+                                      \]
+                                      where $A_T$ is the submatrix of $A$ containing columns associated to variables $x_i > 0$, and $A_S$ is the submatrix containing columns associated to the variablaes $x_i = 0$. This encodes complementary slackness. Also note that we can use linear algebra to reduce the number of variables using $A_T^{\intercal} y = c_T$.
+                                      </p> </li>
+              <p class=fragment>
+              
+              </p>
+              </ol>
+          </section>
+          <section data-auto-animate>
+              <h3> What to do with a degenerate primal solution </h3>
+              <p> Unfortunately, for a degenerate primal solution, there is no easy way to extract an optimal dual solution. </p>
+              <ol>
+                  <li><p> We can run the simplex method on a smaller linear program feasibility problem.</p></li>
+                  <li class=fragment> <p>If $x^*$ was obtained by finding a basis $B$ for which the simplex method terminates, then it turns out that the columns of $B$ can be used to solve for $y$, i.e.
+                      \[
+                      y = (A_B^{\intercal})^{-1} c_B,
+                      \]
+                      where $A_B$ denotes the submatrix of $A$ consisting of the columns in $B$.
+                      </p>
+                  </li>
+              </ol>
+          </section>
+          <section>
+              <h3>Recovering a Primal Solution</h3>
+              <p> We can also use an optimal dual solution to recover an optimal primal solution using complementary slackness.</p>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &4x_1+x_2\\ &2x_1+x_2+x_3=8\\ &x_1+3x_2+x_4=9\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &8y_1+9y_2\\ &2y_1+y_2\ge4\\ &y_1+3y_2\ge1\\ &y_1\ge0,\ y_2\ge0\end{aligned}\]</p></div>
+              </div>
+              <p class="fragment">Let's take an optimal solution to the dual LP:
+              \[ y^*=(2,0), \qquad b^{\intercal}y^*=16. \]</p>
+          </section>
+          <section>
+              <h3>Recovering a Primal Solution</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &4x_1+x_2\\ &2x_1+x_2+x_3=8\\ &x_1+3x_2+x_4=9\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &8y_1+9y_2\\ &2y_1+y_2\ge4\\ &y_1+3y_2\ge1\\ &y_1\ge0,\ y_2\ge0\end{aligned}\]</p></div>
+              </div>
+              <p>The dual constraints for $x_2$ and $x_3$ are not tight: $y_1+3y_2=2>1$ and $y_1=2>0$. Complementary slackness implies that
+              \[ x_2^*=0, \qquad x_3^*=0. \]</p>
+              <p class="fragment">Substituting into $Ax=b$ leaves $2x_1=8$ and $x_1+x_4=9$.  <span class="fragment"> This has a unique solution $x=(4,0,0,5)$, so $(4,0,0,5)$ must be an optimal primal solution!</span></p>
+          </section>
+          <section>
+              <h3>Recovering a Primal Solution</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal (SEF)</b></p><p>\[\begin{aligned}\max\quad &4x_1+x_2\\ &2x_1+x_2+x_3=8\\ &x_1+3x_2+x_4=9\\ &x_1,x_2,x_3,x_4\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &8y_1+9y_2\\ &2y_1+y_2\ge4\\ &y_1+3y_2\ge1\\ &y_1\ge0,\ y_2\ge0\end{aligned}\]</p></div>
+              </div>
+              <p>Let's check for $x = (4,0,0,5)$:
+              $
+              \begin{aligned}2x_1+x_2+x_3 = 8 \\ x_1+3x_2+x_4 = 9\\ x_1 = 4\ge0, \ x_2 = 0\ge0\\ x_3 = 0\ge0,\ x_4 = 5\ge0 \\ 4x_1 + x_2 = 16 = b^{\intercal}y^*\end{aligned}.
+              $
+              </p>
+          </section>
+      </section>
+      <section>
+          <section>
+              <h2> Complementary Slackness for LPs Not In SEF </h2>
+          </section>
+          <section>
+              <h3>LPs Not In SEF </h3>
+              <p> Given a maximization LP that has a mixture of free variables and nonfree variables (and equality and inequality constraints), recall that the dual problem has </p>
+              <ol>
+                  <li> An equality constraint for each free variable. </li>
+                  <li> A $\ge$ constraint for each nonnegative variable. </li>
+                  <li> A free variable for each equality constraint. </li>
+                  <li> A nonnegative variable for each $\le$ constraint. </li>
+              </ol>
+              <p class=fragment> Complementary slackness in this case says that each dual constraint associated to a nonnegative variable is tight if that variable is positive. </p>
+              <p class=fragment> Similarly, each dual variable associated to a $\le$ constraint must be $0$ if that constraint is not tight. </p>
+          </section>
+          <section>
+              <h3>Recovering a Dual Solution III</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal</b></p><p>\[\begin{aligned}\max\quad &3x_1+2x_2\\ &x_1+x_2=4\\ &2x_1+x_2\le6\\ &x_2\le3\\ &x_1,x_2\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &4y_1+6y_2+3y_3\\ &y_1+2y_2\ge3\\ &y_1+y_2+y_3\ge2\\ &y_1\text{ free},\ y_2,y_3\ge0\end{aligned}\]</p></div>
+              </div>
+              <p class="fragment">Let's take an optimal solution to the primal LP:
+              \[ x^*=(2,2), \qquad c^{\intercal}x^*=10. \]</p>
+              <p class="fragment">The first constraint is an equality, the second is tight, and the third has slack: $x_2^*=2<3$.</p>
+          </section>
+          <section>
+              <h3>Recovering a Dual Solution III</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal</b></p><p>\[\begin{aligned}\max\quad &3x_1+2x_2\\ &x_1+x_2=4\\ &2x_1+x_2\le6\\ &x_2\le3\\ &x_1,x_2\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &4y_1+6y_2+3y_3\\ &y_1+2y_2\ge3\\ &y_1+y_2+y_3\ge2\\ &y_1\text{ free},\ y_2,y_3\ge0\end{aligned}\]</p></div>
+              </div>
+              <p>At $x^* = (2,2)$, the third primal constraint is not tight, so complementary slackness implies $y_3=0$. Since $x_1^*>0$ and $x_2^*>0$, the first two dual constraints are tight:
+              \[ y_1+2y_2=3, \qquad y_1+y_2+y_3=2. \]</p>
+              <p class="fragment">With $y_3=0$, this has a unique solution $y = (1,1,0)$.  <span class="fragment"> Complementary slackness implies that any optimal dual solution must satisfy these conditions, so $(1,1,0)$ must be an optimal dual solution!</span></p>
+          </section>
+          <section>
+              <h3>Recovering a Dual Solution III</h3>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div><p><b>Primal</b></p><p>\[\begin{aligned}\max\quad &3x_1+2x_2\\ &x_1+x_2=4\\ &2x_1+x_2\le6\\ &x_2\le3\\ &x_1,x_2\ge0\end{aligned}\]</p></div>
+                  <div class="darkBlueText"><p><b>Dual</b></p><p>\[\begin{aligned}\min\quad &4y_1+6y_2+3y_3\\ &y_1+2y_2\ge3\\ &y_1+y_2+y_3\ge2\\ &y_1\text{ free},\ y_2,y_3\ge0\end{aligned}\]</p></div>
+              </div>
+              <p>Let's check for $y = (1,1,0)$:
+              $
+              \begin{aligned}y_1+2y_2 = 3 \ge3\\ y_1+y_2+y_3 = 2\ge2\\ y_1 = 1\text{ (free)},\ y_2 = 1\ge0,\ y_3=0\ge0 \\ 4y_1 + 6 y_2 + 3y_3 = 10 = c^{\intercal}x^*\end{aligned}.
+              $
+              </p>
+          </section>
+          <section>
+              <h3>Complementary Slackness for More General LPs</h3>
+              <p> In summary, nonnegative primal variables are associated to inequality dual constraints, and those dual constraints are tight if that primal variable is positive.</p>
+              <p> Primal inequality constraints are associated to nonnegative dual variables, and those dual variables are 0 if the associated constraint is not held at equality for any optimal solution.</p>
+          </section>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

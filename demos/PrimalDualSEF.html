@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Primal–Dual SEF Explorer</title>
+<style>
+:root{color-scheme:light;--paper:#fdf6e3;--panel:#fffaf0;--line:#d6cfbd;--ink:#073642;--muted:#586e75;--primal:#6b7e00;--dual:#164b78;--orange:#cb4b16;--red:#c32c2b}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.4 system-ui,-apple-system,sans-serif}button,input,select{font:inherit;color:inherit}button,select,input{border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:5px}button{cursor:pointer}button:hover{border-color:#268bd2}input[type=number]{width:66px;min-width:0;font-variant-numeric:tabular-nums}input:invalid{outline:2px solid var(--red)}h1{font-size:21px;margin:0}h2{font-size:18px;margin:0}h3{font-size:14px;margin:0}.shell{padding:12px;max-width:1600px;margin:auto}.top{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:10px}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.workspace{display:grid;grid-template-columns:310px minmax(0,1fr);gap:12px}.card{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.26);padding:11px}.editor table{width:100%;border-collapse:collapse;margin:6px 0 10px}.editor th{font-weight:500;color:var(--muted);font-size:12px}.editor td{padding:2px}.editor td input{width:100%;min-width:0;padding:5px 3px}.editor p{margin:8px 0}.fixed{border-left:3px solid var(--primal);background:#eee8d5;padding:6px 9px;font-size:13px;margin:6px 0 10px}.small{font-size:12px;color:var(--muted)}.views{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0}.view{min-width:0;padding:10px}.view header{display:flex;align-items:center;justify-content:space-between;gap:8px}.primal h2{color:var(--primal)}.dual h2,.dual .lp{color:var(--dual)}.lp{font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;overflow-x:auto;margin:8px 0;min-height:104px}.lp .objective{font-weight:700}.lp .tight{color:var(--red);font-weight:700}.lp .tag{display:inline-block;width:31px}.plot{position:relative;margin:8px 0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}canvas{display:block;width:100%;height:300px;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}.badge{border-radius:20px;background:#eee8d5;padding:3px 8px;font-size:12px;white-space:nowrap}.badge.optimal{color:#506000;background:#e9edce}.badge.infeasible{color:var(--red);background:#f6e1d9}.badge.unbounded{color:#9c3e13;background:#f9e8d6}.status{min-height:61px;font-size:13px;margin-top:6px}.status p{margin:3px 0}.pair-status{margin-top:10px;padding:8px 11px;border-left:3px solid #268bd2;background:#eee8d5;font-size:13px}.cs{margin-top:10px;font-size:13px}.cs table{border-collapse:collapse;margin-top:4px}.cs th,.cs td{padding:3px 12px 3px 0;text-align:left;font-variant-numeric:tabular-nums}.cs th{font-weight:500;color:var(--muted);font-size:12px}.cs .zero{color:var(--muted)}.cs .pos{font-weight:700}.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}.swatch{width:12px;height:10px;display:inline-block;vertical-align:middle;margin-right:4px}.key-point{display:inline-block;color:#859900;font-size:16px;line-height:10px}.error{color:var(--red);min-height:18px}.note{margin-top:8px}.preset{max-width:200px}.view-range input{width:64px}.legend .dash{border-top:2px dashed #93a1a1;width:18px;display:inline-block;vertical-align:middle;margin-right:4px}a{color:var(--dual)}
+@media(max-width:1000px){.workspace{grid-template-columns:270px minmax(0,1fr)}.views{gap:8px}.lp{font-size:12px}.card{padding:8px}canvas{height:260px}}
+@media(max-width:760px){.workspace{grid-template-columns:1fr}.editor table{max-width:480px}.views{grid-template-columns:1fr 1fr}canvas{height:250px}.top h1{font-size:18px}}
+@media(max-width:540px){.views{grid-template-columns:1fr}canvas{height:300px}}
+body.embedded{font-size:12px}body.embedded .workspace{grid-template-columns:260px minmax(0,1fr)}body.embedded .shell{padding:8px}body.embedded h1{font-size:18px}body.embedded h2{font-size:16px}body.embedded canvas{height:225px}body.embedded .card{padding:8px}body.embedded .lp{font-size:12px;min-height:92px}body.embedded .small{font-size:11px}body.embedded .status{min-height:50px;font-size:12px}body.embedded .cs{font-size:12px;margin-top:6px}body.embedded .note{margin-bottom:0}body.embedded .top{margin-bottom:8px}body.embedded .editor-tip,body.embedded .editor-help,body.embedded .legend,body.embedded .note{display:none}
+@media(max-width:760px){body.embedded .workspace{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="shell">
+ <div class="top"><h1>Primal–Dual SEF Explorer</h1><div class="toolbar"><label>Example <select id="preset" class="preset"><option value="bounded">Bounded pair</option><option value="redundant">Redundant rows (dual optimum is an edge)</option><option value="unbounded">Unbounded primal</option><option value="dualunb">Infeasible primal</option><option value="both">Both infeasible</option></select></label><button id="reset" type="button">Reset example</button></div></div>
+ <div class="workspace">
+  <section class="editor card" aria-labelledby="editor-heading">
+   <h2 id="editor-heading">Edit the primal (SEF)</h2>
+   <div class="fixed">Standard equality form: <b>maximize</b> cᵀx subject to <b>Ax = b</b>, <b>x ≥ 0</b>, with 2 constraints and 3 variables.</div>
+   <table aria-label="Objective coefficients"><thead><tr><th>c₁</th><th>c₂</th><th>c₃</th></tr></thead><tbody><tr id="objective-inputs"></tr></tbody></table>
+   <h3>Constraints Ax = b</h3>
+   <table aria-label="Constraint coefficients and right-hand side"><thead><tr><th>x₁</th><th>x₂</th><th>x₃</th><th></th><th>b</th></tr></thead><tbody id="constraint-inputs"></tbody></table>
+   <div id="error" class="error" role="alert"></div>
+   <p class="small editor-tip">Every change updates the dual, both solutions, and both pictures. Coefficients may be negative or fractional.</p>
+   <hr style="border:0;border-top:1px solid var(--line)">
+   <label class="view-range">Viewing box: −R to R, R = <input id="range" type="number" min="0.1" max="10000" value="5" step="any"></label>
+   <p><button id="fit" type="button">Fit solution points</button> <button id="camera" type="button">Reset cameras</button></p>
+   <p class="small"><b>Viewing box only.</b> The solver ignores this box. Dashed edges mark clipped parts; the set may continue beyond them.</p>
+   <p class="small editor-help">Primal: drag to rotate, scroll to zoom. Dual: drag to pan, scroll to zoom.</p>
+  </section>
+  <div>
+   <div class="views">
+    <section class="card view primal"><header><h2>Primal</h2><span class="badge" id="p-badge"></span></header><div class="lp" id="p-lp" aria-label="Primal linear program"></div><div id="p-status" class="status" aria-live="polite"></div><div class="plot"><canvas id="p-canvas" aria-label="Rotatable 3D picture of the primal feasible set, objective direction, and solution point" role="img"></canvas></div></section>
+    <section class="card view dual"><header><h2>Dual</h2><span class="badge" id="d-badge"></span></header><div class="lp" id="d-lp" aria-label="Automatically derived dual linear program"></div><div id="d-status" class="status" aria-live="polite"></div><div class="plot"><canvas id="d-canvas" aria-label="2D picture of the dual feasible region, objective direction, and solution point" role="img"></canvas></div></section>
+   </div>
+  </div>
+ </div>
+</main>
+<script src="lib/lp3-core.js"></script>
+<script src="lib/sef2-core.js"></script>
+<script>
+'use strict';
+document.body.classList.toggle('embedded',new URLSearchParams(location.search).has('embed'));
+const $=id=>document.getElementById(id),{dot,norm,add,sub,mul}=LP3;
+const presets={
+ bounded:{A:[[1,0,1],[0,4,1]],b:[4,8],c:[1,2,2]},
+ redundant:{A:[[1,1,1],[2,2,2]],b:[3,6],c:[1,2,3]},
+ unbounded:{A:[[1,-1,0],[0,1,-1]],b:[1,1],c:[1,1,1]},
+ dualunb:{A:[[1,1,1],[1,1,1]],b:[1,2],c:[1,0,0]},
+ both:{A:[[1,-1,0],[-1,1,0]],b:[1,1],c:[0,0,1]}
+};
+const SUB=['₁','₂','₃'];
+function numeric(id,label){return `<input type="number" id="${id}" step="any" min="-1000000" max="1000000" aria-label="${label}">`;}
+for(let j=0;j<3;j++)$('objective-inputs').insertAdjacentHTML('beforeend',`<td>${numeric('c'+j,'Objective coefficient of x'+(j+1))}</td>`);
+for(let i=0;i<2;i++){
+ const tr=document.createElement('tr');
+ tr.innerHTML=[0,1,2].map(j=>`<td>${numeric('a'+i+j,'Row '+(i+1)+' coefficient of x'+(j+1))}</td>`).join('')+`<td>=</td><td>${numeric('b'+i,'Right hand side '+(i+1))}</td>`;
+ $('constraint-inputs').append(tr);
+}
+const fmt=x=>{if(Math.abs(x)<1e-8)return '0';return Number(x.toPrecision(5)).toString().replace('-','−');};
+const vector=x=>'('+x.map(fmt).join(', ')+')';
+function expression(coeff,name){
+ let out='';coeff.forEach((v,j)=>{if(Math.abs(v)<1e-12)return;const mag=Math.abs(v),term=(mag===1?'':fmt(mag))+name+'<sub>'+(j+1)+'</sub>';out+=(out?(v<0?' − ':' + '):(v<0?'−':''))+term;});return out||'0';
+}
+function showPrimalLP(p,r){
+ const tight=r&&r.status==='optimal'&&r.x?r.x.map(v=>Math.abs(v)<=1e-7):[0,0,0].map(()=>false);
+ $('p-lp').innerHTML='<div class="objective"><span class="tag">max</span>'+expression(p.c,'x')+'</div>'+p.A.map((a,i)=>'<div><span class="tag">'+(i===0?'s.t.':'')+'</span>'+expression(a,'x')+' = '+fmt(p.b[i])+'</div>').join('')+'<div><span class="tag"></span>'+[0,1,2].map(j=>'<span'+(tight[j]?' class="tight" title="Tight at the displayed optimum"':'')+'>x<sub>'+(j+1)+'</sub> ≥ 0</span>').join(', ')+'</div>';
+}
+function showDualLP(p,r){
+ const d=SEF2.dualLP(p),slack=r&&r.status==='optimal'&&r.x?SEF2.dualSlacks(p,r.x):null;
+ $('d-lp').innerHTML='<div class="objective"><span class="tag">min</span>'+expression(d.c,'y')+'</div>'+d.A.map((a,j)=>{
+  const t=slack&&Math.abs(slack[j])<=1e-7*Math.max(1,Math.abs(d.b[j]),norm(a)*norm(r.x));
+  return '<div'+(t?' class="tight" title="Tight at the displayed optimum"':'')+'><span class="tag">'+(j===0?'s.t.':'')+'</span>'+expression(a,'y')+' ≥ '+fmt(d.b[j])+'</div>';
+ }).join('')+'<div><span class="tag"></span>y<sub>1</sub>, y<sub>2</sub> free</div>';
+}
+function read(){
+ const val=id=>{const e=$(id);if(!e.checkValidity()||e.value.trim()===''||!Number.isFinite(e.valueAsNumber))throw Error('Enter a finite number between −1,000,000 and 1,000,000 in every coefficient field.');return e.valueAsNumber;};
+ return {A:[0,1].map(i=>[0,1,2].map(j=>val('a'+i+j))),b:[0,1].map(i=>val('b'+i)),c:[0,1,2].map(j=>val('c'+j))};
+}
+/* ---------- shared view helpers ---------- */
+class Base{
+ constructor(prefix){
+  this.id=prefix;this.canvas=$(prefix+'-canvas');this.ctx=this.canvas.getContext('2d');this.R=5;
+  new ResizeObserver(()=>this.draw()).observe(this.canvas);
+ }
+ setup(){
+  const canvas=this.canvas,rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(rect.width===0||rect.height===0)return false;
+  canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);this.width=rect.width;this.height=rect.height;
+  const c=this.ctx;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,this.width,this.height);c.lineWidth=1;return true;
+ }
+ arrowHead(p,q,color){const angle=Math.atan2(q[1]-p[1],q[0]-p[0]),c=this.ctx;c.beginPath();c.moveTo(q[0],q[1]);c.lineTo(q[0]-8*Math.cos(angle-.4),q[1]-8*Math.sin(angle-.4));c.lineTo(q[0]-8*Math.cos(angle+.4),q[1]-8*Math.sin(angle+.4));c.closePath();c.fillStyle=color;c.fill();}
+ text(s,p,color='#586e75',offset=[5,-5]){const c=this.ctx;c.font='12px system-ui';c.lineWidth=3;c.strokeStyle='#fffaf0';c.strokeText(s,p[0]+offset[0],p[1]+offset[1]);c.fillStyle=color;c.fillText(s,p[0]+offset[0],p[1]+offset[1]);c.lineWidth=1;}
+ update(p,solution){this.p=p;this.solution=solution;this.rebuild();this.draw();}
+ rebuild(){this.R=Number($('range').value)||5;}
+}
+/* ---------- primal: 3D ---------- */
+class Primal3D extends Base{
+ constructor(){
+  super('p');this.reset();
+  const canvas=this.canvas;let drag=null;
+  canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);});
+  canvas.addEventListener('pointermove',e=>{if(!drag)return;this.yaw+=(e.clientX-drag.x)*.009;this.pitch=Math.max(-1.45,Math.min(1.45,this.pitch+(e.clientY-drag.y)*.009));drag={x:e.clientX,y:e.clientY};this.draw();});
+  const end=()=>drag=null;canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);canvas.addEventListener('lostpointercapture',end);
+  canvas.addEventListener('wheel',e=>{e.preventDefault();this.zoom=Math.max(.3,Math.min(4,this.zoom*Math.exp(-e.deltaY*.001)));this.draw();},{passive:false});
+ }
+ reset(){this.yaw=-.65;this.pitch=.48;this.zoom=1;}
+ rebuild(){
+  super.rebuild();const p=this.p,R=this.R,nn=['nonnegative','nonnegative','nonnegative'];
+  this.faces=this.solution&&this.solution.status==='infeasible'?[]:LP3.mesh(SEF2.primalLP(p),R);
+ }
+ project(v){
+  const co=Math.cos(this.yaw),si=Math.sin(this.yaw),cp=Math.cos(this.pitch),sp=Math.sin(this.pitch);
+  const x=co*v[0]-si*v[1],y=si*v[0]+co*v[1],z=cp*v[2]-sp*y;
+  const scale=Math.min(this.width,this.height)*.36*this.zoom/this.R;
+  return [this.width/2+x*scale,this.height/2-z*scale,cp*y+sp*v[2]];
+ }
+ path(points){const c=this.ctx;if(!points.length)return;c.beginPath();points.forEach((v,i)=>{const q=this.project(v);i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);});}
+ segment(a,b,color,dash=[]){const c=this.ctx;this.path([a,b]);c.strokeStyle=color;c.setLineDash(dash);c.stroke();c.setLineDash([]);}
+ label(v,s,color,offset){this.text(s,this.project(v),color,offset);}
+ arrow(a,b,color){this.segment(a,b,color);this.arrowHead(this.project(a),this.project(b),color);}
+ draw(){
+  if(!this.p||!this.setup())return;
+  const c=this.ctx,R=this.R,solution=this.solution,cn=norm(this.p.c);
+  for(let i=-2;i<=2;i++){this.segment([-R,i*R/2,0],[R,i*R/2,0],'#e7e0cf');this.segment([i*R/2,-R,0],[i*R/2,R,0],'#e7e0cf');}
+  // Feasible set: thick green.
+  const feas=(this.faces||[]).map(f=>({...f,depth:f.points.reduce((s,v)=>s+this.project(v)[2],0)/f.points.length}));
+  feas.sort((a,b)=>a.depth-b.depth);
+  for(const f of feas){
+   if(f.points.length>=3){this.path(f.points);c.closePath();c.fillStyle='rgba(133,153,0,.30)';c.fill();}
+   if(f.points.length===1){const q=this.project(f.points[0]);c.beginPath();c.arc(q[0],q[1],4,0,2*Math.PI);c.fillStyle='#6b7e00';c.fill();continue;}
+   this.path(f.points);if(f.points.length>=3)c.closePath();c.strokeStyle='#6b7e00';c.lineWidth=3;c.setLineDash(f.box?[6,4]:[]);c.stroke();c.setLineDash([]);c.lineWidth=1;
+  }
+  for(let i=0;i<3;i++){const a=[0,0,0],b=[0,0,0];a[i]=-R;b[i]=R;this.segment(a,b,'#93a1a1');this.label(b,'x'+SUB[i]);this.label(a,'−'+fmt(R),'#93a1a1',[3,12]);}
+  this.label([0,0,0],'0','#93a1a1',[3,13]);
+  if(cn>1e-12){const dir=mul(this.p.c,1/cn),end=mul(dir,R*.65);c.lineWidth=2;this.arrow([0,0,0],end,'#cb4b16');this.label(end,'max improves','#cb4b16',[5,12]);c.lineWidth=1;}
+  if(solution&&solution.x){
+   if(solution.x.every(v=>Math.abs(v)<=R+1e-7)){
+    const q=this.project(solution.x);c.beginPath();c.arc(q[0],q[1],5,0,2*Math.PI);c.fillStyle='#859900';c.fill();c.strokeStyle='#073642';c.lineWidth=1.5;c.stroke();c.lineWidth=1;this.label(solution.x,solution.status==='optimal'?'x*':'feasible','#506000',[8,-8]);
+    if(solution.ray&&norm(solution.ray)>1e-12){
+     let length=R;solution.ray.forEach((v,i)=>{if(v>1e-9)length=Math.min(length,(R-solution.x[i])/v);if(v<-1e-9)length=Math.min(length,(-R-solution.x[i])/v);});
+     c.lineWidth=2;this.arrow(solution.x,add(solution.x,mul(solution.ray,Math.max(0,length*.85))),'#cb4b16');c.lineWidth=1;
+    }
+   }else{c.fillStyle='#9c3e13';c.font='12px system-ui';c.fillText('Solution outside view — use Fit solution points',8,this.height-27);}
+  }
+  c.fillStyle='#586e75';c.font='12px system-ui';
+  c.fillText('Drag to rotate · scroll to zoom',8,this.height-9);
+  c.fillText(cn>1e-12?'Arrow: direction of objective improvement':'Zero objective: constant value 0',8,18);
+  if(solution&&solution.status==='infeasible'){c.fillStyle='#c32c2b';c.fillText('Empty feasible set',8,36);}
+  else if(!this.faces.length){c.fillStyle='#586e75';c.fillText('No feasible points inside this viewing box',8,36);}
+ }
+}
+/* ---------- dual: 2D ---------- */
+function clipHalfPlane(poly,a,rhs){ // keep a.y >= rhs
+ const out=[];
+ for(let i=0;i<poly.length;i++){
+  const P=poly[i],Q=poly[(i+1)%poly.length],dp=a[0]*P[0]+a[1]*P[1]-rhs,dq=a[0]*Q[0]+a[1]*Q[1]-rhs;
+  if(dp>=0)out.push(P);
+  if((dp>0&&dq<0)||(dp<0&&dq>0)){const t=dp/(dp-dq);out.push([P[0]+t*(Q[0]-P[0]),P[1]+t*(Q[1]-P[1])]);}
+ }
+ return out;
+}
+class Dual2D extends Base{
+ constructor(){
+  super('d');this.reset();
+  const canvas=this.canvas;let drag=null;
+  canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);});
+  canvas.addEventListener('pointermove',e=>{if(!drag)return;const s=this.scale();this.cx-=(e.clientX-drag.x)/s;this.cy+=(e.clientY-drag.y)/s;drag={x:e.clientX,y:e.clientY};this.draw();});
+  const end=()=>drag=null;canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);canvas.addEventListener('lostpointercapture',end);
+  canvas.addEventListener('wheel',e=>{e.preventDefault();this.zoom=Math.max(.3,Math.min(8,this.zoom*Math.exp(-e.deltaY*.001)));this.draw();},{passive:false});
+ }
+ reset(){this.zoom=1;this.cx=0;this.cy=0;}
+ scale(){return Math.min(this.width||300,this.height||300)*.4*this.zoom/this.R;}
+ P(y){const s=this.scale();return [this.width/2+(y[0]-this.cx)*s,this.height/2-(y[1]-this.cy)*s];}
+ rebuild(){
+  super.rebuild();const R=this.R;let poly=[[-R,-R],[R,-R],[R,R],[-R,R]];
+  this.rows=[0,1,2].map(j=>SEF2.column(this.p,j));
+  if(!(this.solution&&this.solution.status==='infeasible'))for(let j=0;j<3&&poly.length;j++){if(norm(this.rows[j])>1e-12)poly=clipHalfPlane(poly,this.rows[j],this.p.c[j]);else if(this.p.c[j]>0)poly=[];}
+  else poly=[];
+  this.poly=poly;
+ }
+ poly2(pts){const c=this.ctx;c.beginPath();pts.forEach((v,i)=>{const q=this.P(v);i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);});}
+ line(p0,d,color,w,dash=[]){const c=this.ctx,K=1e4;c.beginPath();const a=this.P([p0[0]-d[0]*K,p0[1]-d[1]*K]),b=this.P([p0[0]+d[0]*K,p0[1]+d[1]*K]);c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.strokeStyle=color;c.lineWidth=w;c.setLineDash(dash);c.stroke();c.setLineDash([]);c.lineWidth=1;}
+ draw(){
+  if(!this.p||!this.setup())return;
+  const c=this.ctx,R=this.R,s=this.solution,b=this.p.b,bn=norm(b);
+  // grid + axes
+  const step=R/2;for(let i=-40;i<=40;i++){this.line([i*step,0],[0,1],'#e7e0cf',1);this.line([0,i*step],[1,0],'#e7e0cf',1);}
+  this.line([0,0],[1,0],'#93a1a1',1);this.line([0,0],[0,1],'#93a1a1',1);
+  this.text('y₁',[this.width-22,this.height/2],'#586e75',[0,-5]);this.text('y₂',[this.width/2,14],'#586e75',[6,0]);
+  // viewing box
+  this.poly2([[-R,-R],[R,-R],[R,R],[-R,R]]);c.closePath();c.strokeStyle='#93a1a1';c.setLineDash([4,4]);c.stroke();c.setLineDash([]);
+  // feasible region
+  if(this.poly.length>=3){this.poly2(this.poly);c.closePath();c.fillStyle='rgba(38,139,210,.18)';c.fill();}
+  else if(this.poly.length===2){this.poly2(this.poly);c.strokeStyle='#164b78';c.lineWidth=3;c.stroke();c.lineWidth=1;}
+  // outline of the feasible region
+  if(this.poly.length>=3){this.poly2(this.poly);c.closePath();c.strokeStyle='#164b78';c.lineWidth=1.5;c.stroke();c.lineWidth=1;}
+  // objective: minimize b.y  (improvement = -b)
+  if(bn>1e-12){
+   const dir=mul(b,-1/bn),end=mul(dir,R*.65),p=this.P([0,0]),q=this.P(end);c.lineWidth=2;c.beginPath();c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.strokeStyle='#cb4b16';c.stroke();this.arrowHead(p,q,'#cb4b16');c.lineWidth=1;
+  }
+  if(s&&s.x){
+   if(s.x.every(v=>Math.abs(v)<=R+1e-7)){
+    const q=this.P(s.x);c.beginPath();c.arc(q[0],q[1],5,0,2*Math.PI);c.fillStyle='#268bd2';c.fill();c.strokeStyle='#073642';c.lineWidth=1.5;c.stroke();c.lineWidth=1;this.text(s.status==='optimal'?'y*':'feasible',q,'#164b78',[8,-8]);
+    if(s.ray&&norm(s.ray)>1e-12){const rn=norm(s.ray),e=add(s.x,mul(s.ray,R*.5/rn)),pp=this.P(s.x),qq=this.P(e);c.lineWidth=2;c.beginPath();c.moveTo(pp[0],pp[1]);c.lineTo(qq[0],qq[1]);c.strokeStyle='#cb4b16';c.stroke();this.arrowHead(pp,qq,'#cb4b16');c.lineWidth=1;}
+   }else{c.fillStyle='#9c3e13';c.font='12px system-ui';c.fillText('Solution outside view — use Fit solution points',8,this.height-27);}
+  }
+  c.fillStyle='#586e75';c.font='12px system-ui';
+  c.fillText('Drag to pan · scroll to zoom',8,this.height-9);
+  c.fillText(bn>1e-12?'Arrow: direction of objective improvement':'Zero objective: constant value 0',8,18);
+  if(s&&s.status==='infeasible'){c.fillStyle='#c32c2b';c.fillText('Empty feasible region',8,36);}
+  else if(this.poly.length<2){c.fillStyle='#586e75';c.fillText('No feasible points inside this viewing box',8,36);}
+ }
+}
+const views=[new Primal3D(),new Dual2D()];
+let results=null,timer;
+function resultText(prefix,r){
+ const badge=$(prefix+'-badge');badge.textContent=r.status==='numerical'?'Numerical difficulty':r.status;badge.className='badge '+r.status;
+ const el=$(prefix+'-status'),name=prefix==='p'?'x':'y',sense=prefix==='p'?'above':'below';
+ if(r.status==='optimal')el.innerHTML='<p><b>Optimal value: '+fmt(r.value)+'</b></p><p>One optimal solution: '+name+'* = '+vector(r.x)+'</p>';
+ else if(r.status==='unbounded')el.innerHTML='<p><b>Unbounded '+sense+'</b></p><p>Feasible point '+vector(r.x)+'; improving ray '+vector(r.ray)+'.</p>';
+ else if(r.status==='infeasible')el.textContent='No point satisfies all the constraints.';
+ else el.textContent='The solver could not certify a result at this numerical scale. Try rescaling the coefficients.';
+}
+function update(){
+ let p;try{p=read();$('error').textContent='';}catch(e){$('error').textContent=e.message;return;}
+ const rs=[SEF2.solvePrimal(p),SEF2.solveDual(p)];results=rs;
+ showPrimalLP(p,rs[0]);showDualLP(p,rs[1]);
+ resultText('p',rs[0]);resultText('d',rs[1]);views[0].update(p,rs[0]);views[1].update(p,rs[1]);
+}
+function loadPreset(){
+ const p=presets[$('preset').value];
+ for(let j=0;j<3;j++)$('c'+j).value=p.c[j];
+ for(let i=0;i<2;i++){$('b'+i).value=p.b[i];for(let j=0;j<3;j++)$('a'+i+j).value=p.A[i][j];}
+ $('range').value=5;views.forEach(v=>v.reset());update();
+}
+$('preset').addEventListener('change',loadPreset);$('reset').addEventListener('click',loadPreset);
+document.querySelector('.editor').addEventListener('input',e=>{if(e.target.id==='range')return;clearTimeout(timer);timer=setTimeout(update,100);});
+$('range').addEventListener('input',()=>{if(!$('range').checkValidity()||!$('range').value)return;views.forEach(v=>{if(v.p){v.rebuild();v.draw();}});});
+$('fit').addEventListener('click',()=>{if(!results)return;const coordinates=results.flatMap(r=>r.x||[]);const extent=Math.max(2,...coordinates.map(Math.abs))*1.35;$('range').value=Math.min(10000,Math.ceil(extent*10)/10);views.forEach(v=>{v.rebuild();v.draw();});});
+$('camera').addEventListener('click',()=>views.forEach(v=>{v.reset();v.draw();}));
+loadPreset();
+</script>
+</body>
+</html>
