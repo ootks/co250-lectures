@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Normal fan of the quadrilateral with vertices (0,0) orange, (4,0) blue, (3,3) green, (0,2) magenta.
+       The plane of objective vectors c is split into the four normal cones, colored by the vertex
+       each cone maximizes. Cone boundaries are the edge normals (0,-1), (3,1), (-1,3), (-1,0).
+       Plane center at (150,150); no text. -->
+  <polygon points="150,150 290,103.33 290,10 103.33,10" fill="#859900" fill-opacity="0.45"/>
+  <polygon points="150,150 103.33,10 10,10 10,150" fill="#d33682" fill-opacity="0.45"/>
+  <polygon points="150,150 10,150 10,290 150,290" fill="#cb4b16" fill-opacity="0.45"/>
+  <polygon points="150,150 150,290 290,290 290,103.33" fill="#268bd2" fill-opacity="0.45"/>
+
+  <g stroke="#586e75" stroke-width="3" stroke-linecap="round">
+    <line x1="150" y1="150" x2="290" y2="103.33"/>
+    <line x1="150" y1="150" x2="103.33" y2="10"/>
+    <line x1="150" y1="150" x2="10" y2="150"/>
+    <line x1="150" y1="150" x2="150" y2="290"/>
+  </g>
+
+  <rect x="10" y="10" width="280" height="280" fill="none" stroke="#93a1a1" stroke-width="1.5"/>
+  <circle cx="150" cy="150" r="6" fill="#586e75"/>
+</svg>

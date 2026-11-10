@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+          <h2>Introduction to Optimization</h2>
+          <h3>CO 250</h3>
+          <br>
+          <h4>Lecture 16</h4>
+          <br>
+          <p class="centered"><a href="?view=scroll">Scroll view</a></p>
+          <p class="centered"><a href="beamer/lecture16.pdf">PDF version of these slides</a> <em>(demo: this PDF version is experimental and may contain errors or differ from the slides)</em></p>
+      </section>
+      <section>
+          <h2>Lecture Outline</h2>
+          <ul>
+              <li>Review of Complementary Slackness</li>
+              <li>Strong Duality and Farkas' Lemma</li>
+              <li>Normal Cones</li>
+          </ul>
+      </section>
+      <section>
+          <section>
+              <h2>Review: Complementary Slackness</h2>
+          </section>
+          <section>
+              <h3>Review: Duality</h3>
+              <ul>
+                  <li> Every linear program has a dual linear program. </li>
+                  <li> Dual constraints correspond to primal variables. </li>
+                  <li> Dual variables correspond to primal constraints. </li>
+                  <li class=fragment> Variable sign conditions should be thought of as being part of the variable definition and not a separate constraint for these purposes. </li>
+                  <li class=fragment> Inequality constraints correspond to dual variables with sign constraints, and sign-constrained variables correspond to dual inequality constraints.</li>
+              </ul>
+          </section>
+          <section>
+              <h3>Review: Complementary Slackness</h3>
+              <ul>
+                  <li> For each primal inequality constraint, the dual variable will either be 0 or nonzero.  </li>
+                  <li> For an optimal solution $x^*$ to the LP, a primal inequality is tight if the left and right sides of the inequality are equal at $x^*$. It is slack otherwise. </li>
+                  <li> <b>Theorem:</b> If $x^*$ is an optimal solution to an LP, and a given primal inequality is slack, then the dual variable is equal to 0. </li>
+                  <li class=fragment> Each LP is the dual of its dual LP, so the dual concept holds. </li>
+                  <li class=fragment> <b>Theorem:</b> If $x^*$ is an optimal solution to an LP, and $x_i \ge 0$ is a nonnegativity constraint, and $x^*_i > 0$, then for any optimal solution $y^*$ to the dual LP, the corresponding inequality in the dual LP is tight. </li>
+              </ul>
+          </section>
+          <section>
+              <h3>Complementary Slackness Example</h3>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around; font-size:0.85em;">
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &3x_1+4x_2-x_3\\
+                          \text{s.t.}\quad &x_1+2x_2+x_3\le-1,\\
+                          &2x_1+x_2-x_3=1,\\
+                          &x_1-x_2+2x_3\ge-3,\\
+                          &x_1\ge0,\ x_2\text{ free},\ x_3\le0.
+                      \end{aligned}\]</p>
+                  </div>
+                  <div class="darkBlueText" style="flex:1; min-width:0;">
+                      <p class="centered"><b>Dual</b></p>
+                      <p>\[\begin{aligned}
+                          \min\quad &-y_1+y_2-3y_3\\
+                          \text{s.t.}\quad &y_1+2y_2+y_3\ge3,\\
+                          &2y_1+y_2-y_3=4,\\
+                          &y_1-y_2+2y_3\le-1,\\
+                          &y_1\ge0,\ y_2\text{ free},\ y_3\le0.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class="centered">The optimal primal solution: $x^*=(0,\,0,\,-1)$, with optimal value $1$.</p>
+          </section>
+          <section>
+              <style>
+                  .reveal .cs-table .fragment.highlight-green.visible { color: #07a221; }
+                  .reveal .cs-table th, .reveal .cs-table td { font-size: 24px; padding: 3px 14px; white-space: nowrap; }
+              </style>
+              <h3>Complementary Slackness Example</h3>
+              <table class="cs-table">
+                  <thead><tr><th>Primal</th><th></th><th class="darkBlueText">Dual</th></tr></thead>
+                  <tbody>
+                      <tr><td colspan="3" style="color:#93a1a1;"><em>Constraints $\leftrightarrow$ dual variables</em></td></tr>
+                      <tr><td> $x_1+2x_2+x_3\le-1$</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_1\ge0$</td></tr>
+                      <tr><td> $2x_1+x_2-x_3=1$</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_2$ free</td></tr>
+                      <tr><td> $x_1-x_2+2x_3\ge-3$</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_3\le0$</td></tr>
+                      <tr><td colspan="3" style="color:#93a1a1;"><em>Variables $\leftrightarrow$ dual constraints</em></td></tr>
+                      <tr><td>$x_1\ge0$</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_1+2y_2+y_3\ge3$</td></tr>
+                      <tr><td>$x_2$ free</td><td>$\leftrightarrow$</td><td class="darkBlueText">$2y_1+y_2-y_3=4$</td></tr>
+                      <tr><td>$x_3\le0$</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_1-y_2+2y_3\le-1$</td></tr>
+                  </tbody>
+              </table>
+          </section>
+          <section data-auto-animate>
+              <h3 data-id="cs-title">Complementary Slackness Example</h3>
+              <table class="cs-table">
+                  <thead><tr><th>Primal at $x^*$</th><th></th><th class="darkBlueText">Dual</th></tr></thead>
+                  <tbody>
+                      <tr><td colspan="3" style="color:#93a1a1;"><em>Constraints $\leftrightarrow$ dual variables</em></td></tr>
+                      <tr><td><span class="fragment highlight-green" data-fragment-index="1">$x^*_1+2x^*_2+x^*_3=-1\le-1$</span></td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_1\ge0$</td></tr>
+                      <tr><td><span class="fragment highlight-green" data-fragment-index="1">$2x^*_1+x^*_2-x^*_3=1=1$</span></td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_2$ free</td></tr>
+                      <tr><td><span class="fragment highlight-red" data-fragment-index="1">$x^*_1-x^*_2+2x^*_3=-2\ge-3$</span></td><td>$\leftrightarrow$</td><td class="darkBlueText"><span data-id="eq1" style="display:inline-block">$y_3\le0$</span> <b class="fragment" data-fragment-index="2">(tight)</b></td></tr>
+                      <tr><td colspan="3" style="color:#93a1a1;"><em>Variables $\leftrightarrow$ dual constraints</em></td></tr>
+                      <tr>
+                          <td><span class="fragment highlight-green" data-fragment-index="1">$x^*_1=0\ge0$</span></td>
+                          <td>$\leftrightarrow$</td>
+                          <td class="darkBlueText">$y_1+2y_2+y_3\ge3$</td>
+                      </tr>
+                      <tr>
+                          <td><span class="fragment highlight-red" data-fragment-index="1">$x^*_2=0$ <em>(free)</em></span></td>
+                          <td>$\leftrightarrow$</td>
+                          <td class="darkBlueText"><span data-id="eq2" style="display:inline-block">$2y_1+y_2-y_3=4$</span> <b class="fragment" data-fragment-index="2">(tight)</b></td>
+                      </tr>
+                      <tr>
+                          <td><span class="fragment highlight-red" data-fragment-index="1">$x^*_3=-1\le0$</span></td>
+                          <td>$\leftrightarrow$</td>
+                          <td class="darkBlueText"><span data-id="eq3" style="display:inline-block">$y_1-y_2+2y_3\le-1$</span> <b class="fragment" data-fragment-index="2">(tight)</b></td>
+                      </tr>
+                  </tbody>
+              </table>
+              <p class="fragment" data-fragment-index="1" style="font-size:24px;"><span style="color:#ff2c2d;">Red</span>: inequalities with slack at $x^* = (0,0,-1)$. <span style="color:#07a221;">Green</span>: rows with no slack (tight).</p>
+          </section>
+          <section data-auto-animate>
+              <h3 data-id="cs-title">Complementary Slackness Example</h3>
+              <p> We find from the previous considerations that for any dual optimal solution, $y_3=0$ (its primal constraint has slack), and the dual constraints for $x_2$ (free) and $x_3<0$ (sign constraint with slack) are tight: </p>
+              <div class="darkBlueText" style="text-align:center;">
+                  <p><span data-id="eq1" style="display:inline-block">\(\displaystyle y_3=0\)</span></p>
+                  <p><span data-id="eq2" style="display:inline-block">\(\displaystyle 2y_1+y_2-y_3=4\)</span></p>
+                  <p><span data-id="eq3" style="display:inline-block">\(\displaystyle y_1-y_2+2y_3=-1\)</span></p>
+              </div>
+              <p> There is a unique solution to these 3 equations in 3 unknowns. </p>
+              <p class="fragment darkBlueText">\[y^*=(y_1,y_2,y_3)=(1,\,2,\,0).\]</p>
+          </section>
+          <section>
+
+              <h2>Complementary Slackness Example II</h2>
+          </section>
+          <section>
+              <h4>Complementary Slackness Example II </h4>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around; font-size:0.85em;">
+                  <div style="flex:1; min-width:0;">
+                      <p class="centered"><b>Primal</b></p>
+                      <p>\[\begin{aligned}
+                          \max\quad &4x_1+4x_2-3x_3\\
+                          \text{s.t.}\quad &x_1+x_2+x_3=2,\\
+                          &x_1-x_2+2x_3=5,\\
+                          &2x_1+x_2-x_3=2,\\
+                          &x_1\ge0,\ x_2\text{ free},\ x_3\ge0.
+                      \end{aligned}\]</p>
+                  </div>
+                  <div class="darkBlueText" style="flex:1; min-width:0;">
+                      <p class="centered"><b>Dual</b></p>
+                      <p>\[\begin{aligned}
+                          \min\quad &2y_1+5y_2+2y_3\\
+                          \text{s.t.}\quad &y_1+y_2+2y_3\ge4,\\
+                          &y_1-y_2+y_3=4,\\
+                          &y_1+2y_2-y_3\ge-3,\\
+                          &y_1,y_2,y_3\text{ free}.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+              <p class="centered">The optimal primal solution: $x^*=(2,\,-1,\,1)$, with optimal value $1$.</p>
+          </section>
+          <section>
+              <h4>Complementary Slackness Example II </h4>
+              <table class="cs-table">
+                  <thead><tr><th>Primal</th><th></th><th class="darkBlueText">Dual</th></tr></thead>
+                  <tbody>
+                      <tr><td colspan="3" style="color:#93a1a1;"><em>Constraints $\leftrightarrow$ dual variables</em></td></tr>
+                      <tr><td>$x_1+x_2+x_3=2$</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_1$ free</td></tr>
+                      <tr><td>$x_1-x_2+2x_3=5$</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_2$ free</td></tr>
+                      <tr><td>$2x_1+x_2-x_3=2$</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_3$ free</td></tr>
+                      <tr><td colspan="3" style="color:#93a1a1;"><em>Variables $\leftrightarrow$ dual constraints</em></td></tr>
+                      <tr><td>$x_1\ge0$</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_1+y_2+2y_3\ge4$</td></tr>
+                      <tr><td>$x_2$ free</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_1-y_2+y_3=4$</td></tr>
+                      <tr><td>$x_3\ge0$</td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_1+2y_2-y_3\ge-3$</td></tr>
+                  </tbody>
+              </table>
+          </section>
+          <section data-auto-animate>
+              <h4 data-id="cs-title">Complementary Slackness Example II </h4>
+              <table class="cs-table">
+                  <thead><tr><th>Primal at $x^*$</th><th></th><th class="darkBlueText">Dual</th></tr></thead>
+                  <tbody>
+                      <tr><td colspan="3" style="color:#93a1a1;"><em>Constraints $\leftrightarrow$ dual variables</em></td></tr>
+                      <tr><td><span class="fragment highlight-green" data-fragment-index="1">$x^*_1+x^*_2+x^*_3=2=2$</span></td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_1$ free</td></tr>
+                      <tr><td><span class="fragment highlight-green" data-fragment-index="1">$x^*_1-x^*_2+2x^*_3=5=5$</span></td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_2$ free</td></tr>
+                      <tr><td><span class="fragment highlight-green" data-fragment-index="1">$2x^*_1+x^*_2-x^*_3=2=2$</span></td><td>$\leftrightarrow$</td><td class="darkBlueText">$y_3$ free</td></tr>
+                      <tr><td colspan="3" style="color:#93a1a1;"><em>Variables $\leftrightarrow$ dual constraints</em></td></tr>
+                      <tr>
+                          <td><span class="fragment highlight-red" data-fragment-index="1">$x^*_1=2\ge0$</span></td>
+                          <td>$\leftrightarrow$</td>
+                          <td class="darkBlueText"><span data-id="eq1" style="display:inline-block">$y_1+y_2+2y_3\ge4$</span> <b class="fragment" data-fragment-index="2">(tight)</b></td>
+                      </tr>
+                      <tr>
+                          <td><span class="fragment highlight-red" data-fragment-index="1">$x^*_2=-1$ <em>(free)</em></span></td>
+                          <td>$\leftrightarrow$</td>
+                          <td class="darkBlueText"><span data-id="eq2" style="display:inline-block">$y_1-y_2+y_3=4$</span> <b class="fragment" data-fragment-index="2">(tight)</b></td>
+                      </tr>
+                      <tr>
+                          <td><span class="fragment highlight-red" data-fragment-index="1">$x^*_3=1\ge0$</span></td>
+                          <td>$\leftrightarrow$</td>
+                          <td class="darkBlueText"><span data-id="eq3" style="display:inline-block">$y_1+2y_2-y_3\ge-3$</span> <b class="fragment" data-fragment-index="2">(tight)</b></td>
+                      </tr>
+                  </tbody>
+              </table>
+              <p class="fragment" data-fragment-index="1" style="font-size:24px;"><span style="color:#ff2c2d;">Red</span>: inequalities with slack at $x^* = (2,-1,1)$. <span style="color:#07a221;">Green</span>: rows with no slack (tight).</p>
+          </section>
+          <section data-auto-animate>
+              <h4 data-id="cs-title">Complementary Slackness Example II </h4>
+              <p> The dual constraints associated with $x_1^*,x_3^*>0$ and with the free variable $x_2$ are tight for any dual optimal solution: </p>
+              <div class="darkBlueText" style="text-align:center;">
+                  <p><span data-id="eq1" style="display:inline-block">\(\displaystyle y_1+y_2+2y_3=4\)</span></p>
+                  <p><span data-id="eq2" style="display:inline-block">\(\displaystyle y_1-y_2+y_3=4\)</span></p>
+                  <p><span data-id="eq3" style="display:inline-block">\(\displaystyle y_1+2y_2-y_3=-3\)</span></p>
+              </div>
+              <p> There is a unique solution to these 3 equations in 3 unknowns. </p>
+              <p class="fragment darkBlueText">\[y^*=(y_1,y_2,y_3)=(1,\,-1,\,2).\]</p>
+          </section>
+      </section>
+      <section>
+          <section>
+              <h2> Farkas' Lemma and Strong Duality </h2>
+          </section>
+          <section>
+              <h3>Farkas' Lemma</h3>
+              <p> Recall Farkas' lemma. </p>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Farkas' Lemma</b></p>
+                  <p> For $A \in \R^{m \times n}$ and $b \in \R^m$, exactly one of the following two things holds: </p>
+                  <ul>
+                      <li>There is some $x \in \R^n$ so that $Ax = b$, and $x \ge 0$. </li>
+                      <li>There is some $y \in \R^m$ so that $A^{\intercal}y \ge 0$ and $b^{\intercal}y < 0$. </li>
+                  </ul>
+              </div>
+              <p> We discussed a geometric proof of this using the separating hyperplane theorem and now we will prove it using strong duality. </p>
+          </section>
+          <section>
+              <h3>Farkas' Lemma Proof</h3>
+              <p> We have already seen that if there is $y$ so that $A^{\intercal}y \ge 0$ and $b^{\intercal}y < 0$, then there cannot be an element of the set $\{x\in \R^n : Ax = b, x \ge 0\}$. If there were, then
+                 \[
+                 \underbrace{y^{\intercal}Ax}_{\qquad \ge 0\\A^{\intercal}y \ge 0, x \ge 0} = \underbrace{y^{\intercal}b}_{<0}. 
+                 \]
+              </p>
+              <p class=fragment> So to prove the other direction, we will need strong duality. What LP are we going to apply the strong duality theorem to? </p>
+          </section>
+          <section>
+              <h3>Farkas' Lemma Proof</h3>
+              <p> Consider the linear program
+              \[
+                \begin{aligned}
+                \max\qquad & \vec{0}^{\intercal}x \\
+                \text{s.t.}\qquad & Ax = b \\
+                & x \ge 0 \\
+                \end{aligned}
+              \]
+              </p>
+              <p> This is infeasible precisely when the set $\{x\in \R^n : Ax = b, x \ge 0\}$ is empty. </p>
+              <p class=fragment> Strong duality implies that the dual LP does not have an optimal solution (if it did, then the primal LP would have an optimal solution by strong duality). </p>
+              <p class=fragment> So the dual LP is either unbounded or infeasible. </p>
+          </section>
+          <section>
+              <h3>Farkas' Lemma Proof</h3>
+              <p> The dual LP is
+              \[
+                \begin{aligned}
+                \min\qquad & b^{\intercal}y \\
+                \text{s.t.}\qquad & A^{\intercal}y \ge 0 \\
+                \end{aligned}
+              \]
+              </p>
+              <p> Why is this feasible?</p>
+              <p class=fragment> It's feasible since $y = 0$ is feasible. </p>
+              <p class=fragment> Since the dual LP is unbounded, we have seen that there must in particular be a feasible $y$ so that $b^{\intercal} y < 0$.</p>
+              <p class=fragment> We conclude that there is some $y$ so that $A^{\intercal}y \ge 0$ and $b^{\intercal}y< 0$, which is what we wanted.</p>
+          </section>
+          <section>
+              <h3>Farkas' Lemma Variants</h3>
+              <p>We can use more general linear programming duality results to get other versions of Farkas' lemma: </p>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Farkas' Lemma Version II</b></p>
+                  <p> For $A \in \R^{m \times n}$ and $b \in \R^m$, exactly one of the following two things holds: </p>
+                  <ul>
+                      <li>There is some $x \in \R^n$ so that $Ax \le b$. </li>
+                      <li>There is some $y \in \R^m$ so that $y  \ge 0$, $A^{\intercal}y = 0$ and $b^{\intercal}y < 0$. </li>
+                  </ul>
+              </div>
+              <p class=fragment>  We can prove this by noting that the dual of the linear program 
+              \[
+                \begin{aligned}
+                \max\qquad & \vec{0}^{\intercal}x \\
+                \text{s.t.}\qquad & Ax \le b \\
+                \end{aligned}
+                \qquad
+                \text{ is }
+                \qquad
+                \begin{aligned}
+                \min\qquad & b^{\intercal}y \\
+                \text{s.t.}\qquad & A^{\intercal}y = 0 \\
+                & y \ge 0 \\
+                \end{aligned}
+              \]
+              </p>
+
+          </section>
+      </section>
+      <section>
+          <section>
+              <h2> Normal Cones </h2>
+          </section>
+          <section>
+              <h3> Normal Cones </h3>
+              <p> The feasible region of a linear program is a polytope, and we have seen that (typically) the unique maximizer of a linear function over a polytope is a vertex of that polytope.</p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; flex:0 0 360px;">
+                      <img src="images/normal_cone_quadrilateral.svg" width="360" height="300" alt="A quadrilateral in the plane with an objective direction arrow and its maximizing vertex highlighted." />
+                      <span style="position:absolute; left:66%; top:10%; color:#8a3210;">$x^*$</span>
+                  </div>
+                  <div>
+                      <p>\[\begin{aligned}
+                          \max\quad &x_1+2x_2\\
+                          \text{s.t.}\quad &x_1\ge0,\\
+                          &x_2\ge0,\\
+                          &3x_1+x_2\le12,\\
+                          &-x_1+3x_2\le6.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3> Normal Cones </h3>
+              <p> So while there are infinitely many possible objective directions $c$, there are only finitely many possible outcomes of the optimal solution of the LP. </p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; flex:0 0 360px;">
+                        <img src="images/normal_cone_vertices.svg" width="360" height="300" alt="The same quadrilateral with all four vertices highlighted." />
+                      <span style="position:absolute; left:66%; top:10%; color:#8a3210;">$x^*$</span>
+                  </div>
+                  <div>
+                      <p>\[\begin{aligned}
+                      \max\quad &c^{\intercal}x\\
+                          \text{s.t.}\quad &x_1\ge0,\\
+                          &x_2\ge0,\\
+                          &3x_1+x_2\le12,\\
+                          &-x_1+3x_2\le6.
+                      \end{aligned}\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <iframe src="demos/NormalCones2D.html?embed=1" title="Interactive quadrilateral and the plane of objective vectors, colored by optimal vertex" style="width:100%; height:640px; border:1px solid #93a1a1; border-radius:10px;" data-preload></iframe>
+              <p style="font-size:18px; margin:4px 0;"><a href="demos/NormalCones2D.html" target="_blank" rel="noopener">Open the demo in its own tab</a></p>
+          </section>
+          <section>
+              <h3> Normal Cones </h3>
+              <div class=flexbox>
+                  <p> For each vertex $v$ in a polytope $P$, we define the normal cone $N_v$ to be the set of $c$ so that the maximizer of the linear program $\max \{c^{\intercal}x : x \in P\}$ is $v$:
+                  \[
+                      N_v = \{c \in \R^n : \text{For any }x \in P,\; c^{\intercal}v \ge c^{\intercal}x \}.
+                  \]
+              </p>
+              <img src="images/normal_fan_quadrilateral.svg" width="260" height="260" alt="The plane of objective vectors divided into four colored normal cones, one for each vertex of the quadrilateral." />
+              </div>
+              <p class=fragment> Normally, with linear programming, we are given the objective direction $c$ and want to find a vertex $v \in P$ maximizing $c^{\intercal}v$; the normal cone flips this idea on its head. </p>
+              <p class=fragment> Can we get a more explicit description of the normal cone of a polytope?</p>
+          </section>
+          <section>
+              <h3> Normal Cones </h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Normal Cone Characterization (SEF Polytopes)</b></p>
+                  <p> Suppose that $P = \{x \in \R^n : Ax = b, x \ge 0\}$, and let $v \in P$ be a vertex (i.e. a basic feasible solution). Then $c \in N_v$ if and only if there exists some $y \in \R^m$ so that 
+                  \[
+                    c \le A^{\intercal}y,
+                  \]
+                  and $c_i = (A^{\intercal}y)_i$ whenever $v_i > 0$.
+                  </p>
+              </div>
+              <p> This is really a rephrasing of complementary slackness. </p>
+          </section>
+          <section>
+              <h3> Normal Cones </h3>
+              <p> <b> Example of Theorem </b> </p>
+              <p> Consider a polytope defined by 
+              \[
+              P=\{x\in\R^4:Ax=b,\ x\ge0\} \text{ with }\]
+                  \[
+                  A=\begin{pmatrix}1&1&1&0\\1&3&0&1\end{pmatrix},\quad b=\begin{pmatrix}4\\6\end{pmatrix}.
+              \]</p>
+              <p style="font-size:26px;">Here is a vertex of this polytope: $v=(3,1,0,0)$.</p>
+              <p class=fragment>Let's use the theorem to check that $c=(3,5,1,0) \in N_v$ (i.e. $v$ is a maximizer of $c^{\intercal}x$ in $P$).</p>
+              <p class=fragment>Let $y = (2,1)$, and note that $A^{\intercal}y = (3,5,2,1)$. We see that 
+              \[
+              c = A^{\intercal}y - (0,0,1,1).
+              \]</p>
+          </section>
+          <section>
+              <h3> Normal Cones </h3>
+              <p> <b> Proof of Theorem </b> </p>
+              <p>
+              $c$ is in $N_v$ if and only if $v$ is an optimal solution of the following linear program:
+              \[
+                \max \{c^{\intercal}x : Ax = b, x \ge 0\}
+              \]
+              </p>
+              <p> The dual linear program is
+              \[
+                  \min \{b^{\intercal}y : A^{\intercal}y \ge c\}.
+              \]
+              </p>
+              <p> Strong duality implies that the dual linear program is feasible, so there is some $y$ so that $A^{\intercal}y \ge c$, and by complementary slackness, we know that $(A^{\intercal}y)_i = c_i$ whenever $v_i > 0$.
+              </p>
+          </section>
+          <section>
+              <h3> Normal Cones </h3>
+              <p> The above theorem shows one characterization of the normal cone, but it does not make it easy to check if a given $c$ is in the normal cone without solving a linear program. We can give a simpler characterization (at least when the vertex is nondegenerate). </p>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Normal Cone Characterization (SEF Polytopes)</b></p>
+                  <p>
+                  Let $P=\{x:Ax=b,\ x\ge0\}$, and let $v$ be a vertex of $P$ with basis $B$ with $m$ positive entries (so $v$ is nondegenerate).
+                  For each $c$, we can break up its coordinates into those coordinates in the basis $B$ and those outside it: $c = \begin{pmatrix}c_B & c_N\end{pmatrix}$.
+                  \[
+                      N_v=\{c\in\R^n : c - A^{\intercal}A_B^{-\intercal}c_B\le0\}.
+                  \]
+                  </p>
+              </div>
+          </section>
+          <section>
+              <h3> Normal Cones </h3>
+              <p><b>Proof of Theorem</b> This can be seen from the terminal condition of the simplex method.
+              </p>
+              <p> We can also see it from complementary slackness; using these dual LPs:</p>
+              <div class=flexbox style="justify-content:space-between;">
+              <p style="text-align:left;">
+              $\max \{c^{\intercal}x : Ax = b, x \ge 0\}$
+              </p>
+              <p style="text-align:right;">
+              $\min \{b^{\intercal}y : A^{\intercal}y \ge c\}.$
+              </p>
+              </div>
+              <p class=fragment> Complementary slackness implies that $v$ is an optimal solution to the primal LP if and only if there is a feasible $y^*$ for the dual LP that satisfies $(A^{\intercal}y)_i = c_i$ whenever $v_i > 0$.</p>
+              <p class=fragment> This implies that the unique such $y^*$ is precisely $y^* = A_B^{-\intercal}c_B$. </p>
+              <p class=fragment> Plugging in, we get that $v$ is an optimal solution to the primal LP if and only if $A^{\intercal}A_B^{-\intercal}c_B \ge c$, which is what we wanted to show. </p>
+          </section>
+          <section>
+              <h3> Normal Cones </h3>
+              <p>We can also characterize normal cones for polytopes described by inequalities. </p>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Normal Cone Characterization (Polytopes $Ax \le b$)</b></p>
+                  <p> Suppose that $P = \{x \in \R^n : Ax \le b\}$, and let $v \in P$ be a vertex. Then $c \in N_v$ if and only if there exists some $y \in \R^m$ so that 
+                  \[
+                    c = A^{\intercal}y, \qquad y \ge 0,
+                  \]
+                  and $y_i = 0$ whenever $(Av)_i < b_i$.
+                  </p>
+              </div>
+              <p class=fragment> One way to think of this is as follows: for each $v$ in $P$, there is a collection of tight constraints, $a_1^{\intercal}x \le b_1, \dots, a_k^{\intercal}x \le b_k$ where $k \ge n$, and where $a_i^{\intercal}v = b_i$ for each $i$. We then have that the normal cone is
+              \[
+                  N_v = \{\sum_{i=1}^k y_i a_i : y \ge 0\}.
+              \]
+              </p>
+          </section>
+          <section>
+              <h3> Normal Cone Example </h3>
+              <p> Let's recall that the $n$ dimensional hypercube is the polytope defined by 
+              \[
+                P = \{x \in \R^n : 0 \le x_i \le 1 \text{ for }i=1,\dots,n\}.
+              \]
+              </p>
+              <p> So $A = \begin{pmatrix} I \\ -I\end{pmatrix},$ and $b = \begin{pmatrix} \vec{1}\\\vec{0}\end{pmatrix}.$ </p>
+              <p> A vertex $v$ of $P$ is a point where $n$ of the constraints are tight, i.e. a point where every entry is either 0 or 1. </p>
+              <div class="flexbox fragment" style="align-items:center; justify-content:space-around;">
+                  <p style="font-size:26px;">The tight constraints at $v$ have normals $e_i$ (when $v_i=1$) and $-e_i$ (when $v_i=0$), so
+                  \[
+                      N_v=\{c\in\R^n : c_i\ge0 \text{ if } v_i=1,\ c_i\le0 \text{ if } v_i=0\}.
+                  \]
+                  </p>
+                  <img src="images/normal_fan_square.svg" width="400" alt="A square with four colored vertices, and its normal fan: the four quadrants of the plane, each colored by its vertex." />
+              </div>
+          </section>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

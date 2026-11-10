@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 300" width="360" height="300">
+  <!-- Same quadrilateral as normal_cone_quadrilateral.svg: vertices (0,0), (4,0), (3,3), (0,2);
+       scale 60 px/unit, origin at (40,260). No objective direction; all four vertices highlighted. -->
+
+  <!-- coordinate axes (no labels) -->
+  <line x1="20" y1="260" x2="340" y2="260" stroke="#93a1a1" stroke-width="1.5"/>
+  <line x1="40" y1="285" x2="40" y2="20" stroke="#93a1a1" stroke-width="1.5"/>
+
+  <!-- feasible region -->
+  <polygon points="40,260 280,260 220,80 40,140" fill="#268bd2" fill-opacity="0.16" stroke="#268bd2" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- highlighted vertices -->
+  <circle cx="40"  cy="260" r="8" fill="#cb4b16" stroke="#8a3210" stroke-width="2"/>
+  <circle cx="280" cy="260" r="8" fill="#cb4b16" stroke="#8a3210" stroke-width="2"/>
+  <circle cx="220" cy="80"  r="8" fill="#cb4b16" stroke="#8a3210" stroke-width="2"/>
+  <circle cx="40"  cy="140" r="8" fill="#cb4b16" stroke="#8a3210" stroke-width="2"/>
+</svg>

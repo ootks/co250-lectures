@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 300" width="360" height="300">
+  <!-- Quadrilateral with vertices (0,0), (4,0), (3,3), (0,2); scale 60 px/unit, origin at (40,260).
+       Inequalities: x1 >= 0, x2 >= 0, 3x1 + x2 <= 12, -x1 + 3x2 <= 6.
+       Objective direction c = (1,2); the unique maximizer is the vertex (3,3). -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#859900"/>
+    </marker>
+  </defs>
+
+  <!-- coordinate axes (no labels) -->
+  <line x1="20" y1="260" x2="340" y2="260" stroke="#93a1a1" stroke-width="1.5"/>
+  <line x1="40" y1="285" x2="40" y2="20" stroke="#93a1a1" stroke-width="1.5"/>
+
+  <!-- feasible region -->
+  <polygon points="40,260 280,260 220,80 40,140" fill="#268bd2" fill-opacity="0.16" stroke="#268bd2" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- level line of the objective through the optimal vertex -->
+  <line x1="160" y1="50" x2="280" y2="110" stroke="#6c71c4" stroke-width="2.5" stroke-dasharray="7 5"/>
+
+  <!-- objective direction -->
+  <line x1="130" y1="200" x2="166" y2="128" stroke="#859900" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <!-- other vertices -->
+  <circle cx="40"  cy="260" r="5" fill="#fdf6e3" stroke="#268bd2" stroke-width="2.5"/>
+  <circle cx="280" cy="260" r="5" fill="#fdf6e3" stroke="#268bd2" stroke-width="2.5"/>
+  <circle cx="40"  cy="140" r="5" fill="#fdf6e3" stroke="#268bd2" stroke-width="2.5"/>
+
+  <!-- optimal vertex -->
+  <circle cx="220" cy="80" r="8" fill="#cb4b16" stroke="#8a3210" stroke-width="2"/>
+</svg>
