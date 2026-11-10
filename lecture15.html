@@ -57,10 +57,11 @@
               <p> Proof of strong duality </p>
               <ul>
                   <li class=fragment> If the primal LP is bounded, then the simplex method terminates. </li>
-                  <li class=fragment> When it terminates, the LP will be in canonical form with objective vector $\le 0$. </li>
+                  <li class=fragment> At this point, the LP will be in canonical form with $c \le 0$. </li>
                   <li class=fragment> For such an LP, $y = \vec{0}$ is an optimal solution to its dual.</li>
-                  <li class=fragment> From this, we get that strong duality holds for the canonical form LP.  </li>
+                  <li class=fragment> We get from this that strong duality holds for the canonical form LP.  </li>
                   <li class=fragment> Because the canonical form of the primal LP is obtained from <b>row operations</b>, we can recover strong duality for the original LP. </li>
+                  <li class=fragment> If $B$ is the basis that the simplex algorithm terminates at, then we can express $y^*$ as $(A_B^{\intercal})^{-1}c_B$, where $A_B$ is the submatrix of columns in $B$ and $c_B$ is the vector obtained from the entries of $c$ in $B$. </li>
               </ul>
           </section>
           <section>
