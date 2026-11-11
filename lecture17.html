@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+          <h2>Introduction to Optimization</h2>
+          <h3>CO 250</h3>
+          <br>
+          <h4>Lecture 17</h4>
+          <br>
+          <p class="centered"><a href="?view=scroll">Scroll view</a></p>
+      </section>
+      <section>
+          <h2>Lecture Outline</h2>
+          <ul>
+              <li>Review of Farkas' Lemma</li>
+              <li>Review of Normal Cones</li>
+              <li>Minimum Cost Perfect Matchings</li>
+          </ul>
+      </section>
+      <section>
+          <section>
+              <h2>Review: Farkas' Lemma</h2>
+          </section>
+          <section>
+              <h3>Review: Farkas' Lemma</h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Farkas' Lemma</b></p>
+                  <p> For $A \in \R^{m \times n}$ and $b \in \R^m$, exactly one of the following two things holds: </p>
+                  <ul>
+                      <li>There is some $x \in \R^n$ so that $Ax = b$ and $x \ge 0$. </li>
+                      <li>There is some $y \in \R^m$ so that $A^{\intercal}y \ge 0$ and $b^{\intercal}y < 0$. </li>
+                  </ul>
+              </div>
+              <p> Proof is by strong duality applied to the LPs
+              </p>
+              <div class=justified-pair>
+                  <p>$\max \{\vec{0}^{\intercal}x : Ax = b, x\ge 0\}$ </p> 
+                  <p>$\min \{b^{\intercal}y : A^{\intercal}y \ge c\}$ </p> 
+              </div>
+          </section>
+          <section>
+              <h3>Review: Farkas' Lemma</h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Farkas' Lemma (Version II)</b></p>
+                  <p> For $A \in \R^{m \times n}$ and $b \in \R^m$, exactly one of the following two things holds: </p>
+                  <ul>
+                      <li>There is some $x \in \R^n$ so that $Ax \le b$. </li>
+                      <li>There is some $y \in \R^m$ so that $y \ge 0$, $A^{\intercal}y = 0$ and $b^{\intercal}y < 0$. </li>
+                  </ul>
+              </div>
+              <p> Proven by strong duality applied to the LPs. </p>
+              <div class="flexbox fragment" style="justify-content:space-around;">
+                  <div><p>\[
+                      \begin{aligned}
+                      \max\quad & \vec{0}^{\intercal}x \\
+                      \text{s.t.}\quad & Ax \le b
+                      \end{aligned}
+                  \]</p></div>
+                  <div class="darkBlueText"><p>\[
+                      \begin{aligned}
+                      \min\quad & b^{\intercal}y \\
+                      \text{s.t.}\quad & A^{\intercal}y = 0 \\
+                      & y \ge 0
+                      \end{aligned}
+                  \]</p></div>
+              </div>
+          </section>
+      </section>
+      <section>
+          <section>
+              <h2>Review: Normal Cones</h2>
+          </section>
+          <section>
+              <h3>Review: Normal Cones</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <p> For a vertex $v$ of a polytope $P$, the normal cone $N_v$ is the set of objective vectors $c$ for which $v$ is a maximizer of $c^{\intercal}x$ over $P$:
+                  </p>
+                  <img src="images/normal_fan_quadrilateral.svg" width="260" height="260" alt="The plane of objective vectors divided into four colored normal cones, one for each vertex of the quadrilateral." />
+              </div>
+              <p>\[
+                  N_v = \{c \in \R^n : c^{\intercal}v \ge c^{\intercal}x \text{ for all } x \in P \}.
+              \]</p>
+          </section>
+          <section>
+              <h3>Review: Normal Cones</h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Normal Cone Characterization (SEF Polytopes)</b></p>
+                  <p> Let $P = \{x \in \R^n : Ax = b,\ x \ge 0\}$ and let $v \in P$ be a vertex. Then $c \in N_v$ if and only if there exists $y \in \R^m$ with
+                  </p>
+                  <p>\[
+                      c \le A^{\intercal}y,
+                  \]</p>
+                  <p> and $c_i = (A^{\intercal}y)_i$ whenever $v_i > 0$.
+                  </p>
+              </div>
+              <p class="fragment"> This is a rephrasing of complementary slackness. </p>
+          </section>
+          <section>
+              <h3>Review: Normal Cones</h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Normal Cone Characterization (Nondegenerate Vertices)</b></p>
+                  <p> Let $v$ be a nondegenerate vertex of $P = \{x : Ax = b,\ x \ge 0\}$ with basis $B$, and write $c = \begin{pmatrix} c_B & c_N \end{pmatrix}$. Then
+                  </p>
+                  <p>\[
+                      N_v = \{c \in \R^n : c - A^{\intercal}A_B^{-\intercal}c_B \le 0\}.
+                  \]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Review: Normal Cones</h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Normal Cone Characterization (Polytopes $Ax \le b$)</b></p>
+                  <p> Let $P = \{x \in \R^n : Ax \le b\}$ and let $v \in P$ be a vertex. Then $c \in N_v$ if and only if there exists $y \in \R^m$ with
+                  </p>
+                  <p>\[
+                      c = A^{\intercal}y, \qquad y \ge 0,
+                  \]</p>
+                  <p> and $y_i = 0$ whenever $(Av)_i < b_i$.
+                  </p>
+              </div>
+              <p class="fragment"> If $a_1^{\intercal}x \le b_1, \dots, a_k^{\intercal}x \le b_k$ are the constraints tight at $v$, then
+              </p>
+              <p class="fragment">\[
+                  N_v = \Big\{\sum_{i=1}^k y_i a_i : y \ge 0\Big\}.
+              \]</p>
+          </section>
+          <section>
+              <h3>Review: Normal Cones</h3>
+              <p> For the hypercube $P = \{x \in \R^n : 0 \le x_i \le 1\}$ and a vertex $v \in \{0,1\}^n$:
+              </p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <p>\[
+                      N_v=\{c\in\R^n : c_i\ge0 \text{ if } v_i=1,\ c_i\le0 \text{ if } v_i=0\}.
+                  \]</p>
+                  <img src="images/normal_fan_square.svg" width="400" alt="A square with four colored vertices, and its normal fan: the four quadrants of the plane, each colored by its vertex." />
+              </div>
+          </section>
+      </section>
+      <section>
+          <section>
+              <h2>Minimum Cost Perfect Matching</h2>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> Recall a <b>graph</b> $G = (V, E)$ consists of a finite set $V$ of <b>vertices</b> and a set $E$ of <b>edges</b>, where each edge is a set $\{u, v\}$ of two distinct vertices, written $uv$.
+              </p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_graph.svg" width="460" alt="A graph with six vertices a through f drawn in two rows of three, with eight edges." />
+                  <div>
+                      <p>\[V = \{a, b, c, d, e, f\}\]</p>
+                      <p>\[E = \{ab, bc, ad, bd, be, cf, de, ef\}\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> A <b>matching</b> in $G$ is a set $M \subseteq E$ of edges, so that every vertex is contained in <b>at most one</b> edge. </p>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div>
+                      <img src="images/mcm_matching_ok.svg" width="420" alt="The graph with edges ad, be and cf highlighted in blue." />
+                      <p style="font-size:24px;"><b>A matching:</b> $\{ad, be, cf\}$</p>
+                  </div>
+                  <div class="fragment">
+                      <img src="images/mcm_matching_bad.svg" width="420" alt="The graph with edges ab and bd highlighted in red, both meeting at vertex b." />
+                      <p style="font-size:24px;"><b>Not a matching:</b> $\{ab, bd\}$</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> A matching $M$ is <b>perfect</b> if every vertex is contained in <b>exactly</b> one edge. </p>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div>
+                      <img src="images/mcm_perfect.svg" width="420" alt="The graph with edges ab, cf and de highlighted in blue and all six vertices outlined in green." />
+                      <p style="font-size:24px;"><b>Perfect:</b> $\{ab, de, cf\}$</p>
+                  </div>
+                  <div class="fragment">
+                      <img src="images/mcm_notperfect.svg" width="420" alt="The graph with edges bd and cf highlighted and vertices a and e outlined in red." />
+                      <p style="font-size:24px;"><b>Not perfect:</b> $\{bd, cf\}$</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> This graph has exactly three perfect matchings. </p>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div>
+                      <img src="images/mcm_pm1.svg" width="290" alt="Perfect matching bc, ad, ef." />
+                      <p style="font-size:22px;">$\{bc, ad, ef\}$</p>
+                  </div>
+                  <div class="fragment">
+                      <img src="images/mcm_pm2.svg" width="290" alt="Perfect matching cf, ab, de." />
+                      <p style="font-size:22px;">$\{cf, ab, de\}$</p>
+                  </div>
+                  <div class="fragment">
+                      <img src="images/mcm_pm3.svg" width="290" alt="Perfect matching cf, ad, be." />
+                      <p style="font-size:22px;">$\{cf, ad, be\}$</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> Not every graph has a perfect matching. </p>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div>
+                      <img src="images/mcm_nopm_odd.svg" width="420" alt="A graph with five vertices." />
+                      <p style="font-size:24px;">$|V| = 5$</p>
+                  </div>
+                  <div class="fragment">
+                      <img src="images/mcm_nopm_star.svg" width="420" alt="A star with one center vertex joined to three leaves." />
+                      <p style="font-size:24px;">A star with three leaves</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> For this class, we will consider a graph where each edge has a <b>cost</b>. </p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_costs.svg" width="460" alt="The graph with a cost written on each edge." />
+              </div>
+              <p> We imagine that we need to buy each edge to use it. The <b>cost of a matching</b> is the sum of the costs of the edges in the matching. </p>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> The <b>cost</b> of a matching $M$ is </p>
+              <p>\[c(M) = \sum_{e \in M} c_e.\]</p>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div>
+                      <img src="images/mcm_cost_pm1.svg" width="290" alt="Perfect matching bc, ad, ef with edge costs." />
+                      <p style="font-size:22px;">$c(M) = 2 + 4 + 6 = 12$</p>
+                  </div>
+                  <div class="fragment">
+                      <img src="images/mcm_cost_pm2.svg" width="290" alt="Perfect matching cf, ab, de with edge costs." />
+                      <p style="font-size:22px;">$c(M) = 2 + 3 + 3 = 8$</p>
+                  </div>
+                  <div class="fragment">
+                      <img src="images/mcm_cost_pm3.svg" width="290" alt="Perfect matching cf, ad, be with edge costs." />
+                      <p style="font-size:22px;">$c(M) = 2 + 4 + 5 = 11$</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Minimum Cost Perfect Matching Problem</b></p>
+                  <p> <b>Input:</b> a graph $G = (V, E)$ and costs $c_e \in \R$ for each $e \in E$. </p>
+                  <p> <b>Output:</b> a perfect matching $M$ of $G$ with $c(M)$ as small as possible (if the graph has a perfect matching). </p>
+              </div>
+              <div class="flexbox fragment" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_cost_min.svg" width="400" alt="The graph with the minimum cost perfect matching cf, ab, de highlighted in green." />
+                  <div>
+                      <p>\[M^* = \{ab, de, cf\}\]</p>
+                      <p>\[c(M^*) = 8\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> From earlier in the course, we saw ways of modelling matchings using an integer program. </p>
+              <p> We have <b> variables</b> $x_e$ for edge $e$. We want $x_e$ to be 1 if $e$ is included in the matching we are looking for and 0 ottherwise.</p>
+              <p class=fragment> We also have constraints for each vertex: the total number of edges that are incident to that vertex should be exactly 1. </p>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p>
+              The minimum cost perfect matching integer program is:
+              \[
+                \begin{aligned}
+                \min\qquad &\sum_{e \in E} c_e x_e \\
+                \text{s.t. }\qquad &\text{For each vertex }v \in V,\;\sum_{e \in E : v \in e} x_e = 1 \\
+                & 0 \le x_e\\
+                & x_e \in \mathbb{Z}.
+                \end{aligned}
+              \]
+              </p>
+              <p class=fragment> Note that we don't need to have the constraint that $x_e \le 1$, since that is implied by the equality constraints. </p>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> Integer programs are generally much harder to solve than linear programs, so we can ask what happens when we drop the integrality constraint. </p>
+              <p class=fragment>
+              This is the linear programming <b>relaxation</b> of the minimum cost perfect matching problem.
+              \[
+                \begin{aligned}
+                \min\qquad &\sum_{e \in E} c_e x_e \\
+                \text{s.t. }\qquad &\text{For each vertex }v \in V,\;\sum_{e \in E : v \in e} x_e = 1 \\
+                & 0 \le x_e.
+                \end{aligned}
+              \]
+              </p>
+              <p class=fragment> Is this a reasonable way to approach this problem? </p>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_c4_costs.svg" width="320" alt="A cycle with four vertices a, b, c, d and edge costs ab = 1, bc = 4, cd = 2, da = 3." />
+                  <div style="font-size:0.85em;">
+                      <p>\[
+                        \begin{aligned}
+                        \min\quad & x_{ab} + 4x_{bc} + 2x_{cd} + 3x_{da} \\
+                        \text{s.t.}\quad & x_{ab} + x_{da} = 1 \\
+                        & x_{ab} + x_{bc} = 1 \\
+                        & x_{bc} + x_{cd} = 1 \\
+                        & x_{cd} + x_{da} = 1 \\
+                        & x \ge 0.
+                        \end{aligned}
+                      \]</p>
+                  </div>
+              </div>
+              <p class=fragment> The optimal solution to this LP is the integral point
+                  \[x^* = (1, 0, 1, 0)!\]
+              </p>
+              <div class="fragment" style="font-size:0.85em;">
+                  <p> We can check that this is optimal using the dual solution
+                      \[y^* = (0, 1, 1, 1).\]
+                  </p>
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> Example: a triangle. </p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_triangle_half.svg" width="320" alt="A triangle on vertices a, b, c with every edge labelled x = 1/2." />
+                  <div style="font-size:0.85em;">
+                      <p>\[
+                        \begin{aligned}
+                        \min\quad & x_{ab} + x_{bc} + x_{ca} \\
+                        \text{s.t.}\quad & x_{ab} + x_{ca} = 1 \\
+                        & x_{ab} + x_{bc} = 1 \\
+                        & x_{bc} + x_{ca} = 1 \\
+                        & x \ge 0.
+                        \end{aligned}
+                      \]</p>
+                  </div>
+              </div>
+              <p class=fragment> The only feasible solution to this LP is
+                  \[x^* = \left(\tfrac{1}{2}, \tfrac{1}{2}, \tfrac{1}{2}\right),\]
+                  which is not integral.
+              </p>
+              <p class=fragment> This triangle has no perfect matching, but the LP relaxation is still feasible. </p>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> Example: two triangles joined by an edge. </p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_two_tri_pm.svg" width="460" alt="Two triangles a, b, c and d, e, f joined by the edge cd. Triangle edges cost 1 and the edge cd costs 10. The perfect matching ab, cd, ef is highlighted." />
+                  <div>
+                      <p style="font-size:24px;">The only perfect matching:</p>
+                      <p>\[M = \{ab, cd, ef\}\]</p>
+                      <p>\[c(M) = 1 + 10 + 1 = 12\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_two_tri_half.svg" width="460" alt="The same graph with every triangle edge labelled x = 1/2 and the edge cd labelled x = 0." />
+                  <div>
+                      <p>\[x^*_{ab} = x^*_{bc} = x^*_{ca} = x^*_{de} = x^*_{ef} = x^*_{fd} = \tfrac{1}{2}, \quad x^*_{cd} = 0\]</p>
+                      <p>\[\sum_{e \in E} c_e x^*_e = 6 \cdot \tfrac{1}{2} = 3\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div>
+                      <img src="images/mcm_c4_opt.svg" width="290" alt="The four-cycle with the integral optimal solution x = (1, 0, 1, 0)." />
+                      <p style="font-size:22px;">Cycle on 4 vertices</p>
+                      <p style="font-size:22px;">$x^* = (1, 0, 1, 0)$</p>
+                  </div>
+                  <div>
+                      <img src="images/mcm_triangle_half.svg" width="290" alt="The triangle with the fractional solution x = (1/2, 1/2, 1/2)." />
+                      <p style="font-size:22px;">Triangle</p>
+                      <p style="font-size:22px;">$x^* = (\tfrac{1}{2}, \tfrac{1}{2}, \tfrac{1}{2})$</p>
+                  </div>
+                  <div>
+                      <img src="images/mcm_two_tri_half.svg" width="290" alt="Two triangles joined by an edge with the fractional solution x = 1/2 on the triangle edges." />
+                      <p style="font-size:22px;">Two triangles joined by an edge</p>
+                      <p style="font-size:22px;">$x^*_e = \tfrac{1}{2}$ on the triangle edges</p>
+                  </div>
+              </div>
+              <p class="fragment"> Why does the LP sometimes work and sometimes not? </p>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> Remember that a graph is <b> bipartite </b> if its vertices can be partitioned into two parts, so that edges only join vertices in different parts. </p>
+              <p class=fragment> Equivalently, the vertices of the graph can be colored either black or white so that every edge has one black vertex and one white vertex. </p>
+              <img src="images/mcm_c4_bipartite.svg" width="400" alt="The four-cycle drawn as a bipartite graph: parts A = {a, c} (black vertices) on the left and B = {b, d} (white vertices) on the right, with every edge joining the two parts." />
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Integrality of Bipartite Perfect Matching Polytope</b></p>
+                  <p> For any bipartite graph with $n$ vertices and $m$ edges, let $P = \{x \in \R^m : \forall v \in V,\;\sum_{e \in E : v \in e} x_e = 1, x \ge 0\}$.</p>
+                  <p> Every vertex of $P$ has entries which are all either 0 or 1. </p>
+                  <p class=fragment> In particular, the linear programming relaxation of the bipartite matching problem always has the same optimal value as the minimum cost perfect matching.</p>
+              </div>
+          </section>
+          <section>
+              <h3>Proof of Integrality Theorem</h3>
+              <p> We will use the extreme point characterization of the vertices of a polytope: we will show that if $x \in P$ is not integral, then there exist $y$ and $z$ so that $y, z \neq x$, and there is some $t$ so that $0 \le t \le 1$ so that $x = ty + (1-t)z$.</p>
+              <p class=fragment> Equivalently, we will find some $v \neq 0$ and $\epsilon > 0$ so that $x - \epsilon v$ and $x + \epsilon v$ are both in $P$. This implies that $x$ is not an extreme point by taking $y = x-\epsilon v$, $z = x+\epsilon v$ and $x = \frac{1}{2}y + \frac{1}{2}z$.</p>
+              <p class=fragment> Framed slightly differently, if $x \in P$ has an entry which is not either 0 or 1, we want to find a way to perturb $x$ a little while leaving it in the polytope. </p>
+          </section>
+          <section>
+              <h3>Proof of Integrality Theorem</h3>
+              <div class=justified-pair style="margin-top:-20px;">
+              <p> Fix $x$, and note that $x$ assigns a number to each edge. We say that $e \in E$ is a <b>fractional edge</b> if the weight $x_e$ is not an integer.</p>
+              <img src="images/mcm_fractional_edges.svg" width="360" alt="A graph with weights on each edge: a four-cycle a-b-c-d whose edges each have the fractional weight 1/2 (drawn as thick orange edges), together with a separate matching edge e-f of integer weight 1 (drawn as a thin gray edge). Every vertex's incident weights sum to 1." />
+              </div>
+          </section>
+          <section>
+              <h3>Proof of Integrality Theorem</h3>
+              <p><b> Claim 1</b> Every vertex that is incident to a fractional edge is incident to at least 2 fractional edges.</p>
+              <div class=flexbox>
+                  <p><b>Proof</b> Let $u$ be a vertex and let $e = \{u,v\}$ be a fractional edge containing $u$. The constraints include that $\sum_{e' \in E : u \in e'} x_{e'} = 1$, so
+                  \[x_e = 1 - \sum_{e' \in E : u \in e'\\ e' \neq e} x_{e'},\] and since the left side is fractional, at least one of the other terms in the sum must also be fractional.  </p>
+                  <img src="images/mcm_fractional_vertex.svg" width="340" alt="A vertex u with four incident edges: two fractional edges with x = 1/2, including e = uv, and two edges with x = 0, whose weights sum to 1." />
+              </div>
+          </section>
+          <section>
+              <h3>Proof of Integrality Theorem</h3>
+              <div class=flexbox>
+                <p><b> Claim 2</b> There is a cycle in $G$ consisting of only fractional edges. </p>
+                <img src="images/mcm_fractional_cycle.svg" width="150" alt="A six-vertex cycle in which every edge is a fractional edge of weight 1/2, drawn as thick orange edges forming a closed loop." />
+              </div>
+              <div class=flexbox>
+                <div>
+                    <p> Imagine starting at one of the vertices with a fractional edge and walking through the graph, at each step moving along an edge that is different from the previous edge. (Possible by Claim 1) </p>
+                    <p class=fragment data-fragment-index="8"> At some point this walk must return to a vertex that it already visited. Why? <span class=fragment data-fragment-index="9"> There are only finitely many vertices, so at some point, we will reach a vertex all of whose neighbours along fractional edges have already been visited. </span></p>
+                </div>
+                <div class="r-stack">
+                    <img class="fragment fade-in-then-out" data-fragment-index="2" src="images/mcm_walk_1.svg" width="1000" alt="The walk begins at a vertex incident to a fractional edge." />
+                    <img class="fragment fade-in-then-out" data-fragment-index="3" src="images/mcm_walk_2.svg" width="300" alt="The walk steps to an unvisited neighbour along a fractional edge." />
+                    <img class="fragment fade-in-then-out" data-fragment-index="4" src="images/mcm_walk_3.svg" width="300" alt="Another fractional edge leads the walk onward." />
+                    <img class="fragment fade-in-then-out" data-fragment-index="5" src="images/mcm_walk_4.svg" width="300" alt="The walk continues to a fourth vertex." />
+                    <img class="fragment fade-in-then-out" data-fragment-index="6" src="images/mcm_walk_5.svg" width="300" alt="The walk reaches a fifth vertex, still finding new vertices." />
+                    <img class="fragment fade-in" data-fragment-index="7" src="images/mcm_walk_6.svg" width="300" alt="The walk reaches the sixth vertex; no unvisited vertex remains." />
+                    <img class="fragment" data-fragment-index="9" src="images/mcm_walk_7.svg" width="300" alt="The walk's next edge could return to any previously visited vertex, shown as dotted lines." />
+                </div>
+              </div>
+          </section>
+          <section>
+              <h3>Proof of Integrality Theorem</h3>
+                <p><b> Claim 3</b> Every cycle in a bipartite graph has an even number of edges. </p>
+                <p> We will use the bipartiteness property of the graph: each time we cross an edge of the graph, we move from one side of the graph to the other, so to return to the same side, we need to make an even number of crossings. </p>
+                <img src="images/mcm_even_cycle_bipartite.svg" width="420" alt="A six-edge cycle in a bipartite graph whose vertices alternate between part A (black, left) and part B (white, right). The edges are numbered 1 through 6 around the cycle; since every edge crosses from one side to the other, returning to the starting vertex on the same side takes an even number of edges." />
+          </section>
+          <section>
+              <h3>Proof of Integrality Theorem</h3>
+              <p> We are now almost done. Let the edges in the cycle be $e_1, \dots, e_k$, where $k$ is even. We then let $v$ be a vector where $v_{e_i} = 1$ if $i$ is even and $v_{e_i} = -1$ if $i$ is odd, and $v_e = 0$ if $e$ is not in the cycle. </p>
+              <p>  Note that for each vertex $v$,
+                \[
+                \sum_{e \in E : v \in e} v_e = 0.
+                \]
+              </p>
+              <p class=fragment> Therefore, $x + \epsilon v$ and $x - \epsilon v$ satisfy the constraints for all vertices for any $\epsilon$. </p>
+              <p class=fragment> Finally, we note that $x_{e_i} > 0$ for each $i$, since all of the edges in the cycle were fractional (and in particular $x_{e_i} \neq 0$). Therefore, for $\epsilon$ small enough, $x - \epsilon v$ and $x + \epsilon v$ are still positive. </p>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p>Let's consider a simple problem with taxis: there are some number of taxis and an equal number of people in a city, and each person is hailing a taxi. How do we assign taxis to people to minimize the total amount of milage needed to get the taxis to a person. </p>
+              <img src="images/mcm_taxi_assignment.svg" width="500" alt="A cartoon city map with roads, a park, a river and buildings. Three taxis and three people are scattered across the map, and a line connects each person to each taxi, labelled with the distance between them." />
+              <p> The underlying bipartite graph is the complete bipartite graph on $3$ vertices.</p>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> With a variable $x_{ij}$ for assigning person $i$ to taxi $j$, the LP relaxation is: </p>
+              <div style="font-size:0.8em;">
+              \[
+                \begin{aligned}
+                \min\quad & 2x_{11} + 4x_{12} + 3x_{13}
+                          + 5x_{21} + x_{22} + 3x_{23}
+                          + 2x_{31} + 4x_{32} + 2x_{33} \\
+                \text{s.t.}\quad & x_{11} + x_{12} + x_{13} = 1 \\
+                                 & x_{21} + x_{22} + x_{23} = 1 \\
+                                 & x_{31} + x_{32} + x_{33} = 1 \\
+                                 & x_{11} + x_{21} + x_{31} = 1 \\
+                                 & x_{12} + x_{22} + x_{32} = 1 \\
+                                 & x_{13} + x_{23} + x_{33} = 1 \\
+                                 & x \ge 0.
+                \end{aligned}
+              \]
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p>We can directly apply the simplex method to solve this question.</p>
+              <p class=fragment> The optimal solution assigns person $i$ to taxi $i$: </p>
+              <div class="fragment">
+              \[ x^*_{11} = x^*_{22} = x^*_{33} = 1, \qquad \text{all other } x^*_{ij} = 0, \]
+              \[ \text{with cost} \quad 2 + 1 + 2 = 5. \]
+              </div>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> <b>Remark on Nonuniqueness</b> If there are multiple optimal matchings then there will also be fractional optimal solutions to the LP.</p>
+              <img src="images/mcm_nonunique.svg" width="740" alt="A four-cycle a, b, c, d with all edge costs equal to 1, shown in three panels. Left: the perfect matching {ab, cd} with cost 2. Middle: the perfect matching {bc, da}, also cost 2, so both are optimal. Right: their average, the fractional solution x = 1/2 on every edge, which is also an optimal LP solution of cost 2." />
+              <p class=fragment> Here both matchings cost $2$, so their average $x = \tfrac12$ on every edge is also an optimal LP solution. </p>
+              <p> The theorem guarantees that <b>some optimal solution</b> will be integral, not that all of them will be. The optimal value will always be correct.</p>
+          </section>
+          <section>
+              <h3>Minimum Cost Perfect Matching</h3>
+              <p> Next week, we will discuss an algorithm for minimum cost perfect matching that uses strong duality.</p>
+          </section>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

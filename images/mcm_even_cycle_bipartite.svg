@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 340" width="560" height="340" font-family="Georgia, serif">
+  <!--
+    Claim 3: every cycle in a bipartite graph has an even number of edges.
+    A 6-cycle whose vertices alternate between part A (black, left) and part
+    B (white, right). Each edge crosses from one side to the other, so the
+    edges are numbered 1..6 around the cycle; returning to the start (same
+    side) takes an even number of crossings.
+    Cycle order: a1 (A) - b1 (B) - a2 (A) - b2 (B) - a3 (A) - b3 (B) - back to a1.
+  -->
+
+  <!-- the two parts -->
+  <ellipse cx="140" cy="160" rx="78" ry="140" fill="#268bd2" fill-opacity="0.10" stroke="#268bd2" stroke-width="3" stroke-dasharray="10 6"/>
+  <ellipse cx="420" cy="160" rx="78" ry="140" fill="#cb4b16" fill-opacity="0.10" stroke="#cb4b16" stroke-width="3" stroke-dasharray="10 6"/>
+
+  <!-- vertex coordinates:
+       A side (left):  a1=(140,70)  a2=(140,160)  a3=(140,250)
+       B side (right): b1=(420,70)  b2=(420,160)  b3=(420,250) -->
+
+  <!-- cycle edges, in order, each a crossing between the sides -->
+  <!-- 1: a1 - b1 -->
+  <line x1="140" y1="70"  x2="420" y2="70"  stroke="#586e75" stroke-width="5" stroke-linecap="round"/>
+  <!-- 2: b1 - a2 -->
+  <line x1="420" y1="70"  x2="140" y2="160" stroke="#586e75" stroke-width="5" stroke-linecap="round"/>
+  <!-- 3: a2 - b2 -->
+  <line x1="140" y1="160" x2="420" y2="160" stroke="#586e75" stroke-width="5" stroke-linecap="round"/>
+  <!-- 4: b2 - a3 -->
+  <line x1="420" y1="160" x2="140" y2="250" stroke="#586e75" stroke-width="5" stroke-linecap="round"/>
+  <!-- 5: a3 - b3 -->
+  <line x1="140" y1="250" x2="420" y2="250" stroke="#586e75" stroke-width="5" stroke-linecap="round"/>
+  <!-- 6: b3 - a1 (closes the cycle) -->
+  <line x1="420" y1="250" x2="140" y2="70"  stroke="#586e75" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- edge numbers (placed near each edge's midpoint) -->
+  <g font-size="19" font-style="italic" fill="#073642">
+    <rect x="268" y="44"  width="24" height="24" rx="6" fill="#fdf6e3" stroke="#586e75" stroke-width="1.5"/>
+    <text x="280" y="62"  text-anchor="middle">1</text>
+    <rect x="300" y="96"  width="24" height="24" rx="6" fill="#fdf6e3" stroke="#586e75" stroke-width="1.5"/>
+    <text x="312" y="114" text-anchor="middle">2</text>
+    <rect x="268" y="148" width="24" height="24" rx="6" fill="#fdf6e3" stroke="#586e75" stroke-width="1.5"/>
+    <text x="280" y="166" text-anchor="middle">3</text>
+    <rect x="236" y="200" width="24" height="24" rx="6" fill="#fdf6e3" stroke="#586e75" stroke-width="1.5"/>
+    <text x="248" y="218" text-anchor="middle">4</text>
+    <rect x="268" y="252" width="24" height="24" rx="6" fill="#fdf6e3" stroke="#586e75" stroke-width="1.5"/>
+    <text x="280" y="270" text-anchor="middle">5</text>
+    <rect x="200" y="150" width="24" height="24" rx="6" fill="#fdf6e3" stroke="#586e75" stroke-width="1.5"/>
+    <text x="212" y="168" text-anchor="middle">6</text>
+  </g>
+
+  <!-- A-side vertices (black) -->
+  <circle cx="140" cy="70"  r="24" fill="#073642" stroke="#073642" stroke-width="4"/>
+  <circle cx="140" cy="160" r="24" fill="#073642" stroke="#073642" stroke-width="4"/>
+  <circle cx="140" cy="250" r="24" fill="#073642" stroke="#073642" stroke-width="4"/>
+  <!-- B-side vertices (white) -->
+  <circle cx="420" cy="70"  r="24" fill="#fdf6e3" stroke="#073642" stroke-width="4"/>
+  <circle cx="420" cy="160" r="24" fill="#fdf6e3" stroke="#073642" stroke-width="4"/>
+  <circle cx="420" cy="250" r="24" fill="#fdf6e3" stroke="#073642" stroke-width="4"/>
+
+  <!-- part labels -->
+  <text x="140" y="328" text-anchor="middle" font-size="24" fill="#268bd2" font-style="italic">A</text>
+  <text x="420" y="328" text-anchor="middle" font-size="24" fill="#cb4b16" font-style="italic">B</text>
+</svg>

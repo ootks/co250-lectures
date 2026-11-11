@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 340" width="360" height="340" font-family="Georgia, serif">
+  <!-- Hexagonal cycle v1..v6, every edge fractional (x = 1/2), thick orange -->
+  <!-- center (180,165), radius 120, vertices at angles -90,-30,30,90,150,210 -->
+  <!-- v1 top (180,45) v2 (283.9,105) v3 (283.9,225) v4 bottom (180,285) v5 (76.1,225) v6 (76.1,105) -->
+  <line x1="180" y1="45"  x2="283.9" y2="105" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="283.9" y1="105" x2="283.9" y2="225" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="283.9" y1="225" x2="180" y2="285" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="180" y1="285" x2="76.1" y2="225" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="76.1" y1="225" x2="76.1" y2="105" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="76.1" y1="105" x2="180" y2="45"  stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Edge-weight labels (1/2 on each edge, placed at edge midpoints, nudged outward) -->
+  <rect x="236" y="51"  width="32" height="30" rx="8" fill="#fdf6e3" stroke="#cb4b16" stroke-width="2"/>
+  <text x="252" y="74"  text-anchor="middle" font-size="22" fill="#073642">&#189;</text>
+  <rect x="300" y="150" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#cb4b16" stroke-width="2"/>
+  <text x="316" y="173" text-anchor="middle" font-size="22" fill="#073642">&#189;</text>
+  <rect x="236" y="249" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#cb4b16" stroke-width="2"/>
+  <text x="252" y="272" text-anchor="middle" font-size="22" fill="#073642">&#189;</text>
+  <rect x="92"  y="249" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#cb4b16" stroke-width="2"/>
+  <text x="108" y="272" text-anchor="middle" font-size="22" fill="#073642">&#189;</text>
+  <rect x="28"  y="150" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#cb4b16" stroke-width="2"/>
+  <text x="44"  y="173" text-anchor="middle" font-size="22" fill="#073642">&#189;</text>
+  <rect x="92"  y="51"  width="32" height="30" rx="8" fill="#fdf6e3" stroke="#cb4b16" stroke-width="2"/>
+  <text x="108" y="74"  text-anchor="middle" font-size="22" fill="#073642">&#189;</text>
+
+  <!-- Vertices -->
+  <circle cx="180"   cy="45"  r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <circle cx="283.9" cy="105" r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <circle cx="283.9" cy="225" r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <circle cx="180"   cy="285" r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <circle cx="76.1"  cy="225" r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <circle cx="76.1"  cy="105" r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+</svg>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" width="480" height="300" font-family="Georgia, serif">
+  <!-- Fractional 4-cycle a-b-c-d, each edge x = 1/2 (orange, thick) -->
+  <!-- a=(100,70) b=(260,70) c=(260,230) d=(100,230) -->
+  <line x1="100" y1="70"  x2="260" y2="70"  stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="260" y1="70"  x2="260" y2="230" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="260" y1="230" x2="100" y2="230" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="100" y1="230" x2="100" y2="70"  stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Integer matching edge e-f, x = 1 (gray, thin) -->
+  <!-- e=(400,70) f=(400,230) -->
+  <line x1="400" y1="70"  x2="400" y2="230" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Edge-weight labels (rounded boxes) -->
+  <!-- top edge a-b -->
+  <rect x="164" y="40" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#cb4b16" stroke-width="2"/>
+  <text x="180" y="63" text-anchor="middle" font-size="22" fill="#073642">&#189;</text>
+  <!-- right edge b-c -->
+  <rect x="274" y="135" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#cb4b16" stroke-width="2"/>
+  <text x="290" y="158" text-anchor="middle" font-size="22" fill="#073642">&#189;</text>
+  <!-- bottom edge c-d -->
+  <rect x="164" y="230" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#cb4b16" stroke-width="2"/>
+  <text x="180" y="253" text-anchor="middle" font-size="22" fill="#073642">&#189;</text>
+  <!-- left edge d-a -->
+  <rect x="54" y="135" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#cb4b16" stroke-width="2"/>
+  <text x="70" y="158" text-anchor="middle" font-size="22" fill="#073642">&#189;</text>
+  <!-- matching edge e-f -->
+  <rect x="414" y="135" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+  <text x="430" y="158" text-anchor="middle" font-size="22" fill="#073642">1</text>
+
+  <!-- Vertices -->
+  <circle cx="100" cy="70"  r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <text x="100" y="78"  text-anchor="middle" font-size="23" font-style="italic" fill="#073642">a</text>
+  <circle cx="260" cy="70"  r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <text x="260" y="78"  text-anchor="middle" font-size="23" font-style="italic" fill="#073642">b</text>
+  <circle cx="260" cy="230" r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <text x="260" y="238" text-anchor="middle" font-size="23" font-style="italic" fill="#073642">c</text>
+  <circle cx="100" cy="230" r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <text x="100" y="238" text-anchor="middle" font-size="23" font-style="italic" fill="#073642">d</text>
+  <circle cx="400" cy="70"  r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <text x="400" y="78"  text-anchor="middle" font-size="23" font-style="italic" fill="#073642">e</text>
+  <circle cx="400" cy="230" r="22" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+  <text x="400" y="238" text-anchor="middle" font-size="23" font-style="italic" fill="#073642">f</text>
+</svg>

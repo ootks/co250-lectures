@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 260" width="500" height="260" font-family="Georgia, serif">
+<line x1="70" y1="60" x2="250" y2="60" stroke="#268bd2" stroke-width="8" stroke-linecap="round"/>
+<line x1="250" y1="60" x2="430" y2="60" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+<line x1="70" y1="60" x2="70" y2="200" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+<line x1="250" y1="60" x2="70" y2="200" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+<line x1="250" y1="60" x2="250" y2="200" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+<line x1="430" y1="60" x2="430" y2="200" stroke="#268bd2" stroke-width="8" stroke-linecap="round"/>
+<line x1="70" y1="200" x2="250" y2="200" stroke="#268bd2" stroke-width="8" stroke-linecap="round"/>
+<line x1="250" y1="200" x2="430" y2="200" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+<circle cx="70" cy="60" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="70" y="68" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">a</text>
+<circle cx="250" cy="60" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="250" y="68" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">b</text>
+<circle cx="430" cy="60" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="430" y="68" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">c</text>
+<circle cx="70" cy="200" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="70" y="208" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">d</text>
+<circle cx="250" cy="200" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="250" y="208" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">e</text>
+<circle cx="430" cy="200" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="430" y="208" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">f</text>
+</svg>

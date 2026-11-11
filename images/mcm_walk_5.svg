@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 360" width="320" height="360" font-family="Georgia, serif">
+  <line x1="160.0" y1="50.0" x2="263.9" y2="110.0" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="263.9" y1="110.0" x2="263.9" y2="230.0" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="263.9" y1="230.0" x2="160.0" y2="290.0" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <line x1="160.0" y1="290.0" x2="56.1" y2="230.0" stroke="#cb4b16" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="160.0" cy="50.0" r="18" fill="#b58900" stroke="#7a5b00" stroke-width="3.5"/>
+  <text x="160.0" y="56.0" text-anchor="middle" font-size="18" font-style="italic" fill="#fdf6e3">v₁</text>
+  <circle cx="263.9" cy="110.0" r="18" fill="#268bd2" stroke="#0b5c90" stroke-width="3.5"/>
+  <text x="263.9" y="116.0" text-anchor="middle" font-size="18" font-style="italic" fill="#fdf6e3">v₂</text>
+  <circle cx="263.9" cy="230.0" r="18" fill="#268bd2" stroke="#0b5c90" stroke-width="3.5"/>
+  <text x="263.9" y="236.0" text-anchor="middle" font-size="18" font-style="italic" fill="#fdf6e3">v₃</text>
+  <circle cx="160.0" cy="290.0" r="18" fill="#268bd2" stroke="#0b5c90" stroke-width="3.5"/>
+  <text x="160.0" y="296.0" text-anchor="middle" font-size="18" font-style="italic" fill="#fdf6e3">v₄</text>
+  <circle cx="56.1" cy="230.0" r="18" fill="#268bd2" stroke="#0b5c90" stroke-width="3.5"/>
+  <text x="56.1" y="236.0" text-anchor="middle" font-size="18" font-style="italic" fill="#fdf6e3">v₅</text>
+  <text x="160.0" y="342" text-anchor="middle" font-size="18" fill="#586e75">Still finding new vertices</text>
+</svg>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 260" width="500" height="260" font-family="Georgia, serif">
+<line x1="70" y1="60" x2="250" y2="60" stroke="#268bd2" stroke-width="8" stroke-linecap="round"/>
+<line x1="250" y1="60" x2="430" y2="60" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+<line x1="70" y1="60" x2="70" y2="200" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+<line x1="250" y1="60" x2="70" y2="200" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+<line x1="250" y1="60" x2="250" y2="200" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+<line x1="430" y1="60" x2="430" y2="200" stroke="#268bd2" stroke-width="8" stroke-linecap="round"/>
+<line x1="70" y1="200" x2="250" y2="200" stroke="#268bd2" stroke-width="8" stroke-linecap="round"/>
+<line x1="250" y1="200" x2="430" y2="200" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+<rect x="144.0" y="45.0" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#268bd2" stroke-width="2"/>
+<text x="160.0" y="68.0" text-anchor="middle" font-size="22" fill="#073642">3</text>
+<rect x="324.0" y="45.0" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+<text x="340.0" y="68.0" text-anchor="middle" font-size="22" fill="#073642">2</text>
+<rect x="54.0" y="115.0" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+<text x="70.0" y="138.0" text-anchor="middle" font-size="22" fill="#073642">4</text>
+<rect x="144.0" y="115.0" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+<text x="160.0" y="138.0" text-anchor="middle" font-size="22" fill="#073642">1</text>
+<rect x="234.0" y="115.0" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+<text x="250.0" y="138.0" text-anchor="middle" font-size="22" fill="#073642">5</text>
+<rect x="414.0" y="115.0" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#268bd2" stroke-width="2"/>
+<text x="430.0" y="138.0" text-anchor="middle" font-size="22" fill="#073642">2</text>
+<rect x="144.0" y="185.0" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#268bd2" stroke-width="2"/>
+<text x="160.0" y="208.0" text-anchor="middle" font-size="22" fill="#073642">3</text>
+<rect x="324.0" y="185.0" width="32" height="30" rx="8" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+<text x="340.0" y="208.0" text-anchor="middle" font-size="22" fill="#073642">6</text>
+<circle cx="70" cy="60" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="70" y="68" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">a</text>
+<circle cx="250" cy="60" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="250" y="68" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">b</text>
+<circle cx="430" cy="60" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="430" y="68" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">c</text>
+<circle cx="70" cy="200" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="70" y="208" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">d</text>
+<circle cx="250" cy="200" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="250" y="208" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">e</text>
+<circle cx="430" cy="200" r="24" fill="#eee8d5" stroke="#586e75" stroke-width="4"/>
+<text x="430" y="208" text-anchor="middle" font-size="24" font-style="italic" fill="#073642">f</text>
+</svg>
