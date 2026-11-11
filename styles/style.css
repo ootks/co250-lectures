@@ -220,3 +220,14 @@ p, li, td {
 
 /* Tight paragraphs used inside outcome cards / certificate text */
 .tight { margin: 2px 0; }
+
+/* Flexbox holding two elements pushed to opposite ends */
+.reveal .justified-pair {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.reveal .justified-pair > * {
+    margin: 0;
+}
