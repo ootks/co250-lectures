@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320" width="380" height="320" font-family="Georgia, serif">
+  <!-- Bipartite graph 3+3 with integer edge costs (one negative). -->
+  <!-- Left part A x=110 rows 80,160,240 ; Right part B x=270 rows 80,160,240 -->
+
+  <!-- edges -->
+  <g stroke="#93a1a1" stroke-width="3" stroke-linecap="round">
+    <line x1="138" y1="80"  x2="242" y2="80"/>   <!-- a1-b1 -->
+    <line x1="138" y1="80"  x2="242" y2="160"/>  <!-- a1-b2 -->
+    <line x1="138" y1="160" x2="242" y2="80"/>   <!-- a2-b1 -->
+    <line x1="138" y1="160" x2="242" y2="240"/>  <!-- a2-b3 -->
+    <line x1="138" y1="240" x2="242" y2="160"/>  <!-- a3-b2 -->
+    <line x1="138" y1="240" x2="242" y2="240"/>  <!-- a3-b3 -->
+  </g>
+
+  <!-- edge cost labels (placed near the left endpoint, nudged off the line) -->
+  <g font-family="ui-monospace, Menlo, monospace" font-size="15">
+    <!-- a1-b1 (horizontal top) -->
+    <rect x="170" y="56" width="30" height="24" rx="6" fill="#fdf6e3" stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="185" y="73" text-anchor="middle" fill="#073642">2</text>
+    <!-- a1-b2 (down-right) -->
+    <rect x="166" y="104" width="30" height="24" rx="6" fill="#fdf6e3" stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="181" y="121" text-anchor="middle" fill="#073642">5</text>
+    <!-- a2-b1 (up-right); negative cost flagged in orange -->
+    <rect x="178" y="112" width="30" height="24" rx="6" fill="#fdf6e3" stroke="#cb4b16" stroke-width="1.5"/>
+    <text x="193" y="129" text-anchor="middle" fill="#073642">-1</text>
+    <!-- a2-b3 (down-right) -->
+    <rect x="166" y="184" width="30" height="24" rx="6" fill="#fdf6e3" stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="181" y="201" text-anchor="middle" fill="#073642">4</text>
+    <!-- a3-b2 (up-right) -->
+    <rect x="178" y="192" width="30" height="24" rx="6" fill="#fdf6e3" stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="193" y="209" text-anchor="middle" fill="#073642">3</text>
+    <!-- a3-b3 (horizontal bottom) -->
+    <rect x="170" y="248" width="30" height="24" rx="6" fill="#fdf6e3" stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="185" y="265" text-anchor="middle" fill="#073642">1</text>
+  </g>
+
+  <!-- left part A -->
+  <g fill="#268bd2" stroke="#0d5a8a" stroke-width="2">
+    <circle cx="110" cy="80"  r="20"/>
+    <circle cx="110" cy="160" r="20"/>
+    <circle cx="110" cy="240" r="20"/>
+  </g>
+  <g fill="white" font-size="15" text-anchor="middle" font-weight="bold" font-family="Georgia, serif">
+    <text x="110" y="85">a1</text>
+    <text x="110" y="165">a2</text>
+    <text x="110" y="245">a3</text>
+  </g>
+
+  <!-- right part B -->
+  <g fill="#b58900" stroke="#7a5c00" stroke-width="2">
+    <circle cx="270" cy="80"  r="20"/>
+    <circle cx="270" cy="160" r="20"/>
+    <circle cx="270" cy="240" r="20"/>
+  </g>
+  <g fill="white" font-size="15" text-anchor="middle" font-weight="bold" font-family="Georgia, serif">
+    <text x="270" y="85">b1</text>
+    <text x="270" y="165">b2</text>
+    <text x="270" y="245">b3</text>
+  </g>
+
+  <!-- part labels -->
+  <text x="110" y="300" text-anchor="middle" font-size="16" fill="#586e75">part A</text>
+  <text x="270" y="300" text-anchor="middle" font-size="16" fill="#586e75">part B</text>
+</svg>

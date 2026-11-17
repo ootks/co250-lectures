@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 320" width="420" height="320" font-family="Georgia, serif">
+  <!-- Same bipartite graph, now labelled with REDUCED costs c_e - y_u - y_v.
+       Edges with reduced cost 0 are the equality edges (solid dark); edges
+       with positive reduced cost are faint. -->
+  <!-- Left A x=130 rows 70,160,250 ; Right B x=290 rows 70,160,250 -->
+
+  <!-- positive reduced cost edges, faint -->
+  <g stroke="#d8d0bb" stroke-width="2.5" stroke-linecap="round">
+    <line x1="150" y1="70"  x2="270" y2="160"/>  <!-- a1-b2  red=2 -->
+    <line x1="150" y1="160" x2="270" y2="70"/>   <!-- a2-b1  red=1 -->
+    <line x1="150" y1="250" x2="270" y2="160"/>  <!-- a3-b2  red=1 -->
+  </g>
+
+  <!-- zero reduced cost (equality) edges, solid dark -->
+  <g stroke="#586e75" stroke-width="3.5" stroke-linecap="round">
+    <line x1="150" y1="70"  x2="270" y2="70"/>   <!-- a1-b1  red=0 -->
+    <line x1="150" y1="160" x2="270" y2="160"/>  <!-- a2-b2  red=0 -->
+    <line x1="150" y1="250" x2="270" y2="250"/>  <!-- a3-b3  red=0 -->
+  </g>
+
+  <!-- reduced cost labels -->
+  <g font-family="ui-monospace, Menlo, monospace" font-size="14">
+    <rect x="195" y="58"  width="30" height="22" rx="6" fill="#fdf6e3" stroke="#586e75" stroke-width="1.5"/>
+    <text x="210" y="74"  text-anchor="middle" fill="#073642">0</text>
+    <rect x="195" y="148" width="30" height="22" rx="6" fill="#fdf6e3" stroke="#586e75" stroke-width="1.5"/>
+    <text x="210" y="164" text-anchor="middle" fill="#073642">0</text>
+    <rect x="195" y="238" width="30" height="22" rx="6" fill="#fdf6e3" stroke="#586e75" stroke-width="1.5"/>
+    <text x="210" y="254" text-anchor="middle" fill="#073642">0</text>
+    <rect x="183" y="104" width="30" height="22" rx="6" fill="#fdf6e3" stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="198" y="120" text-anchor="middle" fill="#657b83">2</text>
+    <rect x="207" y="104" width="30" height="22" rx="6" fill="#fdf6e3" stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="222" y="120" text-anchor="middle" fill="#657b83">1</text>
+    <rect x="195" y="194" width="30" height="22" rx="6" fill="#fdf6e3" stroke="#93a1a1" stroke-width="1.5"/>
+    <text x="210" y="210" text-anchor="middle" fill="#657b83">1</text>
+  </g>
+
+  <!-- left part A -->
+  <g fill="#268bd2" stroke="#0d5a8a" stroke-width="2">
+    <circle cx="130" cy="70"  r="20"/>
+    <circle cx="130" cy="160" r="20"/>
+    <circle cx="130" cy="250" r="20"/>
+  </g>
+  <g fill="white" font-size="15" text-anchor="middle" font-weight="bold">
+    <text x="130" y="75">a1</text>
+    <text x="130" y="165">a2</text>
+    <text x="130" y="255">a3</text>
+  </g>
+
+  <!-- right part B -->
+  <g fill="#b58900" stroke="#7a5c00" stroke-width="2">
+    <circle cx="290" cy="70"  r="20"/>
+    <circle cx="290" cy="160" r="20"/>
+    <circle cx="290" cy="250" r="20"/>
+  </g>
+  <g fill="white" font-size="15" text-anchor="middle" font-weight="bold">
+    <text x="290" y="75">b1</text>
+    <text x="290" y="165">b2</text>
+    <text x="290" y="255">b3</text>
+  </g>
+
+  <!-- dual values y_v (blue), outside each vertex -->
+  <g font-family="ui-monospace, Menlo, monospace" font-size="15" fill="#1f6fd6">
+    <text x="92"  y="60"  text-anchor="middle">y=1</text>
+    <text x="92"  y="150" text-anchor="middle">y=2</text>
+    <text x="92"  y="240" text-anchor="middle">y=0</text>
+    <text x="328" y="60"  text-anchor="middle">y=2</text>
+    <text x="328" y="150" text-anchor="middle">y=1</text>
+    <text x="328" y="240" text-anchor="middle">y=3</text>
+  </g>
+
+  <!-- legend -->
+  <g font-size="14">
+    <line x1="80" y1="300" x2="108" y2="300" stroke="#586e75" stroke-width="4" stroke-linecap="round"/>
+    <text x="114" y="305" fill="#586e75">reduced cost 0: equality edge</text>
+  </g>
+</svg>

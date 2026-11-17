@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320" width="380" height="320" font-family="Georgia, serif">
+  <!-- Same graph, with a deficient set S = {a1,a2} highlighted and its
+       neighbourhood N(S) = {b1}. |N(S)| = 1 < 2 = |S|. -->
+  <!-- Left A x=110 rows 80,160,240 ; Right B x=270 rows 80,160,240 -->
+
+  <!-- halo around S = {a1, a2} -->
+  <rect x="78" y="48" width="64" height="144" rx="32"
+        fill="rgba(211,54,130,0.14)" stroke="#d33682" stroke-width="2.5" stroke-dasharray="6 5"/>
+  <text x="110" y="34" text-anchor="middle" font-size="16" fill="#d33682" font-style="italic">S</text>
+
+  <!-- halo around N(S) = {b1} -->
+  <circle cx="270" cy="80" r="30"
+          fill="rgba(38,139,210,0.14)" stroke="#268bd2" stroke-width="2.5" stroke-dasharray="6 5"/>
+  <text x="314" y="74" text-anchor="middle" font-size="16" fill="#268bd2" font-style="italic">N(S)</text>
+
+  <!-- edges: the ones leaving S are emphasised -->
+  <g stroke="#586e75" stroke-width="2.5" stroke-linecap="round">
+    <line x1="130" y1="240" x2="250" y2="80"/>   <!-- a3-b1 -->
+    <line x1="130" y1="240" x2="250" y2="160"/>  <!-- a3-b2 -->
+    <line x1="130" y1="240" x2="250" y2="240"/>  <!-- a3-b3 -->
+  </g>
+  <g stroke="#d33682" stroke-width="4" stroke-linecap="round">
+    <line x1="130" y1="80"  x2="250" y2="80"/>   <!-- a1-b1 -->
+    <line x1="130" y1="160" x2="250" y2="80"/>   <!-- a2-b1 -->
+  </g>
+
+  <!-- left part A -->
+  <g fill="#268bd2" stroke="#0d5a8a" stroke-width="2">
+    <circle cx="110" cy="80"  r="20"/>
+    <circle cx="110" cy="160" r="20"/>
+    <circle cx="110" cy="240" r="20"/>
+  </g>
+  <g fill="white" font-size="15" text-anchor="middle" font-weight="bold">
+    <text x="110" y="85">a1</text>
+    <text x="110" y="165">a2</text>
+    <text x="110" y="245">a3</text>
+  </g>
+
+  <!-- right part B -->
+  <g fill="#b58900" stroke="#7a5c00" stroke-width="2">
+    <circle cx="270" cy="80"  r="20"/>
+    <circle cx="270" cy="160" r="20"/>
+    <circle cx="270" cy="240" r="20"/>
+  </g>
+  <g fill="white" font-size="15" text-anchor="middle" font-weight="bold">
+    <text x="270" y="85">b1</text>
+    <text x="270" y="165">b2</text>
+    <text x="270" y="245">b3</text>
+  </g>
+
+  <text x="190" y="300" text-anchor="middle" font-size="15" fill="#586e75">|N(S)| = 1 &lt; 2 = |S|</text>
+</svg>

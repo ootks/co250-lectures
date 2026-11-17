@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title slide -->
+      <section>
+          <h2>Introduction to Optimization</h2>
+          <h3>CO 250</h3>
+          <br>
+          <h4>Lecture 18</h4>
+          <br>
+          <p class="centered"><a href="?view=scroll">Scroll view</a></p>
+          <p class="centered"><a href="beamer/lecture18.pdf">PDF version of these slides</a> <em>(demo: this PDF version is experimental and may contain errors or differ from the slides)</em></p>
+          <aside class="notes">
+            We open by recalling last lecture's integrality theorem for bipartite
+            perfect matching, then move toward a combinatorial algorithm built on
+            strong duality.
+          </aside>
+      </section>
+      <section>
+          <h2>Lecture Outline</h2>
+          <ul>
+              <li>Review: Integrality of the Bipartite Matching Polytope</li>
+              <li>The Primal Minimum Cost Matching LP</li>
+              <li>The Dual LP and An Algorithm</li>
+          </ul>
+      </section>
+
+      <!-- ===================== Review of integrality result ===================== -->
+      <section>
+          <section>
+              <h2>Matching Linear Programs</h2>
+          </section>
+          <section>
+              <h3>Matching Linear Programs</h3>
+              <p> Last lecture we studied the <b>minimum cost perfect matching</b> problem: given a graph $G = (V, E)$ with edge costs $c_e$, find a perfect matching $M$ minimizing $c(M) = \sum_{e \in M} c_e.$ </p>
+              <p class=fragment> Introducing a variable $x_e$ for each edge, the integer program is
+             \[
+                \begin{aligned}
+                \min\quad & \sum_{e \in E} c_e x_e \\
+                \text{s.t.}\quad & \sum_{e \in E : v \in e} x_e = 1 && \text{for each } v \in V \\
+                & x_e \ge 0 \\
+                & x_e \in \Z.
+                \end{aligned}
+              \]</p>
+              <p class=fragment> Dropping $x_e \in \Z$ gives the <b>LP relaxation</b>. The LP relaxation can sometimes be a genuinely different problem than the min cost perfect matching problem. </p>
+          </section>
+          <section>
+              <h3>Matching Linear Programs</h3>
+              <p> We saw that the LP relaxation sometimes returns an integral solution, corresponding to a matching, and sometimes a fractional solution. </p>
+              <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                  <div>
+                      <img src="images/mcm_c4_opt.svg" width="260" alt="The four-cycle with the integral optimal solution x = (1, 0, 1, 0)." />
+                      <p style="font-size:22px;">Cycle on 4 vertices (bipartite)</p>
+                      <p style="font-size:22px;">$x^* = (1, 0, 1, 0)$ &mdash; integral</p>
+                  </div>
+                  <div>
+                      <img src="images/mcm_triangle_half.svg" width="260" alt="The triangle with the fractional solution x = (1/2, 1/2, 1/2)." />
+                      <p style="font-size:22px;">Triangle (not bipartite)</p>
+                      <p style="font-size:22px;">$x^* = (\tfrac12, \tfrac12, \tfrac12)$ &mdash; fractional</p>
+                  </div>
+              </div>
+              <p class="fragment"> The key difference: the first graph is <b>bipartite</b>, the second is not. </p>
+          </section>
+          <section>
+              <h3>Matching Linear Programs</h3>
+              <p> A graph that is not bipartite can still have a perfect matching. </p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_nonbipartite_pm.svg" width="460" alt="A five-cycle a, b, c, d, e with a sixth vertex f joined to e. The perfect matching ab, cd, ef is highlighted in green." />
+              </div>
+          </section>
+          <section>
+              <h3>Matching Linear Programs</h3>
+              <div style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Integrality of Bipartite Perfect Matching Polytope</b></p>
+                  <p> For any bipartite graph with $n$ vertices and $m$ edges, let
+                  \[P = \Big\{x \in \R^m : \textstyle\sum_{e \in E : v \in e} x_e = 1 \text{ for all } v \in V,\ x \ge 0\Big\}.\]</p>
+                  <p> Every vertex of $P$ has all entries equal to $0$ or $1.$ </p>
+              </div>
+              <p class=fragment> So for a bipartite graph, the LP relaxation always has an <b>integral</b> optimal vertex, with the same optimal value as the minimum cost perfect matching. </p>
+          </section>
+          <section>
+              <h3>Matching Linear Programs</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                <div>
+                  <div style="display:flex; align-items:center; justify-content:center; gap:16px;">
+                    <div>
+                      <img src="images/mcm_bip_example.svg" style="width:300px; max-width:none; height:auto;" alt="A bipartite graph with parts a, b, c and d, e, f and edges ad = 3, ae = 2, bd = 4, be = 5, bf = 1, ce = 3, cf = 6." />
+                      <p> <small>The costs. </small></p>
+                    </div>
+                    <div class="fragment fade-in" data-fragment-index="0">
+                      <img src="images/mcm_bip_example_opt.svg" style="width:300px; max-width:none; height:auto;" alt="The same bipartite graph with the optimal matching edges ad, bf and ce highlighted in green and labelled with the optimal values 1, the other edges labelled 0." />
+                      <p> <small>The optimal solution. </small></p>
+                    </div>
+                  </div>
+                    </div>
+                  <div>
+                  <p>\[
+                    \begin{aligned}
+                    \min\quad & 3x_{ad} + 2x_{ae} + 4x_{bd} + 5x_{be} +\\
+                    & x_{bf} + 3x_{ce} + 6x_{cf} \\
+                    \text{s.t.}\quad & x_{ad} + x_{ae} = 1 && (a) \\
+                                     & x_{bd} + x_{be} + x_{bf} = 1 && (b) \\
+                                     & x_{ce} + x_{cf} = 1 && (c) \\
+                                     & x_{ad} + x_{bd} = 1 && (d) \\
+                                     & x_{ae} + x_{be} + x_{ce} = 1 && (e) \\
+                                     & x_{bf} + x_{cf} = 1 && (f) \\
+                                     & x \ge 0
+                    \end{aligned}
+                  \]</p>
+                  </div>
+              </div>
+              <div class="fragment" style="margin-top:-30px;" data-fragment-index="0">
+                  <p>\[x^*_{ad} = x^*_{bf} = x^*_{ce} = 1, \quad x^*_e = 0 \text{ otherwise}\]</p>
+                  <p>\[\sum_{e \in E} c_e x^*_e = 3 + 1 + 3 = 7\]</p>
+              </div>
+          </section>
+      </section>
+
+      <!-- ===================== Primal and dual LPs ===================== -->
+      <section>
+          <section>
+              <h2>The Primal and Dual LPs</h2>
+          </section>
+          <section>
+              <h3>The Primal Matching LP</h3>
+              <p> Let $G = (V, E)$ be a graph (not necessarily bipartite) with edge costs $c_e.$ The LP relaxation of the minimum cost perfect matching problem is the <b>primal</b>: </p>
+              <p>\[
+                \begin{aligned}
+                \min\quad & \sum_{e \in E} c_e x_e \\
+                \text{s.t.}\quad & \sum_{e \in E : v \in e} x_e = 1 && \text{for each } v \in V \\
+                & x_e \ge 0 && \text{for each } e \in E.
+                \end{aligned}
+              \]</p>
+              <div class="flexbox fragment" style="justify-content:space-around;">
+                  <p> One <b>variable</b> $x_e$ per <b>edge</b> $e \in E.$ </p>
+                  <p> One <b>constraint</b> per <b>vertex</b> $v \in V.$ </p>
+              </div>
+          </section>
+          <section>
+              <h3>Taking the Dual</h3>
+              <p> In the primal, we get the following relationships between vertices/constraints in the LP and edges/vertices in the graph.</p>
+              <div class="flexbox" style="justify-content:space-around;">
+                  <div>
+                      <p> Primal <b>constraints</b> $\leftrightarrow$ vertices </p>
+                      <p class="fragment" data-fragment-index="0"> so dual <b>variables</b> $\leftrightarrow$ vertices. </p>
+                  </div>
+                  <div>
+                      <p> Primal <b>variables</b> $\leftrightarrow$ edges </p>
+                      <p class="fragment" data-fragment-index="0"> so dual <b>constraints</b> $\leftrightarrow$ edges. </p>
+                  </div>
+              </div>
+              <p class="fragment" data-fragment-index="0"> The dual reverses these correspondences. </p>
+          </section>
+          <section>
+              <h3>The Dual LP</h3>
+              <p> The primal variable $x_e$ for $e = uv$ appears with coefficient $1$ in exactly the two vertex constraints for $u$ and $v$, so its dual constraint is $y_u + y_v \le c_e.$ </p>
+                  <div><p>\[
+                      \begin{aligned}
+                      \text{(P)}\quad \min\quad & \sum_{e \in E} c_e x_e \\
+                      \text{s.t.}\quad & \sum_{e \in E : v \in e} x_e = 1 \quad (v \in V) \\
+                      & x_e \ge 0 \quad (e \in E)
+                      \end{aligned}
+                  \]</p></div>
+                  <div class="darkBlueText"><p>\[
+                      \begin{aligned}
+                      \text{(D)}\quad \max\quad & \sum_{v \in V} y_v \\
+                      \text{s.t.}\quad & y_u + y_v \le c_e \quad (e = uv \in E) \\
+                      \end{aligned}
+                  \]</p></div>
+          </section>
+          <section>
+              <h3>Example: Primal and Dual</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                <div>
+                  <img src="images/mcm_c4_costs.svg" style="width:380px; max-width:none; height:auto;" alt="A four-cycle a, b, c, d with edge costs ab = 1, bc = 4, cd = 2, da = 3." />
+                  <img class=fragment src="images/mcm_c4_primal_dual_opt.svg" style="width:380px; max-width:none; height:auto;" alt="The four-cycle with the primal optimal matching ab, cd drawn in green, with each edge labelled by its optimal value x* (ab 1, bc 0, cd 1, da 0), and the dual optimal values y_a = 0, y_b = 1, y_c = 0, y_d = 2 shown beside each vertex; both have value 3." />
+                </div>
+                  <div style="font-size:0.5em;">
+                      <div><p>\[
+                        \begin{aligned}
+                        \min\quad & x_{ab} + 4x_{bc} + 2x_{cd} + 3x_{da} \\
+                        \text{s.t.}\quad & x_{ab} + x_{da} = 1 && (a) \\
+                        & x_{ab} + x_{bc} = 1 && (b) \\
+                        & x_{bc} + x_{cd} = 1 && (c) \\
+                        & x_{cd} + x_{da} = 1 && (d) \\
+                        & x \ge 0
+                        \end{aligned}
+                      \]</p></div>
+                    <div class="darkBlueText" style="font-size:0.5em;">
+                        <div><p>\[
+                            \begin{aligned}
+                            \max\quad & y_a + y_b + y_c + y_d \\
+                            \text{s.t.}\quad & y_a + y_b \le 1 && (ab) \\
+                            & y_b + y_c \le 4 && (bc) \\
+                            & y_c + y_d \le 2 && (cd) \\
+                            & y_d + y_a \le 3 && (da)
+                            \end{aligned}
+                        \]</p></div>
+                    </div>
+                  </div>
+              </div>
+          </section>
+          <section>
+            <h3> Interpreting the Dual</h3>
+            <p> We can think of the dual to the matching LP as a way to <b> reweight the costs of the edges.</b></p>
+            <p> Pick a vertex $v \in V.$ Even if we don't know what the optimal perfect matching is, we know that that perfect matching has one edge incident to $v.$</p>
+            <p class="fragment"> Imagine that we take all of the edges that touch the vertex $v$, and subtract $y_v$ from the cost of all such edges. </p>
+            <p class=fragment> The cost of every perfect matching goes down by $y_v$, so the optimal perfect matchings don't change! Their costs just go down by $y_v.$ </p>
+          </section>
+          <section>
+            <h3> Interpreting the Dual </h3>
+            <embed src="demos/DualReweightGame.html" style="width:1000px; height:620px;">
+          </section>
+          <section>
+            <h3> Interpreting the Dual</h3>
+            <p> For an edge $e = uv$, you can imagine the `updated' weight of an edge, given a dual vector $y,$ to be $c_e - y_u - y_v.$</p>
+            <p class="fragment"> An <b>equality edge</b> of a given dual feasible $y$ is an edge $e$ whose updated cost is $0,$ that is, $c_e = y_u + y_v.$</p>
+            <p class="fragment"> Complementary slackness says that if $e$ is in an optimal matching, then it is an equality edge of every dual optimal $y.$</p>
+          </section>
+          <section>
+            <h3> Certifying Optimality </h3>
+            <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                <img src="images/mcm_prism_costs.svg" width="440" alt="A graph on six vertices a through f, two triangles abc and def joined by the edges cd, ae and bf, with a cost on each edge." />
+                <img class=fragment src="images/mcm_prism_costs_pm.svg" width="440" alt="The same graph with the perfect matching ac, de, bf highlighted in green." />
+            </div>
+            <p class="fragment"> Is this the best perfect matching? </p>
+          </section>
+          <section>
+            <h3> Certifying Optimality </h3>
+            <img src="images/mcm_prism_pm.svg" width="170" style="position:absolute; top:0; right:0; margin:0;" alt="The graph from the game with its minimum cost perfect matching ac, bf, de highlighted in green." />
+            <p> We can use this to certify that a given matching is optimal. </p>
+            <embed src="demos/DualReweightGameNonBipartite.html" style="width:1000px; height:620px;">
+          </section>
+          <section>
+            <h3> Certifying Optimality </h3>
+            <div class="flexbox" style="justify-content:space-around; align-items:flex-start;">
+                <div><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(P)}\quad \min\quad & 4x_{ab} + 3x_{bc} + 2x_{ac} + 3x_{de} + 4x_{ef} \\
+                  & {} + 2x_{df} + 5x_{cd} + 6x_{ae} + x_{bf} \\
+                  \text{s.t.}\quad & x_{ab} + x_{ac} + x_{ae} = 1 && (a) \\
+                  & x_{ab} + x_{bc} + x_{bf} = 1 && (b) \\
+                  & x_{bc} + x_{ac} + x_{cd} = 1 && (c) \\
+                  & x_{de} + x_{df} + x_{cd} = 1 && (d) \\
+                  & x_{de} + x_{ef} + x_{ae} = 1 && (e) \\
+                  & x_{ef} + x_{df} + x_{bf} = 1 && (f) \\
+                  & x \ge 0
+                  \end{aligned}
+                \]</p></div>
+                <div class="darkBlueText"><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(D)}\quad \max\quad & y_a + y_b + y_c + y_d + y_e + y_f \\
+                  \text{s.t.}\quad & y_a + y_b \le 4 && (ab) \\
+                  & y_b + y_c \le 3 && (bc) \\
+                  & y_a + y_c \le 2 && (ac) \\
+                  & y_d + y_e \le 3 && (de) \\
+                  & y_e + y_f \le 4 && (ef) \\
+                  & y_d + y_f \le 2 && (df) \\
+                  & y_c + y_d \le 5 && (cd) \\
+                  & y_a + y_e \le 6 && (ae) \\
+                  & y_b + y_f \le 1 && (bf) \\
+                  & y \text{ free}
+                  \end{aligned}
+                \]</p></div>
+            </div>
+            <p>Check that this is feasible: \[y^* = (y^*_a, y^*_b, y^*_c, y^*_d, y^*_e, y^*_f) = (1, 1, 1, 1, 2, 0)\]</p>
+          </section>
+          <section data-transition="none">
+            <h3> Certifying Optimality </h3>
+            <div class="flexbox" style="justify-content:space-around; align-items:flex-start;">
+                <div><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(P)}\quad \min\quad & 4x_{ab} + 3x_{bc} + 2x_{ac} + 3x_{de} + 4x_{ef} \\
+                  & {} + 2x_{df} + 5x_{cd} + 6x_{ae} + x_{bf} \\
+                  \text{s.t.}\quad & x_{ab} + x_{ac} + x_{ae} = 1 && (a) \\
+                  & x_{ab} + x_{bc} + x_{bf} = 1 && (b) \\
+                  & x_{bc} + x_{ac} + x_{cd} = 1 && (c) \\
+                  & x_{de} + x_{df} + x_{cd} = 1 && (d) \\
+                  & x_{de} + x_{ef} + x_{ae} = 1 && (e) \\
+                  & x_{ef} + x_{df} + x_{bf} = 1 && (f) \\
+                  & x \ge 0
+                  \end{aligned}
+                \]</p></div>
+                <div class="darkBlueText"><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(D)}\quad \max\quad & y_a + y_b + y_c + y_d + y_e + y_f \\
+                  \text{s.t.}\quad & y_a + y_b \le 4 && (ab) \\
+                  & y_b + y_c \le 3 && (bc) \\
+                  & {\color{#2e7d32}{y_a + y_c \le 2}} && {\color{#2e7d32}{(ac)}} \\
+                  & {\color{#2e7d32}{y_d + y_e \le 3}} && {\color{#2e7d32}{(de)}} \\
+                  & y_e + y_f \le 4 && (ef) \\
+                  & y_d + y_f \le 2 && (df) \\
+                  & y_c + y_d \le 5 && (cd) \\
+                  & y_a + y_e \le 6 && (ae) \\
+                  & {\color{#2e7d32}{y_b + y_f \le 1}} && {\color{#2e7d32}{(bf)}} \\
+                  & y \text{ free}
+                  \end{aligned}
+                \]</p></div>
+            </div>
+            <p>Check that this is feasible: \[y^* = (y^*_a, y^*_b, y^*_c, y^*_d, y^*_e, y^*_f) = (1, 1, 1, 1, 2, 0)\]</p>
+          </section>
+          <section data-transition="none">
+            <h3> Certifying Optimality </h3>
+            <div class="flexbox" style="justify-content:space-around; align-items:flex-start;">
+                <div><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(P)}\quad \min\quad & 4x_{ab} + 3x_{bc} + 2x_{ac} + 3x_{de} + 4x_{ef} \\
+                  & {} + 2x_{df} + 5x_{cd} + 6x_{ae} + x_{bf} \\
+                  \text{s.t.}\quad & x_{ab} + x_{ac} + x_{ae} = 1 && (a) \\
+                  & x_{ab} + x_{bc} + x_{bf} = 1 && (b) \\
+                  & x_{bc} + x_{ac} + x_{cd} = 1 && (c) \\
+                  & x_{de} + x_{df} + x_{cd} = 1 && (d) \\
+                  & x_{de} + x_{ef} + x_{ae} = 1 && (e) \\
+                  & x_{ef} + x_{df} + x_{bf} = 1 && (f) \\
+                  & x \ge 0
+                  \end{aligned}
+                \]</p></div>
+                <div class="darkBlueText"><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(D)}\quad \max\quad & y_a + y_b + y_c + y_d + y_e + y_f \\
+                  \text{s.t.}\quad & y_a + y_b \le 4 && (ab) \\
+                  & y_b + y_c \le 3 && (bc) \\
+                  & {\color{#2e7d32}{y_a + y_c \le 2}} && {\color{#2e7d32}{(ac)}} \\
+                  & {\color{#2e7d32}{y_d + y_e \le 3}} && {\color{#2e7d32}{(de)}} \\
+                  & y_e + y_f \le 4 && (ef) \\
+                  & y_d + y_f \le 2 && (df) \\
+                  & y_c + y_d \le 5 && (cd) \\
+                  & y_a + y_e \le 6 && (ae) \\
+                  & {\color{#2e7d32}{y_b + y_f \le 1}} && {\color{#2e7d32}{(bf)}} \\
+                  & y \text{ free}
+                  \end{aligned}
+                \]</p></div>
+            </div>
+            <p>Check that this is feasible: \[y^* = (y^*_a, y^*_b, y^*_c, y^*_d, y^*_e, y^*_f) = (1, 1, 1, 1, 2, 0)\]</p>
+            <p class="fragment">Complementary slackness means that $x_{uv} = 0$ except for $x_{ac}$, $x_{de}$ and $x_{bf}.$ Note that $\{ac, de, bf\}$ is a perfect matching!</p>
+          </section>
+          <section>
+            <h3> Certifying Optimality </h3>
+            <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                <img src="images/mcm_pent_costs.svg" width="440" alt="A graph on six vertices: the five-cycle a, b, c, d, e together with a vertex f joined to a and c, with a cost on each edge." />
+                <img src="images/mcm_pent_costs_pm.svg" width="440" alt="The same graph with the perfect matching af, bc, de highlighted in green." />
+            </div>
+          </section>
+          <section>
+            <h3> Certifying Optimality </h3>
+            <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                <img src="images/mcm_pent_costs.svg" width="400" alt="The original graph: the five-cycle a, b, c, d, e with vertex f joined to a and c, with the original cost on each edge." />
+                <img src="images/mcm_pent_reduced.svg" width="460" alt="The five-cycle a, b, c, d, e with vertex f joined to a and c. The optimal dual y = (0, 1, 0, 2, 3, 1) is written beside the vertices and each edge is labelled with its reduced cost: ab 4, bc 0, cd 3, de 0, ae 1, af 0, cf 1. The zero reduced cost edges bc, de and af are green." />
+            </div>
+          </section>
+          <section>
+            <h3> Certifying Optimality </h3>
+            <div class="flexbox" style="justify-content:space-around; align-items:flex-start;">
+                <div><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(P)}\quad \min\quad & 5x_{ab} + x_{bc} + 5x_{cd} + 5x_{de} + 4x_{ae} + x_{af} + 2x_{cf} \\
+                  \text{s.t.}\quad & x_{ab} + x_{ae} + x_{af} = 1 && (a) \\
+                  & x_{ab} + x_{bc} = 1 && (b) \\
+                  & x_{bc} + x_{cd} + x_{cf} = 1 && (c) \\
+                  & x_{cd} + x_{de} = 1 && (d) \\
+                  & x_{de} + x_{ae} = 1 && (e) \\
+                  & x_{af} + x_{cf} = 1 && (f) \\
+                  & x \ge 0
+                  \end{aligned}
+                \]</p></div>
+                <div class="darkBlueText"><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(D)}\quad \max\quad & y_a + y_b + y_c + y_d + y_e + y_f \\
+                  \text{s.t.}\quad & y_a + y_b \le 5 && (ab) \\
+                  & y_b + y_c \le 1 && (bc) \\
+                  & y_c + y_d \le 5 && (cd) \\
+                  & y_d + y_e \le 5 && (de) \\
+                  & y_a + y_e \le 4 && (ae) \\
+                  & y_a + y_f \le 1 && (af) \\
+                  & y_c + y_f \le 2 && (cf) \\
+                  & y \text{ free}
+                  \end{aligned}
+                \]</p></div>
+            </div>
+            <p>Check that this is feasible: \[y^* = (y^*_a, y^*_b, y^*_c, y^*_d, y^*_e, y^*_f) = (0, 1, 0, 2, 3, 1)\]</p>
+          </section>
+          <section data-transition="none">
+            <h3> Certifying Optimality </h3>
+            <div class="flexbox" style="justify-content:space-around; align-items:flex-start;">
+                <div><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(P)}\quad \min\quad & 5x_{ab} + x_{bc} + 5x_{cd} + 5x_{de} + 4x_{ae} + x_{af} + 2x_{cf} \\
+                  \text{s.t.}\quad & x_{ab} + x_{ae} + x_{af} = 1 && (a) \\
+                  & x_{ab} + x_{bc} = 1 && (b) \\
+                  & x_{bc} + x_{cd} + x_{cf} = 1 && (c) \\
+                  & x_{cd} + x_{de} = 1 && (d) \\
+                  & x_{de} + x_{ae} = 1 && (e) \\
+                  & x_{af} + x_{cf} = 1 && (f) \\
+                  & x \ge 0
+                  \end{aligned}
+                \]</p></div>
+                <div class="darkBlueText"><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(D)}\quad \max\quad & y_a + y_b + y_c + y_d + y_e + y_f \\
+                  \text{s.t.}\quad & y_a + y_b \le 5 && (ab) \\
+                  & {\color{#2e7d32}{y_b + y_c \le 1}} && {\color{#2e7d32}{(bc)}} \\
+                  & y_c + y_d \le 5 && (cd) \\
+                  & {\color{#2e7d32}{y_d + y_e \le 5}} && {\color{#2e7d32}{(de)}} \\
+                  & y_a + y_e \le 4 && (ae) \\
+                  & {\color{#2e7d32}{y_a + y_f \le 1}} && {\color{#2e7d32}{(af)}} \\
+                  & y_c + y_f \le 2 && (cf) \\
+                  & y \text{ free}
+                  \end{aligned}
+                \]</p></div>
+            </div>
+            <p>Check that this is feasible: \[y^* = (y^*_a, y^*_b, y^*_c, y^*_d, y^*_e, y^*_f) = (0, 1, 0, 2, 3, 1)\]</p>
+          </section>
+          <section data-transition="none">
+            <h3> Certifying Optimality </h3>
+            <div class="flexbox" style="justify-content:space-around; align-items:flex-start;">
+                <div><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(P)}\quad \min\quad & 5x_{ab} + x_{bc} + 5x_{cd} + 5x_{de} + 4x_{ae} + x_{af} + 2x_{cf} \\
+                  \text{s.t.}\quad & x_{ab} + x_{ae} + x_{af} = 1 && (a) \\
+                  & x_{ab} + x_{bc} = 1 && (b) \\
+                  & x_{bc} + x_{cd} + x_{cf} = 1 && (c) \\
+                  & x_{cd} + x_{de} = 1 && (d) \\
+                  & x_{de} + x_{ae} = 1 && (e) \\
+                  & x_{af} + x_{cf} = 1 && (f) \\
+                  & x \ge 0
+                  \end{aligned}
+                \]</p></div>
+                <div class="darkBlueText"><p style="font-size:16px;">\[
+                  \begin{aligned}
+                  \text{(D)}\quad \max\quad & y_a + y_b + y_c + y_d + y_e + y_f \\
+                  \text{s.t.}\quad & y_a + y_b \le 5 && (ab) \\
+                  & {\color{#2e7d32}{y_b + y_c \le 1}} && {\color{#2e7d32}{(bc)}} \\
+                  & y_c + y_d \le 5 && (cd) \\
+                  & {\color{#2e7d32}{y_d + y_e \le 5}} && {\color{#2e7d32}{(de)}} \\
+                  & y_a + y_e \le 4 && (ae) \\
+                  & {\color{#2e7d32}{y_a + y_f \le 1}} && {\color{#2e7d32}{(af)}} \\
+                  & y_c + y_f \le 2 && (cf) \\
+                  & y \text{ free}
+                  \end{aligned}
+                \]</p></div>
+            </div>
+            <p>Check that this is feasible: \[y^* = (y^*_a, y^*_b, y^*_c, y^*_d, y^*_e, y^*_f) = (0, 1, 0, 2, 3, 1)\]</p>
+            <p>\[x_{ij} = 1 \text{ when } ij \text{ is green}\]</p>
+          </section>
+      </section>
+
+      <!-- ===================== The primal-dual algorithm ===================== -->
+      <section>
+          <section>
+              <h2>The Primal-Dual Algorithm</h2>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> <b>Goal:</b> solve the minimum cost perfect matching problem on a bipartite graph using the dual LP. </p>
+              <p class="fragment"> The matching LP has an integral optimal vertex, so the simplex method works. But it ignores the graph. We can get a faster algorithm if we make use of the graph structure. </p>
+              <p class="fragment"> One thing is that it is often practically much easier to find <b>A</b> perfect matching, than a minimum cost one.</p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> For this class, we'll mostly be dealing with graphs where we can find a perfect matching by eye.</p>
+              <img src="images/matching_example_perfect_plain.svg" style="width:360px; max-width:none; height:auto;" alt="A bipartite graph with parts u1, u2, u3 and v1, v2, v3 and six edges joining the two parts." />
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> For this class, we'll mostly be dealing with graphs where we can find a perfect matching by eye.</p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/matching_example_perfect.svg" style="width:360px; max-width:none; height:auto;" alt="The bipartite graph with the perfect matching u1-v1, u2-v2, u3-v3 highlighted in bold green and the other edges faded." />
+                  <img src="images/matching_example_perfect2.svg" style="width:360px; max-width:none; height:auto;" alt="The same bipartite graph with the perfect matching u1-v2, u2-v1, u3-v3 highlighted in bold green and the other edges faded." />
+              </div>
+              <p class="fragment"> This graph has exactly two perfect matchings. </p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> In each iteration, we will have a dual feasible $y.$</p>
+              <p> Write $E^{=}$ for the set of <b>equality edges</b> of a dual feasible $y$, the edges so that $c_e = y_u + y_v.$ </p>
+              <p class="fragment"> If $E^{=}$ contains a perfect matching $M$, then $M$ is a minimum cost perfect matching by complementary slackness! </p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> At a high level, the algorithm does the following:</p>
+              <ul> 
+                <li>At each stage, we will have a dual feasible solution $y$ in mind.</li>
+                <li class=fragment>If this dual $y$ is optimal, then there will be an optimal primal solution satisfying complementary slackness. This means there is a perfect matching in the graph induced by $E^=.$</li>
+                <li class=fragment>If this dual $y$ is not optimal, then there will be no perfect matching in $E^=$; we will need to update $y$ to a new value.</li>
+              </ul>
+              <p> The example below shows how this works. </p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> <b>Example.</b> An input to the algorithm</p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/pd2_0.svg" style="width:440px; max-width:none; height:auto;" alt="A bipartite graph with parts a1, a2, a3 and b1, b2, b3, with six edges with costs a1b1 3, a1b2 5, a2b1 4, a2b3 6, a3b2 2, a3b3 3. Every vertex has y equal to 0." />
+                  <div style="width:460px; font-size:0.85em;">
+                      <p> Start with $y = 0.$ </p>
+                      <p class="fragment"> This is dual feasible, since every cost is nonnegative. </p>
+                      <p class="fragment"> There are currently no equality edges, so $E^=$ is empty and there is no perfect matching amongst the edges in $E^=.$</p>
+                      <p class="fragment"> We need to increase some of the entries of $y$.</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/pd2_1.svg" style="width:440px; max-width:none; height:auto;" alt="y equal to 3 on a1 and 0 elsewhere. Edge a1b1 has reduced cost 0 and is purple." />
+                  <div style="width:460px; font-size:0.85em;">
+                      <p> Increase $y_{a_1}$ until an edge at $a_1$ has reduced cost $0$. </p>
+                      <p class="fragment"> Now, $E^= = \{a_1b_1\}$, and there is still no perfect matching. </p>
+                      <p class="fragment"> Let's increase $y_{a_2}$ next. </p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/pd2_2.svg" style="width:440px; max-width:none; height:auto;" alt="y equal to 3 on a1, 4 on a2 and 0 elsewhere. Edges a1b1 and a2b1 are purple." />
+                  <div style="width:460px; font-size:0.85em;">
+                      <p> Increase $y_{a_2}$. </p>
+                      <p class="fragment"> Now $E^= = \{a_1b_1, a_2b_1\}$, but still no perfect matching. </p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/pd2_3.svg" style="width:440px; max-width:none; height:auto;" alt="y equal to 3, 4, 2 on a1, a2, a3 and 0 on the right. Edges a1b1, a2b1, a3b2 are purple." />
+                  <div style="width:460px; font-size:0.85em;">
+                      <p> Increase $y_{a_3}$. </p>
+                      <p class="fragment"> Now $E^= = \{a_1b_1, a_2b_1, a_3 b_2\}$, but still no perfect matching. </p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/pd2_4.svg" style="width:440px; max-width:none; height:auto;" alt="y equal to 3, 4, 2 on a1, a2, a3, 0 on b1 and b2 and 1 on b3. Edges a1b1, a2b1, a3b2, a3b3 are purple." />
+                  <div style="width:460px; font-size:0.85em;">
+                      <p> Increase $y_{b_3}$. </p>
+                      <p class="fragment"> Now $E^= = \{a_1b_1, a_2b_1, a_3 b_2, a_3b_3\}$, but still no perfect matching! </p>
+                      <p class="fragment"> We can't increase any individual $y_v$ any more! To make more progress, we will need to also decrease the weights on some vertices. </p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/pd2_5.svg" style="width:440px; max-width:none; height:auto;" alt="Same state, with a1 and a2 circled in orange and b1 circled in blue. Equality edges a1b1, a2b1, a3b2, a3b3 are purple." />
+                  <div style="width:460px; font-size:0.85em;">
+                      <p> $y = (3,4,2;\,0,0,1),$ $\sum_v y_v = 10.$ </p>
+                      <p class="fragment"> Why is there is no perfect matching in the purple edges? <span class=fragment>Because $a_1$ and $a_2$ both need $b_1.$</span> </p>
+                      <p class="fragment"> We can use this structure though: imagine increasing <b>both</b> $y_{a_1}$ and $y_{a_2}$ by 1, and also <b>decreasing</b> $y_{b_1}$ by 1. The edges $a_1b_1$ and $a_2b_1$ keep the same total weight $y_u + y_v,$ so they remain equality edges. </p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:302px;">
+                      <img src="images/pd2_6a.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y equal to 4, 5, 2 on a1, a2, a3 and -1, 0, 1 on b1, b2, b3. Purple equality edges a1b1, a2b1, a2b3, a3b2, a3b3; they contain the perfect matching a1b1, a2b3, a3b2." />
+                      <img class="fragment" data-fragment-index="1" src="images/pd2_6_match.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The perfect matching a1b1, a2b3, a3b2 highlighted in green." />
+                  </div>
+                  <div style="width:460px; font-size:0.85em;">
+                      <p> $y = (4,5,2;\,-1,0,1),$ $\sum_v y_v = 11.$ </p>
+                      <p class="fragment" data-fragment-index="1"> $E^{=}$ has the perfect matching $M = \{a_1b_1,\ a_2b_3,\ a_3b_2\}.$ </p>
+                      <p class="fragment" data-fragment-index="2"> $c(M) = 3+6+2 = 11 = \sum_v y_v,$ so $M$ is a minimum cost perfect matching. </p>
+                  </div>
+              </div>
+          </section>
+
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> If at some point, we have found some $y$ so that $E^=$ contains a perfect matching, then we are done; that perfect matching is minimum cost. </p>
+              <p class=fragment> The tricky thing is finding a way to update $y$ when $E^=$ has no perfect matching. To do this, we will make use of a combinatorics theorem.</p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm (Hall's Theorem)</h3>
+              <p> For a set of vertices, $S \subseteq V$, the <b>neighborhood</b> of $S$ is the set $\mathcal{N}(S) \subseteq V$ of vertices that share an edge with some vertex of $S.$</p>
+              <div class="fragment">
+              <p > For a bipartite graph $G$ whose vertices are separated into partitions $V_1$ and $V_2$, a <b>deficient set</b> is a set $S \subseteq V$ so that </p>
+              <ul >
+                <li> $S$ is either contained in $V_1$ or $V_2$</li>
+                <li> $\mathcal{N}(S)$ has fewer elements than $S$ does.</li>
+              </ul>
+              </div>
+
+              <div class=fragment style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Hall's Theorem</b></p>
+                  <p> Suppose that $G$ is a bipartite graph.
+                    The graph $G$ has no perfect matching if and only if there exists some deficient set of vertices.
+                 </p>
+              </div>
+          </section>
+
+          <section>
+              <h3>The Primal-Dual Algorithm (Hall's Theorem)</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div>
+                      <img src="images/hall_no_matching.svg" style="width:330px; max-width:none; height:auto;" alt="A bipartite graph with parts a1, a2, a3 and b1, b2, b3 where a1 and a2 are both joined only to b1, so there is no perfect matching." />
+                      <p><small> This graph has no perfect matching. </small></p>
+                  </div>
+                  <div class="fragment">
+                      <img src="images/hall_deficient_set.svg" style="width:330px; max-width:none; height:auto;" alt="The same graph with the deficient set S = {a1, a2} circled and its neighbourhood N(S) = {b1} circled; the edges leaving S are highlighted, showing |N(S)| = 1 is less than |S| = 2." />
+                      <p><small> $S = \{a_1, a_2\}$ is deficient: $|\mathcal{N}(S)| = 1 < 2 = |S|.$ </small></p>
+                  </div>
+              </div>
+              <p class="fragment"> $a_1$ and $a_2$ must both be matched into $\mathcal{N}(S) = \{b_1\}$, but there is only one vertex there. </p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> We can prove Hall's theorem using Farkas' Lemma! </p>
+              <p class="fragment"> Using our integrality theorem, $G$ has no perfect matching if and only if the following polytope is empty
+                \[
+                    P = \{x \in \R^E : \sum_{e \in E : v \in e} x_e = 1 \text{ for all } v\in V,\ x \ge 0\}.
+                \]
+              </p>
+              <p class=fragment> Farkas' lemma says that $\{x : Ax = b,\ x \ge 0\}$ is empty if and only if there is some $w$ with $A^\top w \ge 0$ and $b^\top w < 0.$ Here $A$ is the vertex-edge incidence matrix of $G$ and $b$ is the all-ones vector.</p>
+              <p class=fragment> So $P$ is empty if and only if there is some $w \in \R^V$ so that $w_u + w_v \ge 0$ for each $uv \in E$ and so that $\sum_{v \in V} w_v < 0.$</p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/hall_farkas_w.svg" style="width:420px; max-width:none; height:auto;" alt="The graph with parts a1, a2, a3 and b1, b2, b3 where a1 and a2 are joined only to b1. The deficient set S = {a1, a2} and N(S) = {b1} are outlined. The vertex weights are w = -1 on a1 and a2, 1 on b1 and 0 on a3, b2, b3. Each edge is labelled with the sum of its endpoint weights, which is 0 on a1b1, a2b1, a3b2, a3b3 and 1 on a3b1, and the total weight is -1." />
+                  <div style="width:470px;">
+                      <p style="font-size:22px;">Let's assume <b>there is a set $S$ which is deficient</b> (so $S$ lies inside $V_1$ or inside $V_2$), then define $w_u = -1$ if $u \in S$, $w_v = 1$ if $v \in \mathcal{N}(S)$ and $w_v = 0$ in all other cases.</p>
+                      <p class="fragment" style="font-size:22px;">Let's see that $w$ certifies infeasibility. Let $uv \in E.$ If neither $u$ nor $v$ is in $S,$ then $w_u$ and $w_v$ are both at least $0,$ and so $w_u + w_v \ge 0.$</p>
+                      <p class="fragment" style="font-size:22px;">If $u$ or $v$ is in $S,$ then exactly one of them is (since $S$ lies inside one part), and the other is in $\mathcal{N}(S)$ by definition. So, $w_u + w_v = 1 - 1 = 0.$ Hence $w_u + w_v \ge 0$ for every edge.</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/hall_farkas_w.svg" style="width:420px; max-width:none; height:auto;" alt="The graph with parts a1, a2, a3 and b1, b2, b3 where a1 and a2 are joined only to b1. The deficient set S = {a1, a2} and N(S) = {b1} are outlined. The vertex weights are w = -1 on a1 and a2, 1 on b1 and 0 on a3, b2, b3. Each edge is labelled with the sum of its endpoint weights, which is 0 on a1b1, a2b1, a3b2, a3b3 and 1 on a3b1, and the total weight is -1." />
+                  <div style="width:470px;">
+                      <p style="font-size:22px;">Finally, $\sum_{v \in V} w_v = |\mathcal{N}(S)| - |S| < 0.$ So $w$ certifies that $P$ is empty, and $G$ has no perfect matching.</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> This shows the direction that if there is a deficient set, then there are no perfect matchings. The other direction (that there being no matching implies that there is a deficient set) can be shown with a more careful argument. </p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> Returning to the algorithm, let's say we are at a stage where we have a dual feasible $y$, but the equality edges $E^=$ contains no perfect matching.</p>
+              <p> By Hall's theorem applied to the graph with edge set $E^=,$ there is a deficient subset $S \subseteq V_1$ (or $V_2$) of this graph.</p>
+              <p class=fragment> We will update $y$ by increasing $y_v$ by some number $t > 0$ for every $v \in S$ and decreasing $y_v$ by $t$ for every $v \in \mathcal{N}(S),$ where $\mathcal{N}$ is taken in $E^=.$ We choose $t$ as large as possible while keeping $y$ feasible.</p>
+              <p class=fragment> Note that this is the same as updating to $y - tw,$ where $w$ is the vector we constructed in the proof of one direction of Hall's theorem.</p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> Note that this update keeps $y$ feasible. </p>
+              <p> We have already seen that $w_u + w_v \ge 0$ for all $uv \in E^=$ and that $\sum_{v \in V} w_v < 0.$ So the constraints of the equality edges stay satisfied under $y - tw,$ and the constraints of all other edges are satisfied for small enough $t > 0.$ Hence $y - tw$ is dual feasible for small $t > 0.$</p>
+              <p> The objective $\sum_{v} (y - tw)_v = \sum_{v} y_v - t \sum_{v} w_v$ increases as a function of $t.$</p>
+              <p> Therefore, we are making positive progress each time we update $y$.</p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p style="font-size:26px;"> The value of $t$ that we use can be computed as 
+              \[t = \min\{c_{uv} - y_u - y_v : uv \in E,\ u \in S,\ v \notin \mathcal{N}(S)\}.\]</p>
+              <p style="font-size:26px;"> That is, we take the smallest reduced cost of an edge from $S$ to a vertex outside $\mathcal{N}(S).$ None of these edges is an equality edge, so $t > 0.$ Edges from $S$ into $\mathcal{N}(S)$ never limit $t,$ since one endpoint goes up by $t$ and the other goes down by $t.$ </p>
+              <p class="fragment" style="font-size:26px;"> If there is no edge from $S$ to a vertex outside $\mathcal{N}(S),$ then $S$ is also deficient in $G$ itself, so $G$ has no perfect matching and the minimum cost perfect matching problem is infeasible. </p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p style="font-size:26px;"> <b>Input:</b> a bipartite graph $G = (V_1 \cup V_2, E)$ with nonnegative edge costs $c$ which has a perfect matching. </p>
+              <p style="font-size:26px;"> <b>Initialize</b> $y = 0$.
+              <p style="font-size:26px;"> <b>Start Round:</b> Find the equality edges $E^=$ of the current $y.$ If there is a perfect matching $M$ amongst the edges of $E^=,$ terminate with $M,$ which has minimum cost. </p>
+              <p style="font-size:26px;"> <b>If no perfect matching exists,</b> then</p>
+              <ul>
+                <li style="font-size:26px;">Find a deficient set $S$ (where we only look at equality edges), contained in $V_1$ or in $V_2.$</li>
+                <li style="font-size:26px;">Find every vertex that is joined by an equality edge to some vertex of $S,$ and call this set $N.$</li>
+                <li style="font-size:26px;">Amongst all edges $uv \in E$ with $u \in S$ and $v \notin N,$ find the smallest reduced cost $c_{uv} - y_u - y_v,$ and call it $t.$</li>
+                <li style="font-size:26px;">Add $t$ to $y_v$ for all vertices in $S,$ and subtract $t$ from $y_v$ for all vertices in $N.$</li>
+              </ul>
+              <p style="font-size:26px;"> Go back to the start of the round.</p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd_i0.svg" width="440" alt="Every vertex has y equal to 0 and there are no equality edges. The vertex d is ringed in red." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \emptyset\]</p>
+                      <p class="fragment" style="font-size:22px;">\[S = \{d\}, \quad N_{E^{=}}(S) = \emptyset\]</p>
+                      <p class="fragment" style="font-size:22px;">\[t = \min\{6, 5\} = 5\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd_i1.svg" width="440" alt="y_d equals 5; edge bd is an equality edge in purple. The vertex e is ringed in red." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{bd\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[S = \{e\}, \quad N_{E^{=}}(S) = \emptyset\]</p>
+                      <p class="fragment" style="font-size:22px;">\[t = \min\{7, 3, 1\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd_i2.svg" width="440" alt="y_d equals 5 and y_e equals 1; edges bd and ce are purple. The vertex f is ringed in red." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{bd, ce\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[S = \{f\}, \quad N_{E^{=}}(S) = \emptyset\]</p>
+                      <p class="fragment" style="font-size:22px;">\[t = \min\{4, 1\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd_i3.svg" width="440" alt="y_d = 5, y_e = 1, y_f = 1; edges bd, ce, cf are purple. The vertex a is ringed in red." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{bd, ce, cf\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[S = \{a\}, \quad N_{E^{=}}(S) = \emptyset\]</p>
+                      <p class="fragment" style="font-size:22px;">\[t = \min\{1, 6\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd_ex2.svg" width="440" alt="y_a = 1, y_d = 5, y_e = 1, y_f = 1; edges ad, bd, ce, cf are purple. The vertices a and b are ringed in red and d is ringed in blue." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ad, bd, ce, cf\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[S = \{a, b\}, \quad N_{E^{=}}(S) = \{d\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[t = \min\{5, 2, 3\} = 2\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd_ex3.svg" width="440" alt="Final dual values with the equality edges ad, bd, be, ce, cf in purple and the perfect matching ad, be, cf drawn thickest in green." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ad, bd, be, ce, cf\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[M = \{ad, be, cf\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[\begin{aligned} c(M) &= 6 + 3 + 1 = 10 \\ \sum_{w} y_w &= 10 \end{aligned}\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd4_0.svg" width="440" alt="Every vertex has y equal to 0 and there are no equality edges. The vertex a is ringed in red." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \emptyset\]</p>
+                      <p class="fragment" style="font-size:22px;">\[S = \{a\}, \quad N_{E^{=}}(S) = \emptyset\]</p>
+                      <p class="fragment" style="font-size:22px;">\[t = \min\{4, 5, 4\} = 4\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd4_1.svg" width="440" alt="y_a equals 4; edges ae and ag are purple. The vertex b is ringed in red." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ag\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[S = \{b\}, \quad N_{E^{=}}(S) = \emptyset\]</p>
+                      <p class="fragment" style="font-size:22px;">\[t = \min\{1\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd4_2.svg" width="440" alt="y_a = 4, y_b = 1; edges ae, ag, bf are purple. The vertex c is ringed in red." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ag, bf\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[S = \{c\}, \quad N_{E^{=}}(S) = \emptyset\]</p>
+                      <p class="fragment" style="font-size:22px;">\[t = \min\{6, 6, 2\} = 2\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd4_3.svg" width="440" alt="y_a = 4, y_b = 1, y_c = 2; edges ae, ag, bf, ch are purple. The vertex d is ringed in red." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ag, bf, ch\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[S = \{d\}, \quad N_{E^{=}}(S) = \emptyset\]</p>
+                      <p class="fragment" style="font-size:22px;">\[t = \min\{5, 3\} = 3\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd4_5.svg" width="440" alt="y = 4, 1, 2, 3 on a, b, c, d and 0 on e, f, g, h; edges ae, ag, bf, ch, dh are purple. The vertices b, c, d are ringed in red and f, h in blue." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ag, bf, ch, dh\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[S = \{b, c, d\}, \quad N_{E^{=}}(S) = \{f, h\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[t = \min\{4, 2\} = 2\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd4_6.svg" width="440" alt="Final dual values with the equality edges ae, ag, bf, ch, dg, dh in purple and the perfect matching ae, bf, ch, dg drawn thickest in green." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ag, bf, ch, dg, dh\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[M = \{ae, bf, ch, dg\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[\begin{aligned} c(M) &= 4 + 1 + 2 + 5 = 12 \\ \sum_{w} y_w &= 12 \end{aligned}\]</p>
+                  </div>
+              </div>
+          </section>
+      </section>
+
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

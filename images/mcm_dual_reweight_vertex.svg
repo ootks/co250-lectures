@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" width="760" height="320" font-family="Georgia, serif">
+  <!-- ============================ BEFORE ============================ -->
+  <g>
+    <text x="175" y="28" text-anchor="middle" font-size="20" fill="#586e75">before</text>
+
+    <!-- edges from v (center) to the four leaves -->
+    <!-- matched edge (to w1) highlighted green -->
+    <line x1="175" y1="175" x2="60"  y2="90"  stroke="#859900" stroke-width="7" stroke-linecap="round"/>
+    <line x1="175" y1="175" x2="60"  y2="260" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+    <line x1="175" y1="175" x2="300" y2="90"  stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+    <line x1="175" y1="175" x2="300" y2="260" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- cost labels -->
+    <g>
+      <circle cx="110" cy="126" r="19" fill="#fdf6e3" stroke="#859900" stroke-width="2"/>
+      <text x="110" y="132" text-anchor="middle" font-size="18" fill="#073642">c&#8321;</text>
+      <circle cx="110" cy="222" r="19" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+      <text x="110" y="228" text-anchor="middle" font-size="18" fill="#073642">c&#8322;</text>
+      <circle cx="240" cy="126" r="19" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+      <text x="240" y="132" text-anchor="middle" font-size="18" fill="#073642">c&#8323;</text>
+      <circle cx="240" cy="222" r="19" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+      <text x="240" y="228" text-anchor="middle" font-size="18" fill="#073642">c&#8324;</text>
+    </g>
+
+    <!-- leaves -->
+    <circle cx="60"  cy="90"  r="18" fill="#eee8d5" stroke="#586e75" stroke-width="3"/>
+    <text x="60"  y="96"  text-anchor="middle" font-size="16" font-style="italic" fill="#073642">w&#8321;</text>
+    <circle cx="60"  cy="260" r="18" fill="#eee8d5" stroke="#586e75" stroke-width="3"/>
+    <text x="60"  y="266" text-anchor="middle" font-size="16" font-style="italic" fill="#073642">w&#8322;</text>
+    <circle cx="300" cy="90"  r="18" fill="#eee8d5" stroke="#586e75" stroke-width="3"/>
+    <text x="300" y="96"  text-anchor="middle" font-size="16" font-style="italic" fill="#073642">w&#8323;</text>
+    <circle cx="300" cy="260" r="18" fill="#eee8d5" stroke="#586e75" stroke-width="3"/>
+    <text x="300" y="266" text-anchor="middle" font-size="16" font-style="italic" fill="#073642">w&#8324;</text>
+
+    <!-- center vertex v -->
+    <circle cx="175" cy="175" r="22" fill="#073642" stroke="#073642" stroke-width="3"/>
+    <text x="175" y="182" text-anchor="middle" font-size="20" font-style="italic" fill="#fdf6e3">v</text>
+  </g>
+
+  <!-- arrow -->
+  <g>
+    <line x1="358" y1="175" x2="408" y2="175" stroke="#586e75" stroke-width="3"/>
+    <polygon points="408,169 420,175 408,181" fill="#586e75"/>
+    <text x="389" y="160" text-anchor="middle" font-size="16" fill="#586e75">&#8722;y&#8341;</text>
+  </g>
+
+  <!-- ============================ AFTER ============================ -->
+  <g transform="translate(410,0)">
+    <text x="175" y="28" text-anchor="middle" font-size="20" fill="#586e75">after</text>
+
+    <line x1="175" y1="175" x2="60"  y2="90"  stroke="#859900" stroke-width="7" stroke-linecap="round"/>
+    <line x1="175" y1="175" x2="60"  y2="260" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+    <line x1="175" y1="175" x2="300" y2="90"  stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+    <line x1="175" y1="175" x2="300" y2="260" stroke="#93a1a1" stroke-width="4" stroke-linecap="round"/>
+
+    <g>
+      <circle cx="110" cy="125" r="33" fill="#fdf6e3" stroke="#859900" stroke-width="2"/>
+      <text x="110" y="131" text-anchor="middle" font-size="16" fill="#073642">c&#8321;&#8722;y&#8341;</text>
+      <circle cx="110" cy="221" r="33" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+      <text x="110" y="227" text-anchor="middle" font-size="16" fill="#073642">c&#8322;&#8722;y&#8341;</text>
+      <circle cx="240" cy="125" r="33" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+      <text x="240" y="131" text-anchor="middle" font-size="16" fill="#073642">c&#8323;&#8722;y&#8341;</text>
+      <circle cx="240" cy="221" r="33" fill="#fdf6e3" stroke="#93a1a1" stroke-width="2"/>
+      <text x="240" y="227" text-anchor="middle" font-size="16" fill="#073642">c&#8324;&#8722;y&#8341;</text>
+    </g>
+
+    <circle cx="60"  cy="90"  r="18" fill="#eee8d5" stroke="#586e75" stroke-width="3"/>
+    <text x="60"  y="96"  text-anchor="middle" font-size="16" font-style="italic" fill="#073642">w&#8321;</text>
+    <circle cx="60"  cy="260" r="18" fill="#eee8d5" stroke="#586e75" stroke-width="3"/>
+    <text x="60"  y="266" text-anchor="middle" font-size="16" font-style="italic" fill="#073642">w&#8322;</text>
+    <circle cx="300" cy="90"  r="18" fill="#eee8d5" stroke="#586e75" stroke-width="3"/>
+    <text x="300" y="96"  text-anchor="middle" font-size="16" font-style="italic" fill="#073642">w&#8323;</text>
+    <circle cx="300" cy="260" r="18" fill="#eee8d5" stroke="#586e75" stroke-width="3"/>
+    <text x="300" y="266" text-anchor="middle" font-size="16" font-style="italic" fill="#073642">w&#8324;</text>
+
+    <circle cx="175" cy="175" r="22" fill="#073642" stroke="#073642" stroke-width="3"/>
+    <text x="175" y="182" text-anchor="middle" font-size="20" font-style="italic" fill="#fdf6e3">v</text>
+  </g>
+</svg>
