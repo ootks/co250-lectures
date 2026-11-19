@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <!-- Title slide -->
+      <section>
+          <h2>Introduction to Optimization</h2>
+          <h3>CO 250</h3>
+          <br>
+          <h4>Lecture 19</h4>
+          <br>
+          <p class="centered"><a href="?view=scroll">Scroll view</a></p>
+          <p class="centered"><a href="beamer/lecture19.pdf">PDF version of these slides</a> <em>(demo: this PDF version is experimental and may contain errors or differ from the slides)</em></p>
+      </section>
+      <section>
+          <h2>Lecture Outline</h2>
+          <ul>
+              <li>Review: The Primal-Dual Algorithm</li>
+              <li>Solving Integer Programs</li>
+          </ul>
+      </section>
+
+      <!-- ===================== Review: the primal-dual algorithm (from lecture 18) ===================== -->
+      <section>
+          <section>
+              <h2>Review: The Primal-Dual Algorithm</h2>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> The matching problem can be expressed as a linear program. This is the primal.</p>
+              <div><p>\[
+                  \begin{aligned}
+                  \text{(P)}\quad \min\quad & \sum_{e \in E} c_e x_e \\
+                  \text{s.t.}\quad & \sum_{e \in E : v \in e} x_e = 1 \quad (v \in V) \\
+                  & x_e \ge 0 \quad (e \in E)
+                  \end{aligned}
+              \]</p></div>
+              <p> This is the dual. </p>
+              <div class="darkBlueText"><p>\[
+                  \begin{aligned}
+                  \text{(D)}\quad \max\quad & \sum_{v \in V} y_v \\
+                  \text{s.t.}\quad & y_u + y_v \le c_e \quad (e = uv \in E) \\
+                  \end{aligned}
+              \]</p></div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> The reduced cost of an edge $e = uv$ associated to a dual feasible $y$ is $c_{e}' = c_e - y_u - y_v$. The constraints say that these reduced costs are all nonnegative. </p>
+              <p class="fragment"> An edge is an <b>equality edge</b> for a dual feasible $y$ if the reduced cost $c_e' = 0$, i.e. the constraint $c_e \ge y_u + y_v$ holds with equality. </p>
+              <p class=fragment> For bipartite graphs, complementary slackness says that the dual solution is optimal if and only if there is a perfect matching consisting of only equality edges.
+              </p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p> A bipartite graph has its vertices divided into two sets $V_1$ and $V_2$. </p>
+             <p> We will be looking for <b>deficient sets</b> (where we only consider equality edges in the graph). For an edge set $E^=$, the neighborhood of a set $S$ is the set
+            \[
+            \mathcal{N}_{E^=}(S) = 
+            \{v \in V : \text{There is some }u \in S, \text{ s.t. } uv \in E^=\}.
+            \]
+             </p>
+             <p>
+             A set of vertices $S \subseteq V_1$ or $S \subseteq V_2$ is a deficient set for the edge set $E^=$ if $|\mathcal{N}_{E^=}(S)| < |S|$.
+              </p>
+              <div class=fragment style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Hall's Theorem</b></p>
+                  <p> Suppose that $G$ is a bipartite graph.
+                    The graph $G$ has no perfect matching if and only if there exists some deficient set of vertices.
+                 </p>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <img src="images/primal_dual_flowchart.svg" style="height:540px; max-width:none; width:auto;" alt="Flow chart of the primal-dual algorithm. Start with y = 0. Find the equality edges. If the equality edges contain a perfect matching M, output M as a minimum cost perfect matching. Otherwise find a deficient set S using only equality edges and its neighbours N, let t be the smallest reduced cost over edges uv with u in S and v not in N, add t to y on S and subtract t from y on N, and loop back to finding the equality edges." />
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd5_0_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 0, 0, 0, 0 on a, b, c, d and 0, 0, 0, 0 on e, f, g, h; there are no equality edges." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd5_0_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex a is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{a\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{7, 5\} = 5\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd5_1_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 5, 0, 0, 0 on a, b, c, d and 0, 0, 0, 0 on e, f, g, h; edge ag is purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd5_1_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertices b, c, d are ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ag\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{b, c, d\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{5, 3, 3, 4, 6, 1, 4, 3\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd5_2_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 5, 1, 1, 1 on a, b, c, d and 0, 0, 0, 0 on e, f, g, h; edges ag, de are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd5_2_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertices b, c are ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ag, de\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{b, c\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{4, 2, 2, 3, 5\} = 2\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd5_3_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 5, 3, 3, 1 on a, b, c, d and 0, 0, 0, 0 on e, f, g, h; edges ag, bf, ce, de are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd5_3_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertices c, d are ringed in red and e in blue." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ag, bf, ce, de\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{c, d\}, \quad \mathcal{N}_{E^=}(S) = \{e\}\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{1, 3, 3, 2\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd5_4_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 5, 3, 4, 2 on a, b, c, d and -1, 0, 0, 0 on e, f, g, h; edges ag, bf, ce, cg, de are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd5_4_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertices a, c, d are ringed in red and e, g in blue." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ag, bf, ce, cg, de\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{a, c, d\}, \quad \mathcal{N}_{E^=}(S) = \{e, g\}\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{2, 2, 1\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd5_5.svg" width="440" alt="Final dual values y = 6, 3, 5, 3 on a, b, c, d and -2, 0, -1, 0 on e, f, g, h, with the equality edges ag, bf, ce, cg, de, dh in purple and the perfect matching ag, bf, ce, dh drawn thickest in green." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ag, bf, ce, cg, de, dh\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[M = \{ag, bf, ce, dh\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[\begin{aligned} c(M) &= 5 + 3 + 3 + 3 = 14 \\ \sum_{w} y_w &= 14 \end{aligned}\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+            <h3>The Primal-Dual Algorithm</h3>
+            <p style="font-size:26px;"> Some notes: finding a perfect matching for a large graph is its own computer science problem. For small graphs, a simple case division will suffice: pick an edge, and either <b>include</b> it or <b>exclude</b> it. </p>
+            <div class="flexbox" style="align-items:flex-start; justify-content:space-around;">
+                <div style="width:270px;">
+                    <img src="images/pm_cases_pick.svg" style="width:270px; max-width:none; height:auto;" alt="The bipartite graph with parts a, b, c, d and e, f, g, h and edges ag, bf, ce, cg, de, dh. The edge cg is highlighted in orange." />
+                    <p class="centered" style="font-size:22px;">Pick the edge $cg$</p>
+                </div>
+                <div class="fragment" style="width:270px;">
+                    <img src="images/pm_cases_include.svg" style="width:270px; max-width:none; height:auto;" alt="The edge cg is included in green, and the vertices c and g are deleted along with the edges ag and ce, which are dotted. The edges bf, de, dh remain. The vertex a has no edges left and is ringed in red." />
+                    <p class="centered" style="font-size:22px;"><b>Include $cg$:</b> this is the same as deleting the vertices $c$ and $g$ from the graph and looking for a perfect matching.</p>
+                </div>
+                <div class="fragment" style="width:270px;">
+                    <img src="images/pm_cases_exclude.svg" style="width:270px; max-width:none; height:auto;" alt="The edge cg is deleted and drawn dotted. The edges ag, bf, ce, dh are highlighted in green and form a perfect matching; the edge de is not used." />
+                    <p class="centered" style="font-size:22px;"><b>Exclude $cg$:</b> this is like deleting that edge from the graph (but keeping the vertices). $ag,$ $bf,$ $ce$ are forced, and then $dh.$</p>
+                </div>
+            </div>
+            <p class="fragment" style="font-size:26px;">\[M = \{ag, bf, ce, dh\}\]</p>
+          </section>
+          <section>
+            <h3>The Primal-Dual Algorithm</h3>
+            <p style="font-size:26px;"> To find a deficient set in a small graph, try every subset $S$ of one side: list its neighbours $\mathcal{N}_{E^=}(S)$ along the equality edges, and check whether $|\mathcal{N}_{E^=}(S)| < |S|.$ </p>
+            <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                <div style="position:relative; width:300px; height:275px;">
+                    <img src="images/defset_graph.svg" style="position:absolute; left:0; top:0; width:300px; max-width:none; height:auto;" alt="The bipartite graph with parts a, b, c, d and e, f, g, h and equality edges ag, bf, ce, cg, de." />
+                    <img class="fragment" data-fragment-index="3" src="images/defset_graph_found.svg" style="position:absolute; left:0; top:0; width:300px; max-width:none; height:auto;" alt="The same graph with the vertices a, c, d ringed in red and e, g ringed in blue." />
+                </div>
+                <div style="width:560px;">
+                    <p style="font-size:24px;">\[E^{=} = \{ag, bf, ce, cg, de\}\]</p>
+                    <p class="fragment" data-fragment-index="1" style="font-size:24px;"><b>Size 1:</b> $\mathcal{N}_{E^=}(a) = \{g\},$ $\mathcal{N}_{E^=}(b) = \{f\},$ $\mathcal{N}_{E^=}(c) = \{e, g\},$ $\mathcal{N}_{E^=}(d) = \{e\}.$ None is deficient.</p>
+                    <p class="fragment" data-fragment-index="2" style="font-size:24px;"><b>Size 2:</b> every pair has at least two neighbours. None is deficient.</p>
+                    <p class="fragment" data-fragment-index="3" style="font-size:24px;"><b>Size 3:</b> $\mathcal{N}_{E^=}(\{a, b, c\}) = \{e, f, g\},$ $\mathcal{N}_{E^=}(\{a, b, d\}) = \{e, f, g\},$ $\mathcal{N}_{E^=}(\{a, c, d\}) = \{e, g\}.$</p>
+                    <p class="fragment" data-fragment-index="3" style="font-size:24px;">\[S = \{a, c, d\}, \quad \mathcal{N}_{E^=}(S) = \{e, g\}\]</p>
+                </div>
+            </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p style="font-size:26px;"> When we update $y$, we always increase the entries associated to the deficient set and decrease the entries associated to their neighbors. How do we decide the size of the update? </p>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd5_4.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The 4 by 4 example with y = 5, 3, 4, 2 on a, b, c, d and -1, 0, 0, 0 on e, f, g, h. The equality edges ag, bf, ce, cg, de are purple. The deficient set S = a, c, d is ringed in red and its neighbours e, g are ringed in blue." />
+                      <img class="fragment" data-fragment-index="2" src="images/pd_update_leaving.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The same graph with the edges from S to vertices outside N(S) highlighted in pink: ch with reduced cost 2, df with reduced cost 2 and dh with reduced cost 1." />
+                      <img class="fragment" data-fragment-index="4" src="images/pd_update_after.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The graph after the update, with y = 6, 3, 5, 3 on a, b, c, d and -2, 0, -1, 0 on e, f, g, h. The reduced costs of ch, df, dh are now 1, 1, 0, and dh is a new purple equality edge." />
+                  </div>
+                  <div style="width:460px;">
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;"> Edges between $S$ and $\mathcal{N}_{E^=}(S)$: one end goes up by $t$ and the other goes down by $t,$ so the reduced cost does not change. </p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;"> Edges from $S$ to a vertex outside $\mathcal{N}_{E^=}(S)$ (pink): only one end goes up, so the reduced cost drops by $t.$ It has to stay at least $0.$ </p>
+                      <p class="fragment" data-fragment-index="3" style="font-size:22px;">\[t = \min\{2, 2, 1\} = 1\]</p>
+                      <p class="fragment" data-fragment-index="4" style="font-size:22px;"> After the update, $dh$ is a new equality edge. </p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd6_0_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 0, 0, 0, 0 on a, b, c, d and 0, 0, 0, 0 on e, f, g, h; there are no equality edges." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd6_0_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex a is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{a\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{5, 7, 5\} = 5\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd6_1_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 5, 0, 0, 0 on a, b, c, d and 0, 0, 0, 0 on e, f, g, h; edges ae, ah are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd6_1_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertices b, c are ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ah\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{b, c\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{3, 1, 8, 1\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd6_2_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 5, 1, 1, 0 on a, b, c, d and 0, 0, 0, 0 on e, f, g, h; edges ae, ah, bg, ch are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd6_2_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex d is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ah, bg, ch\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{d\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{4, 3\} = 3\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd6_3_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 5, 1, 1, 3 on a, b, c, d and 0, 0, 0, 0 on e, f, g, h; edges ae, ah, bg, ch, dh are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd6_3_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertices c, d are ringed in red and h in blue." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ah, bg, ch, dh\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{c, d\}, \quad \mathcal{N}_{E^=}(S) = \{h\}\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{7, 1\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd6_4_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 5, 1, 2, 4 on a, b, c, d and 0, 0, 0, -1 on e, f, g, h; edges ae, bg, ch, dg, dh are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd6_4_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertices b, c, d are ringed in red and g, h in blue." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, bg, ch, dg, dh\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{b, c, d\}, \quad \mathcal{N}_{E^=}(S) = \{g, h\}\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{2, 6\} = 2\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd6_5.svg" width="440" alt="Final dual values y = 5, 3, 4, 6 on a, b, c, d and 0, 0, -2, -3 on e, f, g, h, with the equality edges ae, bf, bg, ch, dg, dh in purple and the perfect matching ae, bf, ch, dg drawn thickest in green." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, bf, bg, ch, dg, dh\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[M = \{ae, bf, ch, dg\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[\begin{aligned} c(M) &= 5 + 3 + 1 + 4 = 13 \\ \sum_{w} y_w &= 13 \end{aligned}\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <p style="font-size:26px;"> <b>Input:</b> a bipartite graph $G = (V_1 \cup V_2, E)$ with nonnegative edge costs $c$ which has a perfect matching. </p>
+              <p style="font-size:26px;"> <b>Initialize</b> $y = 0$.</p>
+              <p style="font-size:26px;"> <b>Start Round:</b> Find the equality edges $E^=$ of the current $y.$ If there is a perfect matching $M$ amongst the edges of $E^=,$ terminate with $M,$ which has minimum cost. </p>
+              <p style="font-size:26px;"> <b>If no perfect matching exists,</b> then</p>
+              <ul>
+                <li style="font-size:26px;">Find a deficient set $S$ (where we only look at equality edges), contained in $V_1$ or in $V_2.$</li>
+                <li style="font-size:26px;">Find every vertex that is joined by an equality edge to some vertex of $S,$ and call this set $\mathcal{N}_{E^=}(S).$</li>
+                <li style="font-size:26px;">Amongst all edges $uv \in E$ with $u \in S$ and $v \notin \mathcal{N}_{E^=}(S),$ find the smallest reduced cost $c_{uv} - y_u - y_v,$ and call it $t.$</li>
+                <li style="font-size:26px;">Add $t$ to $y_v$ for all vertices in $S,$ and subtract $t$ from $y_v$ for all vertices in $\mathcal{N}_{E^=}(S).$</li>
+              </ul>
+              <p style="font-size:26px;"> Go back to the start of the round.</p>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:300px;">
+                      <img src="images/mcm_pd_i0_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="Every vertex has y equal to 0 and there are no equality edges." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd_i0_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex d is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{d\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{6, 5\} = 5\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:300px;">
+                      <img src="images/mcm_pd_i1_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y_d equals 5; edge bd is an equality edge in purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd_i1_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex e is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{bd\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{e\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{7, 3, 1\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:300px;">
+                      <img src="images/mcm_pd_i2_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y_d equals 5 and y_e equals 1; edges bd and ce are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd_i2_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex f is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{bd, ce\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{f\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{4, 1\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:300px;">
+                      <img src="images/mcm_pd_i3_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y_d = 5, y_e = 1, y_f = 1; edges bd, ce, cf are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd_i3_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex a is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{bd, ce, cf\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{a\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{1, 6\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:300px;">
+                      <img src="images/mcm_pd_ex2_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y_a = 1, y_d = 5, y_e = 1, y_f = 1; edges ad, bd, ce, cf are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd_ex2_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertices a and b are ringed in red and d is ringed in blue." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ad, bd, ce, cf\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{a, b\}, \quad \mathcal{N}_{E^=}(S) = \{d\}\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{5, 2, 3\} = 2\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd_ex3.svg" width="440" alt="Final dual values with the equality edges ad, bd, be, ce, cf in purple and the perfect matching ad, be, cf drawn thickest in green." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ad, bd, be, ce, cf\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[M = \{ad, be, cf\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[\begin{aligned} c(M) &= 6 + 3 + 1 = 10 \\ \sum_{w} y_w &= 10 \end{aligned}\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd4_0_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="Every vertex has y equal to 0 and there are no equality edges." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd4_0_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex a is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{a\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{4, 5, 4\} = 4\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd4_1_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y_a equals 4; edges ae and ag are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd4_1_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex b is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ag\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{b\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{1\} = 1\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd4_2_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y_a = 4, y_b = 1; edges ae, ag, bf are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd4_2_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex c is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ag, bf\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{c\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{6, 6, 2\} = 2\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd4_3_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y_a = 4, y_b = 1, y_c = 2; edges ae, ag, bf, ch are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd4_3_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertex d is ringed in red." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ag, bf, ch\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{d\}, \quad \mathcal{N}_{E^=}(S) = \emptyset\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{5, 3\} = 3\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <div style="position:relative; width:440px; height:345px;">
+                      <img src="images/mcm_pd4_5_base.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="y = 4, 1, 2, 3 on a, b, c, d and 0 on e, f, g, h; edges ae, ag, bf, ch, dh are purple." />
+                      <img class="fragment" data-fragment-index="1" src="images/mcm_pd4_5_rings.svg" style="position:absolute; left:0; top:0; width:440px; max-width:none; height:auto;" alt="The vertices b, c, d are ringed in red and f, h in blue." />
+                  </div>
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ag, bf, ch, dh\}\]</p>
+                      <p class="fragment" data-fragment-index="1" style="font-size:22px;">\[S = \{b, c, d\}, \quad \mathcal{N}_{E^=}(S) = \{f, h\}\]</p>
+                      <p class="fragment" data-fragment-index="2" style="font-size:22px;">\[t = \min\{4, 2\} = 2\]</p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>The Primal-Dual Algorithm</h3>
+              <div class="flexbox" style="align-items:center; justify-content:space-around;">
+                  <img src="images/mcm_pd4_6.svg" width="440" alt="Final dual values with the equality edges ae, ag, bf, ch, dg, dh in purple and the perfect matching ae, bf, ch, dg drawn thickest in green." />
+                  <div style="width:430px;">
+                      <p style="font-size:22px;">\[E^{=} = \{ae, ag, bf, ch, dg, dh\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[M = \{ae, bf, ch, dg\}\]</p>
+                      <p class="fragment" style="font-size:22px;">\[\begin{aligned} c(M) &= 4 + 1 + 2 + 5 = 12 \\ \sum_{w} y_w &= 12 \end{aligned}\]</p>
+                  </div>
+              </div>
+          </section>
+      </section>
+      <section>
+        <section>
+            <h2>Solving Integer Programs</h2>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> We saw that the integer programming formulation of the perfect matching problem for bipartite graphs could be relaxed to the linear programming formulation with no loss. </p>
+            <p class=fragment> Why don't we just directly tackle the integer program? Because integer programs are usually much harder than linear programs! 
+            </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p>In general, an integer program looks like 
+                \[
+                    \min \{c^{\intercal}x : Ax \le b, x \in \mathbb{Z}^n\}.
+                \]
+            </p>
+            <p> The linear programming relaxation is obtained by replacing the $\mathbb{Z}$ with $\mathbb{R}$.</p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> We've been studying integer programs for a long time as a species. Archimedes (circa 250 BC) wrote the following poem: 
+            </p>
+
+            <blockquote> <small> The sun god had a herd of cattle consisting of bulls and cows, one part of which was white, a second black, a third spotted, and a fourth brown. Among the bulls, the number of white ones was one half plus one third the number of the black greater than the brown; the number of the black, one quarter plus one fifth the number of the spotted greater than the brown; the number of the spotted, one sixth and one seventh the number of the white greater than the brown. Among the cows, the number of white ones was one third plus one quarter of the total black cattle; the number of the black, one quarter plus one fifth the total of the spotted cattle; the number of spotted, one fifth plus one sixth the total of the brown cattle; the number of the brown, one sixth plus one seventh the total of the white cattle. What was the composition of the herd? </small></blockquote>
+        </section>
+        <section>
+            <h3>Why Are Integer Programs Hard?</h3>
+            <p style="font-size:26px;"> Let $W, X, Y, Z$ be the numbers of white, black, spotted and brown <b>bulls</b>, and $w, x, y, z$ the corresponding <b>cows</b>. The first (linear) part asks for nonnegative integers satisfying: </p>
+            <div class="flexbox" style="justify-content:space-around; font-size:0.72em;">
+              <div>
+                <p> Bulls: </p>
+                \[
+                  \begin{aligned}
+                    W &= \left(\tfrac12 + \tfrac13\right) X + Z \\
+                    X &= \left(\tfrac14 + \tfrac15\right) Y + Z \\
+                    Y &= \left(\tfrac16 + \tfrac17\right) W + Z
+                  \end{aligned}
+                \]
+              </div>
+              <div>
+                <p> Cows: </p>
+                \[
+                  \begin{aligned}
+                    w &= \left(\tfrac13 + \tfrac14\right)(X + x) \\
+                    x &= \left(\tfrac14 + \tfrac15\right)(Y + y) \\
+                    y &= \left(\tfrac15 + \tfrac16\right)(Z + z) \\
+                    z &= \left(\tfrac16 + \tfrac17\right)(W + w)
+                  \end{aligned}
+                \]
+              </div>
+            </div>
+            <p style="font-size:26px;"> $W, X, Y, Z, w, x, y, z \in \Z_{\ge 0}$. $\;$ Seven equations, eight unknowns; we seek the smallest positive herd $W + X + Y + Z + w + x + y + z$. </p>
+            <p class="fragment"> The optimal value turns out to be 50389082. </p>
+        </section>
+        <section>
+            <h3>Why Are Integer Programs Hard?</h3>
+            <p> Is this integer program feasible? </p>
+            <p>\[
+                \begin{aligned}
+                31x_1 + 37x_2 + 41x_3 + 43x_4 + 47x_5 &= 200 \\
+                x &\ge 0 \\
+                x &\in \Z^5
+                \end{aligned}
+            \]</p>
+            <p class="fragment"> Without $x \in \Z^5,$ this is an LP, and it is feasible: </p>
+            <p class="fragment">\[x = \left(\frac{200}{31}, 0, 0, 0, 0\right)\]</p>
+            <p class="fragment"> The integer program is <b>infeasible</b>, but there is no obvious way to see this short of checking many cases. </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> Experience shows that solving integer programs is much harder than solving linear programs, but historically, it took quite a while to understand why mathematically. </p>
+            <p> Solving integer programs is still a large field of study.</p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> Geometrically, integer points form a lattice (grey dots). The feasible set for an IP is the intersection between the lattice and a polytope. </p>
+            <img src="images/integer_points_2d.svg" style="height:480px; max-width:none; width:auto;" alt="A five-sided polygon in the plane with axes x1 and x2, drawn over the grid of integer points. The 14 integer points inside the polygon are drawn as large blue dots; the integer points outside it are small grey dots." />
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> Even if the polytope is nonempty, there may be no integer points. This is one reason IPs are hard. </p>
+            <img src="images/integer_points_thin_triangle.svg" style="height:300px; max-width:none; width:auto;" alt="A long thin triangle in the plane with axes x1 and x2, drawn over the grid of integer points. The triangle runs diagonally between the grid points and contains none of them." />
+            <p class=fragment> Observation: every feasible point for the IP is feasible for the LP relaxation. In particular, if the LP is <b>infeasible</b>, then the integer program is infeasible.</p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> Let's say that we want to solve an integer linear program with $c$ being an integer vector.</p>
+            <p>
+                \[\begin{aligned}
+                \max \qquad & x_1 + x_2\\
+                \text{s.t.} \qquad & x_1 + 3x_2 \le 9\\
+                 & 3x_1 + x_2 \le 17\\
+                 & x_1, x_2 \ge 0\\
+                 & x \in \Z^2.
+                \end{aligned} \]
+            </p>
+            <p> A first step may be to solve the linear programming relaxation. </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <img src="images/ip_example_lp.svg" style="height:380px; max-width:none; width:auto;" alt="The feasible region of the LP relaxation, a four-sided polygon with corners (0, 0), (17/3, 0), (21/4, 5/4), (0, 3), with its 17 integer points. The objective direction c = (1, 1) is drawn from the LP optimum (21/4, 5/4), with a dashed red line x1 + x2 = 13/2 through it." />
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p>
+                If we solve the linear program 
+                \[\begin{aligned}
+                \max \qquad & x_1 + x_2\\
+                \text{s.t.} \qquad & x_1 + 3x_2 \le 9\\
+                 & 3x_1 + x_2 \le 17\\
+                 & x_1, x_2 \ge 0
+                \end{aligned} \]
+                
+                we get
+                \[x_{LP} = \left(\tfrac{21}{4},\ \tfrac{5}{4}\right), \qquad v_{LP}^* = 6.5.\]
+            </p>
+            <p> Clearly $x_{LP}$ is not an integer vector. Could there be any integer point that gets the objective value $6.5$? </p>
+            <p class=fragment> No! Because the objective at any integer point would be an integer. </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p>
+                The linear programming relaxation teaches us that for any $x \in \R^2$ that satisfies the linear constraints, 
+                \[
+                x_1 + x_2 \le 6.5.
+                \]
+            </p>
+            <p> But if $x_1$ and $x_2$ are in addition integers, then $x_1+x_2$ must be an integer. This immediately means that any <b>integer feasible point</b> must have objective value at most 6. </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <div style="position:relative; width:590px; height:375px; margin:0 auto;">
+                <img src="images/ip_example_lp.svg" style="position:absolute; left:0; top:0; width:590px; max-width:none; height:auto;" alt="The feasible region of the LP relaxation, a four-sided polygon with corners (0, 0), (17/3, 0), (21/4, 5/4), (0, 3), with its 17 integer points. The objective direction c = (1, 1) is drawn from the LP optimum (21/4, 5/4), with a dashed red line x1 + x2 = 13/2 through it." />
+                <img class="fragment" src="images/ip_example_cut1.svg" style="position:absolute; left:0; top:0; width:590px; max-width:none; height:auto;" alt="The line x1 + x2 = 6 drawn as a bold green line; it passes through the integer point (5, 1)." />
+            </div>
+            <p> The red line is valid for the blue polytope, but the green line is valid for the integer points in the polytope.</p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> Looking at the integer program
+                \[\begin{aligned}
+                \max \qquad & x_1 + x_2\\
+                \text{s.t.} \qquad & x_1 + 3x_2 \le 9\\
+                 & 3x_1 + x_2 \le 17\\
+                 & x_1, x_2 \ge 0\\
+                 & x_1, x_2 \in \mathbb{Z},
+                \end{aligned} \]
+                we see that any integer feasible point must satisfy $x_1 + x_2 \le 6$.
+            </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> So the following integer program has the <b>same feasible points</b>
+                \[\begin{aligned}
+                \max \qquad & x_1 + x_2\\
+                \text{s.t.} \qquad & x_1 + 3x_2 \le 9\\
+                 & 3x_1 + x_2 \le 17\\
+                 & x_1, x_2 \ge 0\\
+                 & \color{red}{x_1 + x_2 \le 6}\\
+                 & x_1, x_2 \in \mathbb{Z}.
+                \end{aligned} \]
+            </p>
+            <p> But its linear programming relaxation is a little better. We get a solution 
+                \[
+                x^*_{LP} = (\frac 92, \frac 32), v^*_{LP} = 6.
+                \]
+            </p>
+            <p class=fragment> This is better, but it's still not an integer point. How can we make progress?</p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> What if we choose some other objective, and see what happens when we optimize that?
+                \[\begin{aligned}
+                \max \qquad & c^{\intercal}x\\
+                \text{s.t.} \qquad & x_1 + 3x_2 \le 9\\
+                 & 3x_1 + x_2 \le 17\\
+                 & x_1, x_2 \ge 0\\
+                 & \color{red}{x_1 + x_2 \le 6}\\
+                 & x_1, x_2 \in \mathbb{Z}.
+                \end{aligned} \]
+            </p>
+            <p class=fragment> We can follow the same process to get another valid inequality for the integer points.</p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> Let's look at the linear program
+                \[\begin{aligned}
+                \max \qquad & x_1\\
+                \text{s.t.} \qquad & x_1 + 3x_2 \le 9\\
+                 & 3x_1 + x_2 \le 17\\
+                 & x_1, x_2 \ge 0\\
+                 & \color{red}{x_1 + x_2 \le 6}\\
+                \end{aligned} \]
+                which has optimal value $\frac{17}{3} \approx 5.7$.
+            </p>
+            <p> What does this tell us about any integer solution to the linear program?</p>
+            <p class=fragment> Well, any point satisfying just the linear inequalities must satisfy $x_1 \le 5.7$, but that means that any integer point would need to satisfy $x_1 \le 5$.</p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <img src="images/ip_example_two_cuts.svg" style="height:400px; max-width:none; width:auto;" alt="The polytope with both added inequalities. The line x1 + x2 = 6 and the vertical line x1 = 5 are drawn in green and labelled. The remaining region, with corners (0, 0), (5, 0), (5, 1), (9/2, 3/2), (0, 3), is shaded blue and still contains all 17 integer points. The small part of the original region that the two inequalities remove, around the old corner (21/4, 5/4), is shaded red." />
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> Overall, we have discovered that any feasible point to the integer program
+                \[\begin{aligned}
+                \max \qquad & x_1 + x_2\\
+                \text{s.t.} \qquad & x_1 + 3x_2 \le 9\\
+                 & 3x_1 + x_2 \le 17\\
+                 & x_1, x_2 \ge 0\\
+                & x_1, x_2 \in \mathbb{Z}
+                \end{aligned} \]
+                must satisfy the additional inequalities
+                \[
+                \color{red}{
+                    \begin{aligned} 
+                        x_1 + x_2 &\le 6\\
+                        x_1 & \le 5,
+                    \end{aligned}
+                }
+                \]
+                which are not implied by just the linear constraints.
+            </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p>
+                The following problem is therefore equivalent to the original one.
+                \[\begin{aligned}
+                \max \qquad & x_1 + x_2\\
+                \text{s.t.} \qquad & x_1 + 3x_2 \le 9\\
+                 & 3x_1 + x_2 \le 17\\
+                 & x_1, x_2 \ge 0\\
+                &\color{red}{x_1 + x_2 \le 6}\\
+                &\color{red}{x_1 \le 5}\\
+                & x_1, x_2 \in \mathbb{Z}.
+                \end{aligned} \]
+                Now $x^* = (5,1)$ is an optimal solution to the linear programming relaxation! So this is optimal for the integer program.
+            </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p>
+                Let's say that we have an integer program
+                \[
+                \begin{aligned}
+                    \max \qquad & c^{\intercal}x \\
+                    \text{s.t.} \qquad & Ax \le b\\
+                     & x \in \Z^n\\
+                \end{aligned}
+                \]
+                We say that a valid cutting plane for this integer program is an inequality 
+                \[
+                    f^{\intercal}x \le v,
+                \]
+                which holds for any integer feasible point $x$.
+            </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p>
+                We saw that if $f$ is an integer vector and we let $v^*$ be the optimal value of the linear program
+                \[
+                \begin{aligned}
+                    \max \qquad & f^{\intercal}x \\
+                    \text{s.t.} \qquad & Ax \le b,
+                \end{aligned}
+                \]
+                then $f^{\intercal}x \le \lfloor v^* \rfloor$ is a valid cutting plane for the integer program. Here, $\lfloor v \rfloor$ is the floor function; the largest integer which is at most $v$.
+            </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <div style="position:relative; width:520px; height:440px; margin:0 auto;">
+                <img src="images/cut_planes_base.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A five-sided polygon drawn over the grid of integer points, with the 14 integer points inside it drawn as large blue dots." />
+                <img class="fragment" src="images/cut_planes_a1.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A cutting plane, 2 x1 + x2 <= 13, drawn as a green line touching one integer point. The line runs across the whole picture, and the part of the polygon on its valid side is shaded in translucent green." />
+                <img class="fragment" src="images/cut_planes_a2.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A cutting plane, x1 - x2 <= 3, drawn as a green line touching one integer point. The line runs across the whole picture, and the part of the polygon on its valid side is shaded in translucent green." />
+                <img class="fragment" src="images/cut_planes_a3.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A cutting plane, x1 + 2 x2 >= 4, drawn as a green line touching one integer point. The line runs across the whole picture, and the part of the polygon on its valid side is shaded in translucent green." />
+                <img class="fragment" src="images/cut_planes_a4.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A cutting plane, x1 >= 1, drawn as a green line touching one integer point. The line runs across the whole picture, and the part of the polygon on its valid side is shaded in translucent green." />
+            </div>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p> This brings us to the notion of the <b>convex hull</b> of a set. Let $C = \{x \in \Z^n : Ax \le b\}$. We define the convex hull to be 
+            \[
+            \conv(C) = \{x \in \R^n : f^{\intercal}x \le v \text{ for every cutting plane}\}.
+            \]
+            </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <div style="position:relative; width:520px; height:440px; margin:0 auto;">
+                <img src="images/cut_planes_base.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A five-sided polygon drawn over the grid of integer points, with the 14 integer points inside it drawn as large blue dots." />
+                <img src="images/cut_planes_a_faded.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="The four cutting planes from the previous picture, drawn as faded dashed lines." />
+                <img class="fragment" src="images/cut_planes_1.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A tighter cutting plane, x1 + x2 <= 8, drawn as a green line across the whole picture through two or more of the integer points. The part of the polygon on its valid side is shaded in translucent green." />
+                <img class="fragment" src="images/cut_planes_2.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A tighter cutting plane, x1 <= 5, drawn as a green line across the whole picture through two or more of the integer points. The part of the polygon on its valid side is shaded in translucent green." />
+                <img class="fragment" src="images/cut_planes_3.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A tighter cutting plane, x1 - 2 x2 <= 1, drawn as a green line across the whole picture through two or more of the integer points. The part of the polygon on its valid side is shaded in translucent green." />
+                <img class="fragment" src="images/cut_planes_4.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A tighter cutting plane, x2 >= 1, drawn as a green line across the whole picture through two or more of the integer points. The part of the polygon on its valid side is shaded in translucent green." />
+                <img class="fragment" src="images/cut_planes_5.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A tighter cutting plane, x1 + x2 >= 3, drawn as a green line across the whole picture through two or more of the integer points. The part of the polygon on its valid side is shaded in translucent green." />
+                <img class="fragment" src="images/cut_planes_6.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A tighter cutting plane, 2 x1 - x2 >= 0, drawn as a green line across the whole picture through two or more of the integer points. The part of the polygon on its valid side is shaded in translucent green." />
+                <img class="fragment" src="images/cut_planes_7.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="A tighter cutting plane, x2 <= 4, drawn as a green line across the whole picture through two or more of the integer points. The part of the polygon on its valid side is shaded in translucent green." />
+                <img class="fragment" src="images/cut_planes_hull.svg" style="position:absolute; left:0; top:0; width:520px; max-width:none; height:auto;" alt="The region bounded by the seven tighter cutting planes, shaded green: the convex hull of the integer points." />
+            </div>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p>
+                The convex hull has many amazing properties. We'll state some without proof.
+            </p>
+              <div class=fragment style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Convex Hull Fact 1</b></p>
+                  <p> The convex hull is the smallest convex set containing $C$. That is, 
+                    \[
+                    \conv(C) = \bigcap_{\substack{C \subseteq S\\ S\text{ convex}}}S.
+                    \]
+                 </p>
+              </div>
+              <p> This follows from the separating hyperplane theorem. </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p>
+                The convex hull has many amazing properties. We'll state some without proof.
+            </p>
+              <div class=fragment style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Convex Hull Fact 2</b></p>
+                  <p> For any $c \in \R^n$,
+                    \[
+                    \max \{c^{\intercal}x : x \in \conv(C)\} = 
+                    \max \{c^{\intercal}x : x \in C\}.
+                    \]
+                 </p>
+              </div>
+              <p> This actually follows from the definition of the convex hull. </p>
+        </section>
+        <section>
+            <h3>Solving Integer Programs</h3>
+            <p>
+                The convex hull has many amazing properties. We'll state some without proof.
+            </p>
+              <div class=fragment style="border:2px solid #93a1a1; border-radius:14px; padding-left:14px; padding-right:14px; background:rgba(238,232,213,0.45); display:inline-block;">
+                  <p><b>Convex Hull Fact 3</b></p>
+                  <p> If $C = \{x \in \Z^n : Ax \le b\}$, then $\conv(C)$ is a polytope.
+                 </p>
+              </div>
+              <p> This is saying that finitely many linear inequalities suffice to define $\conv(C)$.</p>
+        </section>
+        <section>
+            <h3> Solving Integer Programs</h3>
+            <p> In total, the above facts say that any integer linear program can be solved by solving some linear program whose objective is the same as that of the integer linear program.</p>
+            <p class=fragment>But the number of constraints for that linear program may be extremely large! There are systematic ways of finding the linear program (Chvátal–Gomory cuts).</p>
+            <p class=fragment>In practice, we will just start by adding in cutting planes one at a time, and seeing if they improve the solution.</p>
+        </section>
+      </section>
+
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                        conv: '\\text{conv}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>
