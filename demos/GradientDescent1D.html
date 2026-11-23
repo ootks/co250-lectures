@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Step through gradient descent on a function of one variable, choosing the starting point and the step size">
+  <title>Gradient Descent in One Dimension</title>
+  <!--
+    URL parameters:
+      f=sinquad   f(x) = (x^2 + sin x)/2 with the step size fixed at h = 1 (default)
+      f=abs       f(x) = |x| with an adjustable step size
+      embed=1     compact layout for use inside a slide
+  -->
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 12px;
+      background: #fdf6e3;
+      color: #586e75;
+      font-family: Georgia, serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .wrap { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 10px; }
+    .title { text-align: center; margin: 0; font-size: 24px; }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 420px;
+      background: #fdf6e3;
+      border: 1px solid #93a1a1;
+      border-radius: 10px;
+      touch-action: none;
+      cursor: crosshair;
+    }
+    .bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 22px; font-size: 20px; }
+    .bar label { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .bar output { display: inline-block; min-width: 3.2em; font-variant-numeric: tabular-nums; }
+    input[type="range"] { width: 200px; accent-color: #268bd2; }
+    button {
+      font: inherit;
+      font-size: 18px;
+      padding: 7px 16px;
+      border-radius: 8px;
+      border: 1px solid #93a1a1;
+      background: #eee8d5;
+      color: #586e75;
+      cursor: pointer;
+    }
+    button:hover { background: #e6dfc8; }
+    button:disabled { opacity: 0.5; cursor: default; }
+    button.primary { background: #268bd2; border-color: #268bd2; color: #fdf6e3; }
+    .readout { min-height: 1.4em; font-size: 22px; font-variant-numeric: tabular-nums; text-align: center; }
+    .readout sub { font-size: 0.65em; }
+    .hint { text-align: center; margin: 0; font-size: 15px; color: #93a1a1; }
+    body.embed { padding: 4px; gap: 6px; }
+    body.embed .wrap { gap: 6px; }
+    body.embed .title { font-size: 20px; }
+    body.embed canvas { height: 270px; }
+    body.embed .bar { font-size: 17px; gap: 6px 16px; }
+    body.embed button { font-size: 15px; padding: 5px 12px; }
+    body.embed .readout { font-size: 19px; }
+    body.embed .hint { display: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="title" id="title"></p>
+    <canvas id="plot" aria-label="Plot of the function with the gradient descent iterates marked on it"></canvas>
+    <div class="bar">
+      <label><span>x<sub>0</sub></span> <input id="x0" type="range"> <output id="x0out"></output></label>
+      <label id="hwrap">h <input id="h" type="range"> <output id="hout"></output></label>
+      <button id="step" type="button" class="primary">Step</button>
+      <button id="run" type="button">Run</button>
+      <button id="reset" type="button">Reset</button>
+    </div>
+    <div class="readout" id="readout">&nbsp;</div>
+    <p class="hint">Click on the plot to choose the starting point x<sub>0</sub>.</p>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+      var params = new URLSearchParams(location.search);
+      if (params.get('embed')) document.body.classList.add('embed');
+
+      var CONFIGS = {
+        sinquad: {
+          title: 'f(x) = ½ (x² + sin x),  h = 1',
+          f: function (x) { return 0.5 * (x * x + Math.sin(x)); },
+          df: function (x) { return x + 0.5 * Math.cos(x); },
+          xlim: [-3, 3], ylim: [-0.6, 4.2],
+          x0: 2, x0step: 0.1,
+          h: 1, adjustableH: false, tangent: true
+        },
+        abs: {
+          title: 'f(x) = |x|',
+          f: function (x) { return Math.abs(x); },
+          df: function (x) { return x > 0 ? 1 : (x < 0 ? -1 : NaN); },
+          xlim: [-3, 3], ylim: [-0.4, 3.2],
+          x0: 2.3, x0step: 0.05,
+          h: 0.5, hlim: [0.05, 2], hstep: 0.05, adjustableH: true, tangent: false
+        }
+      };
+      var cfg = CONFIGS[params.get('f')] || CONFIGS.sinquad;
+      var MAX_ITERS = 200;
+
+      var canvas = document.getElementById('plot');
+      var ctx = canvas.getContext('2d');
+      var x0In = document.getElementById('x0'), x0Out = document.getElementById('x0out');
+      var hIn = document.getElementById('h'), hOut = document.getElementById('hout');
+      var stepBtn = document.getElementById('step'), runBtn = document.getElementById('run');
+      var readout = document.getElementById('readout');
+
+      document.getElementById('title').textContent = cfg.title;
+      x0In.min = cfg.xlim[0]; x0In.max = cfg.xlim[1]; x0In.step = cfg.x0step; x0In.value = cfg.x0;
+      if (cfg.adjustableH) {
+        hIn.min = cfg.hlim[0]; hIn.max = cfg.hlim[1]; hIn.step = cfg.hstep; hIn.value = cfg.h;
+      } else {
+        document.getElementById('hwrap').style.display = 'none';
+      }
+
+      var h = cfg.h;
+      var xs = [cfg.x0];     // the iterates x_0, x_1, ...
+      var timer = null;
+
+      // Keep the iterates free of floating point noise so that cycles are exact.
+      function clean(x) { return Math.round(x * 1e9) / 1e9; }
+      function fmt(x) {
+        var s = (Math.round(x * 1e4) / 1e4).toFixed(4).replace(/\.?0+$/, '');
+        return (s === '-0' ? '0' : s).replace('-', '−');
+      }
+      function stuck() { return !isFinite(cfg.df(xs[xs.length - 1])); }
+      function canStep() { return !stuck() && xs.length <= MAX_ITERS; }
+
+      function step() {
+        if (!canStep()) return false;
+        var x = xs[xs.length - 1];
+        xs.push(clean(x - h * cfg.df(x)));
+        return true;
+      }
+
+      function stop() {
+        if (timer !== null) { clearInterval(timer); timer = null; }
+        runBtn.textContent = 'Run';
+      }
+
+      function restart() {
+        stop();
+        xs = [clean(parseFloat(x0In.value))];
+        if (cfg.adjustableH) h = parseFloat(hIn.value);
+        render();
+      }
+
+      // ---------------------------------------------------------------- drawing
+      var W = 0, H = 0, M = { l: 16, r: 16, t: 12, b: 12 };
+      function X(x) { return M.l + (x - cfg.xlim[0]) / (cfg.xlim[1] - cfg.xlim[0]) * (W - M.l - M.r); }
+      function Y(y) { return H - M.b - (y - cfg.ylim[0]) / (cfg.ylim[1] - cfg.ylim[0]) * (H - M.t - M.b); }
+      function Xinv(px) { return cfg.xlim[0] + (px - M.l) / (W - M.l - M.r) * (cfg.xlim[1] - cfg.xlim[0]); }
+
+      function draw() {
+        var dpr = window.devicePixelRatio || 1;
+        var rect = canvas.getBoundingClientRect();
+        W = rect.width; H = rect.height;
+        if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
+          canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        }
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+
+        // axes with integer ticks
+        ctx.strokeStyle = '#93a1a1'; ctx.fillStyle = '#93a1a1'; ctx.lineWidth = 1.5;
+        ctx.font = '14px Georgia, serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.beginPath(); ctx.moveTo(X(cfg.xlim[0]), Y(0)); ctx.lineTo(X(cfg.xlim[1]), Y(0));
+        ctx.moveTo(X(0), Y(cfg.ylim[0])); ctx.lineTo(X(0), Y(cfg.ylim[1])); ctx.stroke();
+        for (var t = Math.ceil(cfg.xlim[0]); t <= cfg.xlim[1]; t++) {
+          if (t === 0) continue;
+          ctx.beginPath(); ctx.moveTo(X(t), Y(0) - 4); ctx.lineTo(X(t), Y(0) + 4); ctx.stroke();
+          ctx.fillText(String(t).replace('-', '−'), X(t), Y(0) + 7);
+        }
+        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        for (var u = 1; u <= cfg.ylim[1]; u++) {
+          ctx.beginPath(); ctx.moveTo(X(0) - 4, Y(u)); ctx.lineTo(X(0) + 4, Y(u)); ctx.stroke();
+          ctx.fillText(String(u), X(0) - 8, Y(u));
+        }
+
+        // the function
+        ctx.strokeStyle = '#268bd2'; ctx.lineWidth = 3;
+        ctx.beginPath();
+        var N = 600;
+        for (var i = 0; i <= N; i++) {
+          var x = cfg.xlim[0] + (cfg.xlim[1] - cfg.xlim[0]) * i / N;
+          if (i === 0) ctx.moveTo(X(x), Y(cfg.f(x))); else ctx.lineTo(X(x), Y(cfg.f(x)));
+        }
+        ctx.stroke();
+
+        // path of the iterates
+        var n = xs.length;
+        ctx.strokeStyle = 'rgba(203, 75, 22, 0.55)'; ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (var j = 0; j < n; j++) {
+          if (j === 0) ctx.moveTo(X(xs[j]), Y(cfg.f(xs[j]))); else ctx.lineTo(X(xs[j]), Y(cfg.f(xs[j])));
+        }
+        ctx.stroke();
+
+        // tangent line at the current iterate
+        var cur = xs[n - 1], d = cfg.df(cur);
+        if (cfg.tangent && isFinite(d)) {
+          var half = 0.9 / Math.sqrt(1 + d * d * 0.35);
+          ctx.strokeStyle = '#dc322f'; ctx.lineWidth = 2; ctx.setLineDash([6, 5]);
+          ctx.beginPath();
+          ctx.moveTo(X(cur - half), Y(cfg.f(cur) - d * half));
+          ctx.lineTo(X(cur + half), Y(cfg.f(cur) + d * half));
+          ctx.stroke(); ctx.setLineDash([]);
+        }
+
+        // iterates: older ones are fainter
+        for (var k = 0; k < n; k++) {
+          var last = (k === n - 1);
+          var alpha = last ? 1 : Math.max(0.25, 1 - (n - 1 - k) * 0.12);
+          ctx.fillStyle = 'rgba(203, 75, 22, ' + alpha + ')';
+          ctx.beginPath(); ctx.arc(X(xs[k]), Y(cfg.f(xs[k])), last ? 7 : 4.5, 0, 2 * Math.PI); ctx.fill();
+          ctx.beginPath(); ctx.arc(X(xs[k]), Y(0), last ? 4.5 : 3, 0, 2 * Math.PI); ctx.fill();
+        }
+        // dashed drop from the current iterate to the axis
+        ctx.strokeStyle = 'rgba(203, 75, 22, 0.7)'; ctx.lineWidth = 1.2; ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.moveTo(X(cur), Y(cfg.f(cur))); ctx.lineTo(X(cur), Y(0)); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#cb4b16'; ctx.font = 'italic 17px Georgia, serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+        ctx.fillText('x', X(cur) - 3, Y(cfg.f(cur)) - 10);
+        ctx.font = '12px Georgia, serif'; ctx.textAlign = 'left';
+        ctx.fillText(String(n - 1), X(cur) + 2, Y(cfg.f(cur)) - 6);
+      }
+
+      function render() {
+        var n = xs.length, i = n - 1, cur = xs[i], d = cfg.df(cur);
+        x0Out.textContent = fmt(parseFloat(x0In.value));
+        if (cfg.adjustableH) hOut.textContent = fmt(parseFloat(hIn.value));
+        var html = 'i = ' + i + ', &nbsp; x<sub>' + i + '</sub> = ' + fmt(cur) +
+                   ', &nbsp; f(x<sub>' + i + '</sub>) = ' + fmt(cfg.f(cur));
+        if (isFinite(d)) html += ', &nbsp; derivative = ' + fmt(d);
+        else html += ', &nbsp; the derivative is undefined here';
+        readout.innerHTML = html;
+        stepBtn.disabled = !canStep();
+        runBtn.disabled = !canStep() && timer === null;
+        draw();
+      }
+
+      stepBtn.addEventListener('click', function () { stop(); step(); render(); });
+      runBtn.addEventListener('click', function () {
+        if (timer !== null) { stop(); render(); return; }
+        runBtn.textContent = 'Pause';
+        timer = setInterval(function () {
+          if (!step()) stop();
+          render();
+        }, 450);
+      });
+      document.getElementById('reset').addEventListener('click', restart);
+      x0In.addEventListener('input', restart);
+      hIn.addEventListener('input', restart);
+      canvas.addEventListener('pointerdown', function (e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = Xinv(e.clientX - rect.left);
+        x = Math.max(cfg.xlim[0], Math.min(cfg.xlim[1], x));
+        x0In.value = Math.round(x / cfg.x0step) * cfg.x0step;
+        restart();
+      });
+      window.addEventListener('resize', draw);
+
+      render();
+    })();
+  </script>
+</body>
+</html>
