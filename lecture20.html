@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <!-- Title slide -->
+      <section>
+          <h2>Introduction to Optimization</h2>
+          <h3>CO 250</h3>
+          <br>
+          <h4>Lecture 20</h4>
+          <br>
+          <p class="centered"><a href="?view=scroll">Scroll view</a></p>
+          <p class="centered"><a href="beamer/lecture20.pdf">PDF version of these slides</a> <em>(demo: this PDF version is experimental and may contain errors or differ from the slides)</em></p>
+      </section>
+      <section>
+          <h2>Lecture Outline</h2>
+          <ul>
+              <li>Review: Cutting Planes and the Convex Hull</li>
+              <li>Cutting Plane Algorithms</li>
+              <li>Branch and Bound</li>
+              <li>Convex Functions</li>
+          </ul>
+      </section>
+
+      <!-- ===================== Review: cutting planes and the convex hull (from lecture 19) ===================== -->
+      <section>
+          <section>
+              <h2>Review: Cutting Planes and the Convex Hull</h2>
+          </section>
+          <section>
+              <h3>Review: Integer Programs</h3>
+              <p> An integer linear program has the form
+                \[
+                    \max \{c^{\intercal}x : Ax \le b,\ x \in \Z^n\}.
+                \]</p>
+              <p class="fragment"> Its <b>linear programming relaxation</b> replaces $\Z^n$ with $\R^n$. Every integer feasible point is feasible for the relaxation, so the LP optimum is an <b>upper bound</b> on the IP optimum. </p>
+              <p class="fragment"> But the LP optimum is often fractional, and integer programs are much harder to solve than their relaxations. </p>
+          </section>
+          <section>
+              <h3>Review: Cutting Planes</h3>
+              <p> A <b>valid cutting plane</b> for the integer program is an inequality
+                \[
+                    f^{\intercal}x \le v
+                \]
+                that holds for every integer feasible point $x$. </p>
+              <p class="fragment"> Such an inequality can cut off part of the LP relaxation without removing any integer point, tightening the relaxation. </p>
+          </section>
+          <section>
+              <h3>Example of Cutting Planes: The Floor Construction</h3>
+              <p> If $f$ is an <b>integer</b> vector and $v^*$ is the optimal value of the linear program
+                \[
+                \begin{aligned}
+                    \max \qquad & f^{\intercal}x \\
+                    \text{s.t.} \qquad & Ax \le b,
+                \end{aligned}
+                \]
+                then
+                \[
+                    f^{\intercal}x \le \lfloor v^* \rfloor
+                \]
+                is a valid cutting plane for the integer program. </p>
+              <p class="fragment"> Reason: every feasible $x$ has $f^{\intercal}x \le v^*$; if $x$ is also integer and $f$ is integer, then $f^{\intercal}x$ is an integer, so $f^{\intercal}x \le \lfloor v^* \rfloor$. </p>
+          </section>
+          <section>
+              <h3>Review: Example</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <p class="fs-26"> For the integer program
+                    \[\begin{aligned}
+                    \max \qquad & x_1 + x_2\\
+                    \text{s.t.} \qquad & 3x_1 + x_2 \le 5,\quad x_1 + 3x_2 \le 4\\
+                     & x_1, x_2 \ge 0,\quad x_1, x_2 \in \Z,
+                    \end{aligned} \]
+                    the LP relaxation gives $x_{LP} = \left(\tfrac{11}{8}, \tfrac{7}{8}\right)$ with value $\tfrac94 = 2.25$. </p>
+                  <p class="fragment fs-26"> Since $x_1 + x_2$ is an integer, we may add $x_1 + x_2 \le 2$. The LP optimum moves to $\left(\tfrac32, \tfrac12\right)$, still fractional. </p>
+                  <p class="fragment fs-26"> Optimizing $x_1$ gives $\tfrac53$, so we add $x_1 \le 1$, and $x^* = (1, 1)$ becomes an integral LP optimum. </p>
+                </div>
+                <img src="images/ip_two_cut_example.svg" class="fig" alt="The LP feasible region (blue) with corners (0,0), (5/3,0), (11/8,7/8), (0,4/3) over the integer lattice, its four integer points as blue dots, and the fractional LP optimum (11/8,7/8) in orange. Two dashed green cuts x1 + x2 <= 2 and x1 <= 1 trim the region down to the green-shaded area whose top corner is the integer optimum (1,1)." />
+              </div>
+          </section>
+          <section>
+              <h3>Review: The Convex Hull</h3>
+              <p> Let $C = \{x \in \Z^n : Ax \le b\}$ be the integer feasible points. The <b>convex hull</b> of $C$ is
+                \[
+                \conv(C) = \{x \in \R^n : f^{\intercal}x \le v \text{ for every valid cutting plane}\}.
+                \]</p>
+              <div class="flexbox fragment center-h">
+                  <img src="images/cut_planes_hull.svg" class="fig" alt="The convex hull of the integer points inside a polygon, shaded green, bounded by the tightest cutting planes." />
+              </div>
+          </section>
+          <section>
+              <h3>Review: Convex Hull Facts</h3>
+              <div class="theorem-box">
+                  <p><b>Convex Hull Facts</b> (stated without proof)</p>
+                  <ol class="list-left">
+                      <li> $\conv(C)$ is the smallest convex set containing $C$. </li>
+                      <li class="fragment"> For any $c \in \R^n$,
+                        \[ \max \{c^{\intercal}x : x \in \conv(C)\} = \max \{c^{\intercal}x : x \in C\}. \] </li>
+                      <li class="fragment"> If $C = \{x \in \Z^n : Ax \le b\}$, then $\conv(C)$ is a polytope. </li>
+                  </ol>
+              </div>
+          </section>
+          <section>
+              <h3>Review: Why This Matters</h3>
+              <p> Together, the facts say that <b>any integer linear program can be solved as a linear program</b>: optimize the same objective over $\conv(C)$. </p>
+              <p class="fragment"> The catch: $\conv(C)$ may need an enormous number of inequalities, and we are not given them in advance. </p>
+              <p class="fragment"> This motivates building up the description one cut at a time &mdash; the subject of this lecture. </p>
+          </section>
+      </section>
+
+      <!-- ===================== New content for lecture 20 ===================== -->
+      <section>
+          <section>
+              <h2>Cutting Plane Algorithms</h2>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <p class="fs-26"> Look at the integer program
+                    \[
+                        \begin{aligned}
+                        \max\qquad & c^{\intercal}x\\
+                        \text{s.t.}\qquad & Ax \le b\\
+                        & x \in \mathbb{Z}^n.
+                        \end{aligned}
+                    \]
+                  </p>
+                  <p class="fragment fs-26" data-fragment-index="0">
+                    The linear programming relaxation always has a larger optimal value than the integer program (because its feasible region is larger).
+                  </p>
+                  <p class="fragment fs-26" data-fragment-index="1">
+                    Adding a cutting plane can decrease this optimal value and makes it closer to the the integer program.
+                  </p>
+                </div>
+                <div class="fragment" data-fragment-index="1">
+                  <img src="images/cp_cut_decrease.svg" class="fig" alt="The polytope x1 + 3x2 <= 9, 3x1 + x2 <= 17, x >= 0 over the integer lattice, with LP optimum x* = (21/4, 5/4) in orange and a dashed orange line x1 + x2 = 13/2 through it. The green cut x1 + x2 <= 6 slices off the red corner containing x*, lowering the LP optimal value from 13/2 to 6." />
+                  <p class="centered fs-22"> $\max\ x_1 + x_2$: LP value $\tfrac{13}{2} \to 6$ </p>
+                </div>
+              </div>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <p> If the cutting plane still allows the optimal LP solution, then it does not immediately help improve the bound on the IP.
+              </p>
+              <div class="flexbox around-top">
+                  <div>
+                      <img src="images/cp_cut_nonremoving.svg" class="fig-sm" alt="The polytope with a green cut x1 - x2 <= 5 that is valid for all integer points and slices a small red sliver off the bottom right corner, but leaves the optimum x* feasible." />
+                      <p class="centered fs-22"> $x^*$ still feasible: no progress </p>
+                  </div>
+                  <div>
+                      <img src="images/cp_cut_removing.svg" class="fig-sm" alt="The polytope with a green cut x1 + x2 <= 6 that is valid for all integer points and slices off the corner containing x*, shown as a red sliver." />
+                      <p class="centered fs-22"> $x^*$ removed: the relaxation tightens </p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <p>
+                    This suggests a refinement: a cutting plane <b>for the LP optimal solution $x^*$</b> is one that removes $x^*$ from the LP relaxation. That is, we want
+                    \[
+                        f^{\intercal}x \le v
+                    \]
+                    for every $x$ feasible for the IP, but also
+                    \[
+                        f^{\intercal}x^* > v.
+                    \]
+                  </p>
+                </div>
+                <img src="images/cp_cut_removing.svg" class="fig-sm" alt="The polytope with the cut x1 + x2 <= 6 slicing off the red corner that contains x*, so f-transpose-x* = 6.5 > 6." />
+              </div>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <p class="fs-26"> Consider the integer program
+                    \[\begin{aligned}
+                    \max \qquad & x_1 + x_2\\
+                    \text{s.t.} \qquad & 2x_1 + 3x_2 \le 12\\
+                     & 4x_1 + x_2 \le 10\\
+                     & x_1, x_2 \ge 0,\quad x_1, x_2 \in \Z.
+                    \end{aligned} \]</p>
+                  <p class="fragment fs-26"> The LP relaxation has optimal solution
+                    \[
+                        x^* = \left(\tfrac{9}{5}, \tfrac{14}{5}\right), \qquad x_1^* + x_2^* = \tfrac{23}{5}.
+                    \]</p>
+                </div>
+                <img src="images/cp_example_base.svg" class="fig" alt="The LP feasible region with corners (0,0), (5/2,0), (9/5,14/5), (0,4) over the integer lattice, its twelve integer points as blue dots, and the fractional LP optimum x* = (9/5,14/5) in orange." />
+              </div>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+                  <p class="fs-26"> The LP relaxation has optimal solution
+                    \[
+                        x^* = \left(\tfrac{9}{5}, \tfrac{14}{5}\right), \qquad x_1^* + x_2^* = \tfrac{23}{5}.
+                    \]</p>
+                    <div class=fragment>
+                        <p class="fs-26"> Both of the following inequalities are cutting planes for the IP, but only one is a cutting plane for $x^*$. Which one? </p>
+                        <div class="flexbox justified-pair fs-26">
+                            <p>$x_1 + x_2 \le 4$</p>
+                            <p>$x_1 \le 2$</p>
+                        </div>
+                    </div>
+                    <p class=fragment> $x_1 + x_2 \le 4$ is because $x_1^* + x_2^* > 4$, so $x^*$ is cut out by the cutting plane.</p>
+                <div class="r-stack fragment">
+                  <img src="images/cp_example_cut.svg" class="fig-md" alt="The polytope with the green cut x1 + x2 <= 4, valid for all twelve integer points, slicing off a thin red sliver that contains the LP optimum x*." />
+                  <img class="fragment fig-md fig-bg" src="images/cp_example_both.svg" alt="The same picture with the violet inequality x1 <= 2 added. It is valid for all integer points and removes a triangle at the bottom right corner, but x* = (9/5,14/5) lies to its left and stays feasible." />
+                </div>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+            <p class="fs-26"> We can get the cutting planes for the previous slide by 
+                manipulating the LP:
+                    \[\begin{aligned}
+                    \max \qquad & x_1 + x_2\\
+                    \text{s.t.} \qquad & 2x_1 + 3x_2 \le 12\\
+                     & 4x_1 + x_2 \le 10\\
+                     & x_1, x_2 \ge 0,\quad x_1, x_2 \in \Z.
+                    \end{aligned} \]</p>
+            </p>
+            <p class="fs-26 fragment">
+            \[\begin{aligned}
+            \tfrac{3}{10}(2x_1 + 3x_2) + \tfrac{1}{10}(4x_1 + x_2) &\le \tfrac{3}{10}(12) + \tfrac{1}{10}(10)\\
+            x_1 + x_2 &\le \tfrac{23}{5}\\
+            \end{aligned}\]
+            <p class=fragment> If the left side is integer, then we actually get $x_1 + x_2 \le 4,$ a cutting plane</p>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+            <p class="fs-26"> We can get the cutting planes for the previous slide by manipulating the LP:
+                    \[\begin{aligned}
+                    \max \qquad & x_1 + x_2\\
+                    \text{s.t.} \qquad & 2x_1 + 3x_2 \le 12\\
+                     & 4x_1 + x_2 \le 10\\
+                     & x_1, x_2 \ge 0,\quad x_1, x_2 \in \Z.
+                    \end{aligned} \]</p>
+            <p class="fs-26">
+                \[\begin{aligned}
+                \tfrac{1}{4}(4x_1 + x_2) + \tfrac{1}{4}(-x_2) &\le \tfrac{1}{4}(10) + \tfrac{1}{4}(0)\\
+                x_1 &\le \tfrac{5}{2}\\
+                \end{aligned}\]
+            </p>
+            <p style="font-size:24px;"> We get therefore that any integer point actually satisfies $x_1 \le 2$. </p>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <p> How can we find cutting planes for an IP without having to solve many LPs? We can start by putting the IP into SEF. </p>
+              <div class=fragment>
+                <p> If we have an IP of the form 
+                    \[
+                        \begin{aligned}
+                        \max\qquad & c^{\intercal}x\\
+                        \text{s.t.}\qquad & Ax \le b,
+                        & x \in \mathbb{Z}^n,
+                        \end{aligned}
+                    \]
+                    where $A$ and $b$ both have integer entries, then we can put this IP into standard equality form
+                    \[
+                        \begin{aligned}
+                        \max\qquad & c^{\intercal}(x^+ - x^-)\\
+                        \text{s.t.}\qquad & A(x^+ - x^-) + s = b\\
+                        & x^+, x^-, s \ge 0 \\
+                        & x^+,x^-,s \in \mathbb{Z}^n.
+                        \end{aligned}
+                    \]
+                </p>
+                <p class="fragment">
+                    If $A$ and $b$ have rational entries, then we can clear denominators to get integer entried data. If the data is irrational, then there is no real way to proceed.
+                </p>
+              </div>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <p>For an integer program in SEF,
+                    \[
+                        \begin{aligned}
+                        \max\qquad & c^{\intercal}x\\
+                        \text{s.t.}\qquad & Ax = b,\\
+                        & x \ge 0,\\
+                        & x \in \mathbb{Z}^n,
+                        \end{aligned}
+                    \]
+                 we can solve the LP relaxation by the simplex method. This gives an optimal basis $B$ and the <b>canonical form</b> of the system. </p>
+            </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <p class="fs-26"> The integer program in SEF:
+                    \[\begin{aligned}
+                    \max \qquad & x_1 + x_2\\
+                    \text{s.t.} \qquad & 2x_1 + 3x_2 + x_3 = 12\\
+                     & 4x_1 + x_2 + x_4 = 10\\
+                     & x_1, x_2, x_3, x_4 \ge 0\\
+                     & x_1, x_2, x_3, x_4 \in \Z
+                    \end{aligned} \]</p>
+              <p class="fs-26 fragment"> Canonical form for the optimal basis $B = \{1, 2\}$:
+                    \[\begin{aligned}
+                    \max \qquad & \tfrac{23}{5} - \tfrac{3}{10}x_3 - \tfrac{1}{10}x_4\\
+                    \text{s.t.} \qquad & x_1 - \tfrac{1}{10}x_3 + \tfrac{3}{10}x_4 = \tfrac{9}{5}\\
+                     & x_2 + \tfrac{2}{5}x_3 - \tfrac{1}{5}x_4 = \tfrac{14}{5}\\
+                     & x_1, x_2, x_3, x_4 \ge 0
+                    \end{aligned} \] What is the basic feasible solution?<span class=fragment>$x = (9/5,14/5,0,0)$.</span></p>
+            </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <p class="fs-26"> Take the $x_2$ row of the canonical form:
+                    \[
+                        x_2 + \tfrac{2}{5}x_3 - \tfrac{1}{5}x_4 = \tfrac{14}{5}.
+                    \]
+                </p>
+              <p class="fs-26 fragment">
+                Since each $x_i$ is nonnegative, we can <b>decrease the coefficients on the left side</b> and turn this equation into an inequality
+                <span class=fragment>
+                    \[
+                        x_2 + \lfloor\tfrac{2}{5}\rfloor x_3 - \lfloor \tfrac{1}{5}\rfloor x_4 \le \tfrac{14}{5}.
+                    \]
+                    The left side is now integral, so we can apply our floor trick
+                </span>
+              </p>
+              <p class=fragment>
+                The following is a valid cutting plane:
+                    \[
+                        x_2 \le \lfloor \tfrac{14}{5} \rfloor = 2.
+                    \]
+              </p>
+              <p>This is a cutting plane for $x^*$, since $x^*_2 = \frac{14}{5} > 2$. </p>
+            </section>
+            <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <p> In general, suppose that we have an IP in SEF, and that we have put it in canonical form with respect to the optimal LP basis. </p>
+              <p class="fragment"> Each row $i$ of the canonical form expresses one basic variable in terms of the nonbasic ones $N$:
+                    \[
+                        x_{B(i)} + \sum_{j \in N} \bar{a}_{ij}\, x_j = \bar{b}_i.
+                    \]
+                 At the LP optimum every nonbasic $x_j = 0$, so $x_{B(i)} = \bar{b}_i$. </p>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <p> Write $\lfloor t \rfloor$ for the floor of $t$. Round each coefficient down:
+                    \[
+                        x_{B(i)} + \sum_{j \in N} \lfloor \bar{a}_{ij} \rfloor\, x_j \;\le\; x_{B(i)} + \sum_{j \in N} \bar{a}_{ij}\, x_j = \bar{b}_i,
+                    \]
+                 using $x_j \ge 0$. </p>
+              <p class="fragment"> The left side is an integer for every integer feasible $x$, so
+                    \[
+                        x_{B(i)} + \sum_{j \in N} \lfloor \bar{a}_{ij} \rfloor\, x_j \;\le\; \lfloor \bar{b}_i \rfloor.
+                    \]</p>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <div class="theorem-box">
+                  <p><b>Cutting plane from a canonical form row</b></p>
+                  <p> From a canonical-form row with right-hand side $\bar{b}_i$,
+                    \[
+                        x_{B(i)} + \sum_{j \in N} \lfloor \bar{a}_{ij} \rfloor\, x_j \;\le\; \lfloor \bar{b}_i \rfloor
+                    \]
+                    is valid for every integer feasible point. </p>
+              </div>
+              <p class="fragment"> If $\bar{b}_i \notin \Z$, then the LP optimum has every nonbasic $x_j = 0$ and $x_{B(i)} = \bar{b}_i$, giving left side $\bar{b}_i > \lfloor \bar{b}_i \rfloor$. So this is a cutting plane <b>for $x^*$</b>. </p>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <p class="fs-26"> The integer program in SEF:
+                    \[\begin{aligned}
+                    \max \qquad & 2x_1 + 3x_2 + x_3 + 2x_4\\
+                    \text{s.t.} \qquad & 2x_1 + x_2 + x_3 + 3x_4 = 7\\
+                     & x_1 + 3x_2 + 2x_3 + x_4 = 8\\
+                     & x_1, x_2, x_3, x_4 \ge 0\\
+                     & x_1, x_2, x_3, x_4 \in \Z
+                    \end{aligned} \]</p>
+              <p class="fs-26 fragment"> Canonical form for the optimal basis $B = \{1, 2\}$:
+                    \[\begin{aligned}
+                    \max \qquad & \tfrac{53}{5} - \tfrac{6}{5}x_3 - \tfrac{3}{5}x_4\\
+                    \text{s.t.} \qquad & x_1 + \tfrac{1}{5}x_3 + \tfrac{8}{5}x_4 = \tfrac{13}{5}\\
+                     & x_2 + \tfrac{3}{5}x_3 - \tfrac{1}{5}x_4 = \tfrac{9}{5}\\
+                     & x_1, x_2, x_3, x_4 \ge 0
+                    \end{aligned} \]</p>
+          </section>
+          <section>
+              <h3>Cutting Plane Algorithms</h3>
+              <p class="fs-26"> The LP optimum is $x^* = \left(\tfrac{13}{5}, \tfrac{9}{5}, 0, 0\right)$. Take the $x_1$ row of the canonical form:
+                    \[
+                        x_1 + \tfrac{1}{5}x_3 + \tfrac{8}{5}x_4 = \tfrac{13}{5}.
+                    \]</p>
+              <p class="fs-26 fragment">
+                    \[\begin{aligned}
+                    x_1 + \left\lfloor \tfrac{1}{5} \right\rfloor x_3 + \left\lfloor \tfrac{8}{5} \right\rfloor x_4 &\le \left\lfloor \tfrac{13}{5} \right\rfloor\\
+                    x_1 + x_4 &\le 2
+                    \end{aligned}\]</p>
+              <p class="fs-26 fragment"> $x_1^* + x_4^* = \tfrac{13}{5} > 2$: a <b>cutting plane for $x^*$</b>. </p>
+          </section>
+          <section>
+              <h3></h3>
+              
+          </section>
+          <section>
+              <h3>Adding the Cut in SEF</h3>
+              <p> To get a better LP relaxation, we'd like to also include the cutting plane we just found to the formulation. One snag: the inequality we just got was an inequality, so doesn't fit into SEF.</p>
+              <p class=fragment> To keep the program in standard equality form we introduce one new <b>slack variable</b> $x_{n+1} \ge 0$, and just include it in this one constraint:
+                    \[
+                        x_{B(i)} + \sum_{j \in N} \lfloor \bar{a}_{ij} \rfloor\, x_j \;+\; x_{n+1} \;=\; \lfloor \bar{b}_i \rfloor, \qquad x_{n+1} \ge 0.
+                    \]</p>
+              <p class="fragment"> We append this as a <b>new row</b> and $x_{n+1}$ as a <b>new column</b> (with objective coefficient $0$). The system stays in the form
+                    \[
+                        \max\{ c^{\intercal}x : A'x' = b',\ x' \ge 0,\ x' \in \Z^{n+1}\}.
+                    \]</p>
+          </section>
+          <section>
+              <h3>Adding the Cut in SEF</h3>
+              <p class="fs-26"> The integer program in SEF:
+                    \[\begin{aligned}
+                    \max \qquad & 2x_1 + 2x_2 + 3x_3 + 2x_4\\
+                    \text{s.t.} \qquad & x_1 + 2x_2 + 4x_3 + 2x_4 = 10\\
+                     & 3x_1 + 2x_2 + 4x_3 + 3x_4 = 12\\
+                     & x_1, x_2, x_3, x_4 \ge 0\\
+                     & x_1, x_2, x_3, x_4 \in \Z
+                    \end{aligned} \]</p>
+              <p class="fs-26 fragment"> Canonical form for the optimal basis $B = \{1, 2\}$, with $x^* = \left(1, \tfrac{9}{2}, 0, 0\right)$:
+                    \[\begin{aligned}
+                    \max \qquad & 11 - x_3 - \tfrac{1}{2}x_4\\
+                    \text{s.t.} \qquad & x_1 + \tfrac{1}{2}x_4 = 1\\
+                     & x_2 + 2x_3 + \tfrac{3}{4}x_4 = \tfrac{9}{2}\\
+                     & x_1, x_2, x_3, x_4 \ge 0
+                    \end{aligned} \]</p>
+          </section>
+          <section>
+              <h3>Adding the Cut in SEF</h3>
+              <p class="fs-26"> The $x_2$ row gives a cutting plane for $x^*$:
+                    \[\begin{aligned}
+                    x_2 + \lfloor 2 \rfloor x_3 + \left\lfloor \tfrac{3}{4} \right\rfloor x_4 &\le \left\lfloor \tfrac{9}{2} \right\rfloor\\
+                    x_2 + 2x_3 &\le 4
+                    \end{aligned}\]</p>
+              <p class="fs-26 fragment"> Adding it with a new slack variable $x_5$ keeps the program in SEF:
+                    \[\begin{aligned}
+                    \max \qquad & 2x_1 + 2x_2 + 3x_3 + 2x_4\\
+                    \text{s.t.} \qquad & x_1 + 2x_2 + 4x_3 + 2x_4 = 10\\
+                     & 3x_1 + 2x_2 + 4x_3 + 3x_4 = 12\\
+                     & x_2 + 2x_3 + x_5 = 4\\
+                     & x_1, x_2, x_3, x_4, x_5 \ge 0\\
+                     & x_1, x_2, x_3, x_4, x_5 \in \Z
+                    \end{aligned} \]</p>
+          </section>
+          <section>
+              <h3>Adding the Cut in SEF</h3>
+              <p class="fs-26"> Canonical form of the new program for its optimal basis $B = \{1, 2, 4\}$:
+                    \[\begin{aligned}
+                    \max \qquad & \tfrac{32}{3} - x_3 - \tfrac{2}{3}x_5\\
+                    \text{s.t.} \qquad & x_1 + \tfrac{2}{3}x_5 = \tfrac{2}{3}\\
+                     & x_2 + 2x_3 + x_5 = 4\\
+                     & x_4 - \tfrac{4}{3}x_5 = \tfrac{2}{3}\\
+                     & x_1, x_2, x_3, x_4, x_5 \ge 0
+                    \end{aligned} \]</p>
+              <p class="fs-26 fragment"> The new LP optimum is $x^* = \left(\tfrac{2}{3}, 4, 0, \tfrac{2}{3}, 0\right)$, and the LP value has dropped from $11$ to $\tfrac{32}{3}$. </p>
+          </section>
+          <section>
+              <h3>Adding the Cut in SEF</h3>
+              <p class="fs-26"> The $x_4$ row of the new canonical form gives a second cutting plane:
+                    \[\begin{aligned}
+                    x_4 + \left\lfloor -\tfrac{4}{3} \right\rfloor x_5 &\le \left\lfloor \tfrac{2}{3} \right\rfloor\\
+                    x_4 - 2x_5 &\le 0
+                    \end{aligned}\]</p>
+              <p class="fs-26 fragment"> $x_4^* - 2x_5^* = \tfrac{2}{3} > 0$: a cutting plane for the new $x^*$. It uses the new variable $x_5$, so it was <b>not available from the original canonical form</b>. </p>
+              <p class="fs-26 fragment"> Adding it with a slack variable $x_6$, the LP optimum becomes
+                    \[
+                        x^* = (0, 3, 0, 2, 1, 0)
+                    \]
+                 with value $10$. This is integral, so $(0, 3, 0, 2)$ is optimal for the integer program. </p>
+          </section>
+      </section>
+
+      <!-- ===================== Branch and bound ===================== -->
+      <section>
+          <section>
+              <h2>Branch and Bound</h2>
+          </section>
+          <section>
+              <h3>Branch and Bound</h3>
+              <p> Cutting plane algorithms are inherently <b>sequential</b>: each new cut depends on the LP optimum found after adding the previous one. </p>
+              <p class="fragment"> We often want to <b>parallelize</b> work across many computers, but it is difficult to do so with cutting planes. </p>
+              <p class="fragment"> Idea: split the integer program into two smaller integer programs that can be solved <b>independently</b>. </p>
+          </section>
+          <section>
+              <h3>Branch and Bound</h3>
+              <p> Let $f$ be an integer vector and let $v \notin \Z$. If $x$ is an integer point, then $f^{\intercal}x$ is an integer, so
+                    \[
+                        f^{\intercal}x \le \lfloor v \rfloor \qquad \text{or} \qquad f^{\intercal}x \ge \lceil v \rceil.
+                    \]</p>
+              <p class="fragment"> So any plane splits the integer program into two parts:
+                    \[\begin{aligned}
+                        & \max \{c^{\intercal}x : Ax \le b,\ f^{\intercal}x \le \lfloor v \rfloor,\ x \in \Z^n\},\\
+                        & \max \{c^{\intercal}x : Ax \le b,\ f^{\intercal}x \ge \lceil v \rceil,\ x \in \Z^n\}.
+                    \end{aligned}\]</p>
+              <p class="fragment"> Every integer feasible point is feasible for exactly one part, so the optimal value of the integer program is the larger of the two optimal values. </p>
+          </section>
+          <section>
+              <h3>Branch and Bound</h3>
+              <p> The two parts can be given to <b>different computers</b>, and each part can be split again in the same way. </p>
+              <p class="fragment"> A natural choice of plane: if the LP optimum $x^*$ has $x_i^* \notin \Z$, split on
+                    \[
+                        x_i \le \lfloor x_i^* \rfloor \qquad \text{or} \qquad x_i \ge \lceil x_i^* \rceil.
+                    \]</p>
+              <p class="fragment"> Then $x^*$ is not feasible for the LP relaxation of either part. </p>
+          </section>
+          <section>
+              <h3>Branch and Bound</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <p class="fs-26"> Splitting again and again gives a <b>branch and bound tree</b>: each node is an integer program, and its two children are its two parts. </p>
+                  <p class="fs-26 fragment"> We do not have to expand out every branch of this tree: some branches can be <b>pruned</b> using the LP relaxation. </p>
+                  <p class="fs-26 fragment"> If the LP relaxation at a node is infeasible, or its optimal value is no better than an integer solution we have already found, then nothing below that node can do better. </p>
+                </div>
+                <img src="images/branch_and_bound_tree.svg" style="width:460px; max-width:none; height:auto;" alt="The branch and bound tree for the example. The root has LP optimum (9/5, 14/5) with value 23/5. Its right child, x1 >= 2, has integral LP optimum (2, 2) with value 4. Its left child, x1 <= 1, has LP optimum (1, 10/3) with value 13/3, and is pruned because the floor of 13/3 is 4, no better than the integer solution found. The left child's own children, x2 <= 3 and x2 >= 4, are drawn dashed and are never solved." />
+              </div>
+          </section>
+          <section>
+              <h3>Branch and Bound</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <p class="fs-26"> For the integer program
+                    \[\begin{aligned}
+                    \max \qquad & x_1 + x_2\\
+                    \text{s.t.} \qquad & 2x_1 + 3x_2 \le 12\\
+                     & 4x_1 + x_2 \le 10\\
+                     & x_1, x_2 \ge 0,\quad x_1, x_2 \in \Z,
+                    \end{aligned} \]
+                    $x^* = \left(\tfrac{9}{5}, \tfrac{14}{5}\right)$, so split on $x_1 \le 1$ or $x_1 \ge 2$. </p>
+                  <p class="fs-26 fragment"> The LP optima of the two parts are $\left(1, \tfrac{10}{3}\right)$ with value $\tfrac{13}{3}$ and $(2, 2)$ with value $4$. </p>
+                  <p class="fs-26 fragment"> $(2, 2)$ is integral, and integer points in the first part have value at most $\left\lfloor \tfrac{13}{3} \right\rfloor = 4$, so $(2, 2)$ is optimal. Using such <b>bounds</b> to discard parts is the "bound" in branch and bound. </p>
+                </div>
+                <img src="images/cp_example_branch.svg" class="fig" alt="The LP feasible region split by the vertical lines x1 = 1 and x1 = 2. The part with x1 <= 1 is shaded blue with LP optimum (1, 10/3) circled; the part with x1 >= 2 is shaded green with LP optimum (2, 2) circled; the strip between them, shaded red, contains the old LP optimum x* = (9/5, 14/5) and no integer points." />
+              </div>
+          </section>
+      </section>
+
+      <!-- ===================== Convex functions ===================== -->
+      <section>
+          <section>
+              <h2>Convex Functions</h2>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <div class="theorem-box">
+                      <p><b>Definition</b></p>
+                      <p class="fs-26"> A function $f : \R^n \to \R$ is <b>convex</b> if for all $x, y \in \R^n$ and all $\lambda \in [0, 1]$,
+                        \[
+                            f(\lambda x + (1 - \lambda) y) \le \lambda f(x) + (1 - \lambda) f(y).
+                        \]</p>
+                  </div>
+                  <p class="fs-26 fragment"> Geometrically: the line segment joining any two points on the graph of $f$ lies on or above the graph. </p>
+                </div>
+                <img src="images/convex_function_chord.svg" class="fig-sm" alt="The graph of a convex function in blue, with a green chord joining the points above x and y. Above the point lambda x + (1 - lambda) y, the chord has height lambda f(x) + (1 - lambda) f(y), which is above the value of the function there." />
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <p> Examples of convex functions: </p>
+              <ul>
+                  <li> Affine functions $f(x) = c^{\intercal}x + d$ (the objective of every LP). </li>
+                  <li class="fragment"> $f(x) = x^2$, $f(x) = |x|$ and $f(x) = e^x$ on $\R$. </li>
+                  <li class="fragment"> The squared length $f(x) = \|x\|^2 = x_1^2 + \dots + x_n^2$ on $\R^n$. </li>
+                  <li class="fragment"> Sums of convex functions, and maximums of convex functions such as
+                    $f(x) = \max\{a_1^{\intercal}x + b_1, \dots, a_m^{\intercal}x + b_m\}$. </li>
+              </ul>
+              <p class="fragment"> Not convex: $f(x) = x^3$ and $f(x) = \sin x$ on $\R$. </p>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <p> An application: <b>fitting a line to data</b>. Given data points $(a_1, b_1), \dots, (a_m, b_m)$ with $a_i \in \R^n$ and $b_i \in \R$, we look for $x \in \R^n$ so that $a_i^{\intercal}x \approx b_i$ for every $i$. </p>
+              <p class="fragment"> The <b>least squares</b> problem chooses $x$ by minimizing a convex function:
+                    \[
+                        \min_{x \in \R^n} \ \sum_{i=1}^m \left(a_i^{\intercal}x - b_i\right)^2.
+                    \]</p>
+              <p class="fragment"> Why convexity helps: every <b>local</b> minimum of a convex function is a <b>global</b> minimum. </p>
+          </section>
+      </section>
+
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                        conv: '\\text{conv}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

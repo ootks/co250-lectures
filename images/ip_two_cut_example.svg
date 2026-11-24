@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 400" width="440" height="400" font-family="Georgia, serif">
+<circle cx="70.0" cy="330.0" r="2.3" fill="#d8d0bb"/>
+<circle cx="70.0" cy="180.0" r="2.3" fill="#d8d0bb"/>
+<circle cx="70.0" cy="30.0" r="2.3" fill="#d8d0bb"/>
+<circle cx="220.0" cy="330.0" r="2.3" fill="#d8d0bb"/>
+<circle cx="220.0" cy="180.0" r="2.3" fill="#d8d0bb"/>
+<circle cx="220.0" cy="30.0" r="2.3" fill="#d8d0bb"/>
+<circle cx="370.0" cy="330.0" r="2.3" fill="#d8d0bb"/>
+<circle cx="370.0" cy="180.0" r="2.3" fill="#d8d0bb"/>
+<circle cx="370.0" cy="30.0" r="2.3" fill="#d8d0bb"/>
+<line x1="70.0" y1="330.0" x2="370.0" y2="330.0" stroke="#93a1a1" stroke-width="1.5"/>
+<line x1="70.0" y1="330.0" x2="70.0" y2="30.0" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="370.0" y="350.0" font-size="15" font-style="italic" fill="#073642" text-anchor="end">x_1</text>
+<text x="60.0" y="30.0" font-size="15" font-style="italic" fill="#073642" text-anchor="end">x_2</text>
+<polygon points="70.00,330.00 320.00,330.00 276.25,198.75 70.00,130.00" fill="rgba(38,139,210,0.12)" stroke="#268bd2" stroke-width="2.5"/>
+<polygon points="70.00,330.00 220.00,330.00 220.00,180.00 70.00,130.00" fill="rgba(133,153,0,0.16)" stroke="#859900" stroke-width="2"/>
+<line x1="70.0" y1="30.0" x2="370.0" y2="330.0" stroke="#859900" stroke-width="3" stroke-linecap="round" stroke-dasharray="7 5"/>
+<text x="226.0" y="174.0" font-size="13" fill="#859900">x_1 + x_2 &#8804; 2</text>
+<line x1="220.0" y1="330.0" x2="220.0" y2="30.0" stroke="#859900" stroke-width="3" stroke-linecap="round" stroke-dasharray="7 5"/>
+<text x="226.0" y="108.0" font-size="13" fill="#859900">x_1 &#8804; 1</text>
+<circle cx="70.0" cy="330.0" r="5.5" fill="#268bd2"/>
+<circle cx="70.0" cy="180.0" r="5.5" fill="#268bd2"/>
+<circle cx="220.0" cy="330.0" r="5.5" fill="#268bd2"/>
+<circle cx="220.0" cy="180.0" r="5.5" fill="#268bd2"/>
+<circle cx="276.2" cy="198.8" r="5.5" fill="#cb4b16" stroke="#fff" stroke-width="1.5"/><text x="285.2" y="191.8" font-size="13" fill="#cb4b16">x_LP</text>
+</svg>
