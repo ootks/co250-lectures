@@ -327,7 +327,7 @@
                 Since each $x_i$ is nonnegative, we can <b>decrease the coefficients on the left side</b> and turn this equation into an inequality
                 <span class=fragment>
                     \[
-                        x_2 + \lfloor\tfrac{2}{5}\rfloor x_3 - \lfloor \tfrac{1}{5}\rfloor x_4 \le \tfrac{14}{5}.
+                        x_2 + \lfloor\tfrac{2}{5}\rfloor x_3 + \lfloor -\tfrac{1}{5}\rfloor x_4 \le \tfrac{14}{5}.
                     \]
                     The left side is now integral, so we can apply our floor trick
                 </span>
@@ -335,10 +335,10 @@
               <p class=fragment>
                 The following is a valid cutting plane:
                     \[
-                        x_2 \le \lfloor \tfrac{14}{5} \rfloor = 2.
+                        x_2 - x_4 \le \lfloor \tfrac{14}{5} \rfloor = 2.
                     \]
               </p>
-              <p>This is a cutting plane for $x^*$, since $x^*_2 = \frac{14}{5} > 2$. </p>
+              <p>This is a cutting plane for $x^*$, since $x^*_2 - x^*_4 = \frac{14}{5} > 2$. </p>
             </section>
             <section>
               <h3>Cutting Plane Algorithms</h3>
