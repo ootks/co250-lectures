@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CO 250 - Introduction to Optimization</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.css">
+
+  <link rel="stylesheet" href="styles/solarized.css" id="theme">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <!-- Title slide -->
+      <section>
+          <h2>Introduction to Optimization</h2>
+          <h3>CO 250</h3>
+          <br>
+          <h4>Lecture 21</h4>
+          <br>
+          <p class="centered"><a href="?view=scroll">Scroll view</a></p>
+          <p class="centered"><a href="beamer/lecture21.pdf">PDF version of these slides</a> <em>(demo: this PDF version is experimental and may contain errors or differ from the slides)</em></p>
+      </section>
+      <section>
+          <section>
+              <h2>News on the Simplex Method</h2>
+          </section>
+          <section>
+              <h3>Simplex Method News</h3>
+              <p> Geometrically, the simplex method starts at some vertex of a polytope and moves along the edges of the polytope towards better objective values. </p>
+              <div class="flexbox center-h">
+                  <img src="images/news_polytope_walk.svg" style="height:340px; width:auto; max-width:none;" alt="A three-dimensional polytope with a path drawn along its edges in orange arrows, from a start vertex at the bottom to the optimal vertex at the top. An arrow at the side shows that the objective value improves upwards." />
+              </div>
+          </section>
+          <section>
+              <h3>Simplex Method News</h3>
+              <p> There are many such possible paths; a <b>pivot rule</b> tells you at each vertex which edge to explore next. Bland's rule is one such pivot rule.</p>
+              <div class="flexbox center-h">
+                  <img src="images/news_polytope_directions.svg" style="height:340px; width:auto; max-width:none;" alt="The same polytope with one vertex highlighted in orange and arrows along the five edges leaving it. Three green arrows point along edges that improve the objective, and two grey arrows point along edges that make it worse. A pivot rule has to choose one of the green edges." />
+              </div>
+          </section>
+          <section>
+              <h3>Simplex Method News</h3>
+              <p> It is known that there are some polytopes with few inequalities where Bland's rule takes a <b>really</b> long time to find a solution (the number of steps grows like $2^n$).</p>
+              <div class="flexbox center-h">
+                  <img src="images/news_long_path.svg" style="height:340px; width:auto; max-width:none;" alt="A deformed cube, the Klee-Minty cube, with a red path along its edges from the start vertex to the optimal vertex. The path takes 7 steps and visits every one of the 8 vertices, improving the objective at each step." />
+              </div>
+          </section>
+          <section>
+              <h3>Simplex Method News</h3>
+              <p> These polytopes are very rare and hard to find, so this isn't an issue in practice. Still, people wondered if there is a  <b>different</b> pivot rule so that the number of steps it takes to get to the optimum is always a relatively small number (bounded from above by $m^k$ for some $k$, where $m$ is the number of inequalities). </p>
+              <div class="flexbox center-h">
+                  <img src="images/news_long_vs_short.svg" style="height:280px; width:auto; max-width:none;" alt="The same deformed cube with two paths from the start vertex to the optimal vertex: the long red path of 7 steps through every vertex, and a short green path that follows a single edge straight up." />
+              </div>
+              <p class=fragment> If such a rule existed, it would also show that there are relatively short paths joining any two vertices of a polytope </p>
+          </section>
+          <section>
+              <h3>Simplex Method News</h3>
+              <p> It was believed there is always such a path with length at most $m$ (the number of inequalitie). This is more or less the <b>Hirsch conjecture</b>, but it was disproven by Francisco Santos Leal in 2010. </p>
+              <div class="flexbox center-h">
+                  <img src="images/news_polytope_directions.svg" style="height:270px; width:auto; max-width:none;" alt="The same polytope with one vertex highlighted in orange and arrows along the five edges leaving it. Three green arrows point along edges that improve the objective, and two grey arrows point along edges that make it worse. A pivot rule has to choose one of the green edges." />
+              </div>
+              <p class=fragment> OpenAI just showed that there is a polytope with two vertices that cannot be joined by any path of length at most roughly $m^{\log_2(n)}$, which is still very large. </p>
+          </section>
+          <section>
+              <h3>Simplex Method News</h3>
+              <p> This means that for some (very specific, hard to describe) polytopes, no simplex like algorithm can succeed in a reasonable amount of time. </p>
+              <div class="flexbox center-h">
+                  <img src="images/news_polytope_directions.svg" style="height:340px; width:auto; max-width:none;" alt="The same polytope with one vertex highlighted in orange and arrows along the five edges leaving it. Three green arrows point along edges that improve the objective, and two grey arrows point along edges that make it worse. A pivot rule has to choose one of the green edges." />
+              </div>
+          </section>
+      </section>
+
+      <section>
+          <h2>Lecture Outline</h2>
+          <ul>
+              <li>Review: Cutting Planes for $x^*$</li>
+              <li>Convex Functions and Nonlinear Programming</li>
+              <li>Subgradients</li>
+          </ul>
+      </section>
+
+      <!-- ===================== News: superpolynomial lower bound on polytope diameter ===================== -->
+      <!-- ===================== Review: cutting planes for x^* (from lecture 20) ===================== -->
+      <section>
+          <section>
+              <h2>Review: Cutting Planes for $x^*$</h2>
+          </section>
+          <section>
+              <h3>Review: Cutting Planes for $x^*$</h3>
+              <p> Consider the integer program and its LP relaxation, with LP optimal solution $x^*$:
+                \[
+                    \max \{c^{\intercal}x : Ax \le b,\ x \in \Z^n\}, \qquad \max \{c^{\intercal}x : Ax \le b,\ x \in \R^n\}.
+                \]</p>
+              <p class="fragment"> A <b>valid cutting plane</b> for the integer program is an inequality
+                \[
+                    f^{\intercal}x \le v
+                \]
+                that holds for every integer feasible point $x$. </p>
+              <p class="fragment"> Adding a valid cutting plane to the LP relaxation never removes an integer feasible point. </p>
+          </section>
+          <section>
+              <h3>Review: Cutting Planes for $x^*$</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <div class="theorem-box">
+                      <p><b>Definition</b></p>
+                      <p class="fs-26"> A <b>cutting plane for $x^*$</b> is an inequality $f^{\intercal}x \le v$ such that </p>
+                      <p class="fs-26">
+                        \[
+                            f^{\intercal}x \le v \quad \text{for every } x \text{ feasible for the IP},
+                        \]</p>
+                      <p class="fs-26">
+                        \[
+                            f^{\intercal}x^* > v.
+                        \]</p>
+                  </div>
+                  <p class="fs-26 fragment"> It keeps every integer feasible point, but removes $x^*$ from the LP relaxation. </p>
+                </div>
+                <img src="images/cp_cut_removing.svg" class="fig-sm" alt="The polytope with the cut x1 + x2 <= 6 slicing off the red corner that contains x*, so f-transpose-x* = 6.5 > 6." />
+              </div>
+          </section>
+          <section>
+              <h3>Review: Cutting Planes for $x^*$</h3>
+              <p> A valid cutting plane that $x^*$ still satisfies does not change the LP optimum, so it does not improve the bound on the IP. </p>
+              <div class="flexbox around-top">
+                  <div>
+                      <img src="images/cp_cut_nonremoving.svg" class="fig-sm" alt="The polytope with a green cut x1 - x2 <= 5 that is valid for all integer points and slices a small red sliver off the bottom right corner, but leaves the optimum x* feasible." />
+                      <p class="centered fs-22"> Valid, but <b>not</b> a cutting plane for $x^*$ </p>
+                  </div>
+                  <div>
+                      <img src="images/cp_cut_removing.svg" class="fig-sm" alt="The polytope with a green cut x1 + x2 <= 6 that is valid for all integer points and slices off the corner containing x*, shown as a red sliver." />
+                      <p class="centered fs-22"> A cutting plane for $x^*$ </p>
+                  </div>
+              </div>
+          </section>
+          <section>
+              <h3>Review: Cutting Planes for $x^*$</h3>
+              <p> For an integer program in SEF, put the LP relaxation in canonical form for its optimal basis $B$. Each row reads
+                    \[
+                        x_{B(i)} + \sum_{j \in N} \bar{a}_{ij}\, x_j = \bar{b}_i.
+                    \]</p>
+              <div class="theorem-box fragment">
+                  <p><b>Cutting plane from a canonical form row</b></p>
+                  <p> If $\bar{b}_i \notin \Z$, then
+                    \[
+                        x_{B(i)} + \sum_{j \in N} \lfloor \bar{a}_{ij} \rfloor\, x_j \;\le\; \lfloor \bar{b}_i \rfloor
+                    \]
+                    is a cutting plane for $x^*$. </p>
+              </div>
+          </section>
+          <section>
+              <h3>Example: A Cutting Plane from Canonical Form</h3>
+              <p> The integer program in SEF:
+                    \[\begin{aligned}
+                    \max \qquad & 4x_1 + 3x_2 + 2x_3 + 4x_4\\
+                    \text{s.t.} \qquad & x_1 + 2x_2 + 3x_3 + x_4 = 11\\
+                     & 2x_1 + x_2 + x_3 + 4x_4 = 12\\
+                     & x_1, x_2, x_3, x_4 \ge 0\\
+                     & x_1, x_2, x_3, x_4 \in \Z
+                    \end{aligned} \]</p>
+              <p class="fragment"> The LP relaxation has optimal basis $B = \{1, 2\}$. </p>
+          </section>
+          <section>
+              <h3>Example: A Cutting Plane from Canonical Form</h3>
+              <p> Canonical form for the optimal basis $B = \{1, 2\}$:
+                    \[\begin{aligned}
+                    \max \qquad & \tfrac{82}{3} - \tfrac{5}{3}x_3 - \tfrac{10}{3}x_4\\
+                    \text{s.t.} \qquad & x_1 - \tfrac{1}{3}x_3 + \tfrac{7}{3}x_4 = \tfrac{13}{3}\\
+                     & x_2 + \tfrac{5}{3}x_3 - \tfrac{2}{3}x_4 = \tfrac{10}{3}\\
+                     & x_1, x_2, x_3, x_4 \ge 0
+                    \end{aligned} \]</p>
+              <p class="fragment">
+                    \[
+                        x^* = \left(\tfrac{13}{3}, \tfrac{10}{3}, 0, 0\right), \qquad \text{LP optimal value } \tfrac{82}{3}
+                    \]</p>
+          </section>
+          <section>
+              <h3>Example: A Cutting Plane from Canonical Form</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> The $x_1$ row of the canonical form:
+                    \[
+                        x_1 - \tfrac{1}{3}x_3 + \tfrac{7}{3}x_4 = \tfrac{13}{3}
+                    \]</p>
+                  <p class="fs-26 fragment">
+                    \[\begin{aligned}
+                    x_1 + \left\lfloor -\tfrac{1}{3} \right\rfloor x_3 + \left\lfloor \tfrac{7}{3} \right\rfloor x_4 &\le \left\lfloor \tfrac{13}{3} \right\rfloor\\
+                    x_1 - x_3 + 2x_4 &\le 4
+                    \end{aligned}\]</p>
+                </div>
+              </div>
+          </section>
+          <section>
+              <h3>Example: A Cutting Plane from Canonical Form</h3>
+              <p> Why is $x_1 - x_3 + 2x_4 \le 4$ a cutting plane for $x^*$? </p>
+              <p class="fragment fs-26"> <b>It holds for every integer feasible point.</b> Since $x_3, x_4 \ge 0$, rounding the coefficients down can only decrease the left side:
+                    \[
+                        x_1 - x_3 + 2x_4 \;\le\; x_1 - \tfrac{1}{3}x_3 + \tfrac{7}{3}x_4 = \tfrac{13}{3}.
+                    \]
+                 For integer $x$ the left side is an integer, and an integer that is at most $\tfrac{13}{3}$ is at most $4$. </p>
+              <p class="fragment fs-26"> <b>It removes $x^*$.</b> At $x^* = \left(\tfrac{13}{3}, \tfrac{10}{3}, 0, 0\right)$,
+                    \[
+                        x_1^* - x_3^* + 2x_4^* = \tfrac{13}{3} > 4.
+                    \]</p>
+          </section>
+      </section>
+
+      <!-- ===================== Convex functions ===================== -->
+      <section>
+          <section>
+              <h2>Convex Functions</h2>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <div class="theorem-box">
+                      <p><b>Definition</b></p>
+                      <p class="fs-26"> A function $f : \R^n \to \R$ is <b>convex</b> if for all $x, y \in \R^n$ and all $\lambda \in [0, 1]$, </p>
+                      <p class="fs-26">
+                        \[
+                            f(\lambda x + (1 - \lambda) y) \le \lambda f(x) + (1 - \lambda) f(y).
+                        \]</p>
+                  </div>
+                  <p class="fs-26 fragment"> Geometrically: the line segment joining any two points on the graph of $f$ lies on or above the graph. </p>
+                </div>
+                <img src="images/convex_function_chord.svg" class="fig-sm" alt="The graph of a convex function in blue, with a green chord joining the points above x and y. Above the point lambda x + (1 - lambda) y, the chord has height lambda f(x) + (1 - lambda) f(y), which is above the value of the function there." />
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> A function that is <b>not</b> convex: for these $x$, $y$ and $\lambda$, </p>
+                  <p class="fs-26">
+                    \[
+                        f(\lambda x + (1 - \lambda) y) > \lambda f(x) + (1 - \lambda) f(y).
+                    \]</p>
+                  <p class="fs-26 fragment"> The line segment joining these two points of the graph passes <b>below</b> the graph. </p>
+                </div>
+                <img src="images/nonconvex_function_chord.svg" class="fig-sm" alt="The graph of a function with two valleys and a hump between them, in blue. A red chord joins the bottoms of the two valleys, above the points x and y. Above the midpoint, the graph is at the top of the hump, marked in orange, well above the chord, marked in red." />
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <div class="theorem-box">
+                      <p><b>Definition</b></p>
+                      <p class="fs-26"> The <b>epigraph</b> of a function $f : \R^n \to \R$ is the set of points on or above its graph: </p>
+                      <p class="fs-26">
+                        \[
+                            \text{epi}(f) = \{(x, t) \in \R^n \times \R : t \ge f(x)\}.
+                        \]</p>
+                  </div>
+                  <p class="fs-26 fragment"> The epigraph is a subset of $\R^{n+1}$, so we can ask whether it is a <b>convex set</b>. </p>
+                </div>
+                <img src="images/epigraph_convex.svg" class="fig-sm" alt="The graph t = f(x) of a convex function in blue with the region above it shaded and labelled epi(f). Two points (x, s) and (y, t) of the epigraph are joined by a green line segment that stays inside the shaded region." />
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="theorem-box">
+                  <p><b>Epigraph characterization of convexity</b></p>
+                  <p> A function $f : \R^n \to \R$ is convex if and only if $\text{epi}(f)$ is a convex set. </p>
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <p class="fs-26"> <b>Proof</b> ($\Rightarrow$) Suppose $f$ is convex. Let $(x, s), (y, t) \in \text{epi}(f)$. <span class=fragment>That means that $s \ge f(x)$ and $t \ge f(y)$.</span> </p>
+              <div class="fragment">
+                  <p class="fs-26"> For $\lambda \in [0,1]$, since $f$ is convex, </p>
+                  <p class="fs-26">
+                        \[
+                            f(\lambda x + (1 - \lambda) y) \;\le\; \lambda f(x) + (1 - \lambda) f(y) \;\le\; \lambda s + (1 - \lambda) t.
+                        \]
+                  </p>
+              </div>
+              <div class="fragment">
+                  <p class="fs-26"> This says exactly that </p>
+                  <p class="fs-26">
+                        \[
+                            \lambda (x, s) + (1 - \lambda)(y, t) = \left(\lambda x + (1 - \lambda) y,\ \lambda s + (1 - \lambda) t\right) \in \text{epi}(f),
+                        \]</p>
+                  <p class="fs-26"> so $\text{epi}(f)$ is a convex set. </p>
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <p class="fs-26"> ($\Leftarrow$) Suppose $\text{epi}(f)$ is a convex set. Let $x, y \in \R^n$ and $\lambda \in [0, 1]$. </p>
+              <div class="fragment">
+                  <p class="fs-26"> The points $(x, f(x))$ and $(y, f(y))$ lie on the graph of $f$, so they are in $\text{epi}(f)$. Since $\text{epi}(f)$ is convex, </p>
+                  <p class="fs-26">
+                        \[
+                            \lambda (x, f(x)) + (1 - \lambda)(y, f(y)) = \left(\lambda x + (1 - \lambda) y,\ \lambda f(x) + (1 - \lambda) f(y)\right) \in \text{epi}(f).
+                        \]</p>
+              </div>
+              <div class="fragment">
+                  <p class="fs-26"> By the definition of the epigraph, this means </p>
+                  <p class="fs-26">
+                        \[
+                            \lambda f(x) + (1 - \lambda) f(y) \;\ge\; f(\lambda x + (1 - \lambda) y),
+                        \]</p>
+                  <p class="fs-26"> so $f$ is convex. </p>
+              </div>
+              <p class="fs-26 fragment"> This lets us use what we know about convex <b>sets</b> to show that <b>functions</b> are convex. </p>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <p class="fs-26"> Example: a <b>piecewise linear</b> function on $\R$, </p>
+                  <p class="fs-26">
+                    \[
+                        f(x) = \max\left\{-x,\ \tfrac{1}{2}x,\ 2x - 3\right\}.
+                    \]</p>
+                  <p class="fs-26 fragment">
+                    \[
+                        f(x) = \begin{cases} -x & x \le 0 \\ \tfrac{1}{2}x & 0 \le x \le 2 \\ 2x - 3 & x \ge 2 \end{cases}
+                    \]</p>
+                </div>
+                <img src="images/pwl_function.svg" class="fig" alt="The three lines t = -x, t = x/2 and t = 2x - 3 drawn dashed, with their maximum f drawn as a solid blue piecewise linear graph with breakpoints at (0, 0) and (2, 1)." />
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <p class="fs-26"> $t \ge f(x)$ exactly when $t$ is at least each of the three affine pieces, so </p>
+                  <p class="fs-26">
+                    \[
+                        \text{epi}(f) = \left\{(x, t) : \begin{aligned} t &\ge -x \\ t &\ge \tfrac{1}{2}x \\ t &\ge 2x - 3 \end{aligned}\right\}.
+                    \]</p>
+                  <p class="fs-26 fragment"> This is a polytope! So it convex. </p>
+                  <p class="fs-26 fragment"> So $\text{epi}(f)$ is a convex set, and therefore $f$ is a convex function. </p>
+                </div>
+                <img src="images/pwl_epigraph.svg" class="fig" alt="The same three dashed lines, with the region on or above all three of them shaded blue and labelled epi(f). Its lower boundary is the graph of f." />
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <p> The same argument works for any maximum of affine functions on $\R^n$:
+                    \[
+                        f(x) = \max\{a_1^{\intercal}x + b_1,\ \dots,\ a_m^{\intercal}x + b_m\}.
+                    \]</p>
+              <p class="fragment">
+                    \[
+                        \text{epi}(f) = \{(x, t) \in \R^n \times \R : a_i^{\intercal}x - t \le -b_i \ \text{ for } i = 1, \dots, m\}
+                    \]</p>
+              <p class="fragment"> The epigraph is a <b>polyhedron</b>, so it is convex, and $f$ is convex. </p>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> Example: $f(x) = x^2$ on $\R$. For $x, y \in \R$ and $\lambda \in [0, 1]$: </p>
+                  <p class="fs-22 fragment">
+                  Consider 
+                  \[
+                    \lambda f(x) + (1 - \lambda) f(y) - f(\lambda x + (1 - \lambda) y);
+                  \]
+                  this is nonnegative if and only if $f$ is convex.
+                  </p>
+                  <p class="fs-22 fragment">
+                  Plugging in for $f$ gives
+                  \[
+                    \lambda x^2 + (1 - \lambda) y^2 - (\lambda x + (1 - \lambda) y)^2.
+                  \]
+                  </p>
+                  <p class="fs-22 fragment">
+                  Expanding gives
+                    \[\begin{aligned}
+                    \lambda(1 - \lambda) x^2 - 2\lambda(1 - \lambda) xy + \lambda(1 - \lambda) y^2\\
+                    = \lambda(1 - \lambda)(x^2 - 2 xy + y^2)\\
+                    = \lambda(1 - \lambda)(x - y)^2\\
+                    \ge 0
+                    \end{aligned}\]</p>
+                </div>
+                <img src="images/convex_x_squared.svg" class="fig-sm" alt="The graph of f(x) = x squared in blue, with a green chord joining two points of the graph. A green point on the chord lies directly above an orange point on the graph." />
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> Convex functions are also closed under taking <b>sums</b>: if $f, g : \R^n \to \R$ are convex, then $f + g$ is convex. </p>
+                  <div class="fragment" data-fragment-index="0">
+                      <p class="fs-26"> Example: the squared $L^2$ norm on $\R^n$, </p>
+                      <p class="fs-26">
+                        \[
+                            f(x) = \|x\|_2^2 = x_1^2 + x_2^2 + \dots + x_n^2.
+                        \]</p>
+                  </div>
+                  <p class="fs-26 fragment" data-fragment-index="1"> Each term $x \mapsto x_i^2$ is convex, by the previous example, so their sum $\|x\|_2^2$ is convex. </p>
+                </div>
+                <img src="images/squared_norm_bowl.svg" class="fig-sm fragment" data-fragment-index="0" alt="The graph of f(x) = x1 squared plus x2 squared over the plane, drawn as a bowl: a parabola profile with circular cross-sections at several heights." />
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="theorem-box">
+                  <p><b>Second derivative characterization of convexity</b></p>
+                  <p> Let $f : \R \to \R$ be twice differentiable. Then $f$ is convex if and only if </p>
+                  <p>
+                    \[
+                        f''(x) \ge 0 \quad \text{for all } x \in \R.
+                    \]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <p class="fs-26"> <b>Proof</b> ($\Leftarrow$) Suppose $f''(x) \ge 0$ for all $x$, so that $f'$ is nondecreasing. </p>
+              <div class="fragment">
+                  <p class="fs-26"> Let $x &lt; y$ and $\lambda \in (0, 1)$, and set $z = \lambda x + (1 - \lambda) y$, so that </p>
+                  <p class="fs-26">
+                        \[
+                            z - x = (1 - \lambda)(y - x), \qquad y - z = \lambda (y - x).
+                        \]</p>
+              </div>
+              <div class="fragment">
+                  <p class="fs-26"> By the mean value theorem there are $a \in (x, z)$ and $b \in (z, y)$ with </p>
+                  <p class="fs-26">
+                        \[
+                            f(z) - f(x) = f'(a)(z - x), \qquad f(y) - f(z) = f'(b)(y - z).
+                        \]</p>
+              </div>
+              <p class="fs-26 fragment"> Since $a &lt; b$ and $f'$ is nondecreasing, $f'(a) \le f'(b)$. </p>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <p class="fs-26"> Then </p>
+              <p class="fs-26">
+                    \[\begin{aligned}
+                    \lambda f(x) + (1 - \lambda) f(y) - f(z)
+                    &= (1 - \lambda)\left(f(y) - f(z)\right) - \lambda\left(f(z) - f(x)\right)\\
+                    &= (1 - \lambda) f'(b)(y - z) - \lambda f'(a)(z - x)\\
+                    &= \lambda(1 - \lambda)(y - x)\left(f'(b) - f'(a)\right)\\
+                    &\ge 0.
+                    \end{aligned}\]</p>
+              <p class="fs-26 fragment"> So $f(\lambda x + (1 - \lambda) y) \le \lambda f(x) + (1 - \lambda) f(y)$, and $f$ is convex. </p>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <p class="fs-26"> ($\Rightarrow$) Suppose $f$ is convex. Let $x &lt; z &lt; y$ and write $z = \lambda x + (1 - \lambda) y$ with $\lambda \in (0, 1)$. </p>
+              <div class="fragment">
+                  <p class="fs-26"> Subtracting $f(x)$ from both sides of $f(z) \le \lambda f(x) + (1 - \lambda) f(y)$, and using $z - x = (1 - \lambda)(y - x)$: </p>
+                  <p class="fs-26">
+                        \[
+                            f(z) - f(x) \le (1 - \lambda)\left(f(y) - f(x)\right)
+                            \quad\Longrightarrow\quad
+                            \frac{f(z) - f(x)}{z - x} \le \frac{f(y) - f(x)}{y - x}.
+                        \]</p>
+              </div>
+              <div class="fragment">
+                  <p class="fs-26"> Subtracting both sides from $f(y)$ instead, and using $y - z = \lambda(y - x)$: </p>
+                  <p class="fs-26">
+                        \[
+                            f(y) - f(z) \ge \lambda\left(f(y) - f(x)\right)
+                            \quad\Longrightarrow\quad
+                            \frac{f(y) - f(x)}{y - x} \le \frac{f(y) - f(z)}{y - z}.
+                        \]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <p class="fs-26"> Taking $z \to x$ in the first inequality and $z \to y$ in the second: </p>
+              <p class="fs-26">
+                    \[
+                        f'(x) \;\le\; \frac{f(y) - f(x)}{y - x} \;\le\; f'(y).
+                    \]</p>
+              <div class="fragment">
+                  <p class="fs-26"> So $f'(x) \le f'(y)$ whenever $x &lt; y$: the derivative $f'$ is nondecreasing. Therefore </p>
+                  <p class="fs-26">
+                        \[
+                            f''(x) = \lim_{h \to 0^+} \frac{f'(x + h) - f'(x)}{h} \ge 0. \qquad \blacksquare
+                        \]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p> Example: $f(x) = e^x$ on $\R$. </p>
+                  <p class="fragment">
+                    \[
+                        f'(x) = e^x, \qquad f''(x) = e^x > 0 \quad \text{for all } x \in \R
+                    \]</p>
+                  <p class="fragment"> By the second derivative characterization, $e^x$ is convex. </p>
+                </div>
+                <img src="images/convex_exp.svg" class="fig-sm" alt="The graph of f(x) = e to the x in blue, with a green chord joining two points of the graph. A green point on the chord lies directly above an orange point on the graph." />
+              </div>
+          </section>
+          <section>
+              <h3>Convex Functions</h3>
+              <p class="fs-26"> For $f : \R^n \to \R$, the <b>Hessian</b> of $f$ at $x$ is the $n \times n$ symmetric matrix of second partial derivatives: </p>
+              <p class="fs-26">
+                    \[
+                        \nabla^2 f(x) = \begin{pmatrix}
+                        \dfrac{\partial^2 f}{\partial x_1^2}(x) & \cdots & \dfrac{\partial^2 f}{\partial x_1 \partial x_n}(x) \\
+                        \vdots & \ddots & \vdots \\
+                        \dfrac{\partial^2 f}{\partial x_n \partial x_1}(x) & \cdots & \dfrac{\partial^2 f}{\partial x_n^2}(x)
+                        \end{pmatrix}.
+                    \]</p>
+              <div class="theorem-box fragment">
+                  <p><b>Second derivative characterization of convexity in $\R^n$</b> (stated without proof)</p>
+                  <p class="fs-26"> Let $f : \R^n \to \R$ be twice continuously differentiable. Then $f$ is convex if and only if, for every $x \in \R^n$, the eigenvalues of the Hessian $\nabla^2 f(x)$ are all nonnegative. </p>
+              </div>
+          </section>
+      </section>
+
+      <!-- ===================== Convex nonlinear programs ===================== -->
+      <section>
+          <section>
+              <h2>Convex Nonlinear Programs</h2>
+          </section>
+          <section>
+              <h3>Convex Nonlinear Programs</h3>
+              <div class="theorem-box">
+                  <p><b>Definition</b></p>
+                  <p> A <b>convex nonlinear program</b> is an optimization problem of the form </p>
+                  <p>
+                    \[\begin{aligned}
+                    \min \qquad & f(x)\\
+                    \text{s.t.} \qquad & g_i(x) \le 0 \qquad i = 1, \dots, m,
+                    \end{aligned}\]</p>
+                  <p> where $f, g_1, \dots, g_m : \R^n \to \R$ are all convex functions. </p>
+              </div>
+          </section>
+          <section>
+              <h3>Convex Nonlinear Programs</h3>
+              <p> The <b>sublevel sets</b> of a convex function are convex: if $g : \R^n \to \R$ is convex and $t \in \R$, then
+                    \[
+                        \{x \in \R^n : g(x) \le t\}
+                    \]
+                 is a convex set. </p>
+              <p class="fragment"> The feasible region of a convex nonlinear program is an intersection of sublevel sets,
+                    \[
+                        \{x \in \R^n : g_1(x) \le 0\} \cap \dots \cap \{x \in \R^n : g_m(x) \le 0\},
+                    \]
+                 so it is a convex set. </p>
+          </section>
+          <section>
+              <h3>Convex Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> Example: the <b>constrained formulation of LASSO</b>. Given data $(x_1, y_1), \dots, (x_D, y_D)$ and $k \ge 0$, </p>
+                  <p class="fs-26">
+                    \[\begin{aligned}
+                    \min \qquad & \sum_{i=1}^{D} \left(\langle \theta, x_i \rangle - y_i\right)^2\\
+                    \text{s.t.} \qquad & \|\theta\|_1 \le k,
+                    \end{aligned}\]</p>
+                  <p class="fs-26"> where $\|\theta\|_1 = \sum_{j=1}^{n} |\theta_j|$. </p>
+                  <div class="fragment">
+                      <p class="fs-26"> This is a convex nonlinear program in the variable $\theta$, with </p>
+                      <p class="fs-26">
+                        \[\begin{aligned}
+                        f(\theta) &= \sum_{i=1}^{D} \left(\langle \theta, x_i \rangle - y_i\right)^2,\\
+                        g_1(\theta) &= \|\theta\|_1 - k.
+                        \end{aligned}\]</p>
+                  </div>
+                </div>
+                <img src="images/lasso_constrained.svg" class="fig-sm" alt="The feasible region of constrained LASSO in two variables: the diamond where the 1-norm of theta is at most k, shaded blue. Violet elliptical level curves of the least squares objective surround the unconstrained least squares solution, which lies outside the diamond. The smallest level curve that meets the diamond touches it at the corner theta* = (0, k), marked in orange." />
+              </div>
+          </section>
+      </section>
+
+      <!-- ===================== Solving nonlinear programs ===================== -->
+      <section>
+          <section>
+              <h2>Solving Nonlinear Programs</h2>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <p> How do we solve nonlinear programs? </p>
+              <div class="fragment">
+                  <p> A simpler question first: how can we solve a nonlinear program with <b>no constraints</b>? </p>
+                  <p>
+                        \[
+                            \min_{x \in \R^n} \ f(x)
+                        \]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <p> Remember an idea from calculus: </p>
+              <div class="theorem-box fragment">
+                  <p> If $f : \R \to \R$ is differentiable and $x_0$ is a minimizer of $f$, then </p>
+                  <p>
+                    \[
+                        f'(x_0) = 0.
+                    \]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <p class="fs-26"> But functions like $f(x) = |x|$ do not have derivatives at all points: </p>
+              <p class="fs-26">
+                    \[
+                        f'(x) = \begin{cases} 1 & \text{if } x > 0 \\ -1 & \text{if } x &lt; 0 \\ \text{undefined} & \text{if } x = 0. \end{cases}
+                    \]</p>
+              <img src="images/gd_abs.svg" style="width:640px; max-width:none; height:auto;" alt="Left: the V-shaped graph of f(x) = |x|, whose lowest point is at x = 0. Right: its derivative, which is -1 for negative x and 1 for positive x, and is undefined at 0." />
+              <p class="fs-26 fragment"> The minimizer of $|x|$ is $x_0 = 0$, which is <b style="color:#cb4b16;">exactly the point where $f$ is not differentiable</b>. So there is no point $x_0$ where $f'(x_0) = 0$. </p>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <div class="theorem-box">
+                      <p><b>Definition</b></p>
+                      <p class="fs-26"> Let $f : \R^n \to \R$ and $x_0 \in \R^n$. A vector $s \in \R^n$ is a <b>subgradient</b> of $f$ at $x_0$ if the affine function </p>
+                      <p class="fs-26">
+                        \[
+                            h(x) = f(x_0) + s^{\intercal}(x - x_0)
+                        \]</p>
+                      <p class="fs-26"> satisfies $h(x) \le f(x)$ for all $x \in \R^n$. </p>
+                  </div>
+                  <p class="fs-26 fragment"> So $h$ is an affine function that <b>lower bounds</b> $f$ everywhere, and <b>equals</b> $f$ at $x_0$: $h(x_0) = f(x_0)$. </p>
+                </div>
+                <img src="images/subgradient_definition.svg" class="fig-sm" alt="The graph of a convex function f in blue with a kink at the point x0. A green line h(x) = f(x0) + s-transpose (x - x0) passes through the point (x0, f(x0)), marked in orange, and lies on or below the graph of f everywhere." />
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> Example: $f(x) = |x|$ at the point $x_0 = 0$, with $s = 0$. </p>
+                  <p class="fs-26 fragment">
+                    \[
+                        h(x) = f(0) + 0 \cdot (x - 0) = 0
+                    \]</p>
+                  <div class="fragment">
+                      <p class="fs-26">
+                        \[
+                            h(x) = 0 \le |x| = f(x) \quad \text{for all } x \in \R
+                        \]</p>
+                      <p class="fs-26"> So $0$ is a subgradient of $|x|$ at $x_0 = 0$. </p>
+                  </div>
+                </div>
+                <img src="images/abs_subgradient_zero.svg" class="fig-sm" alt="The V-shaped graph of f(x) = |x| in blue together with the horizontal green line h(x) = 0. The line lies on or below the graph everywhere and meets it at the origin, marked in orange." />
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <p class="fs-26"> In fact, $c$ is a subgradient of $|x|$ at $x_0 = 0$ for <b>any</b> $c$ with $-1 \le c \le 1$: the affine function is $h(x) = f(0) + c(x - 0) = cx$, and $cx \le |x|$ for all $x$. </p>
+              <iframe src="demos/SubgradientAbs.html?embed=1" title="Interactive plot of |x| with the line of slope c through the origin; a slider changes c and shows whether c is a subgradient at 0" style="width:100%; height:400px; border:1px solid #93a1a1; border-radius:10px;" data-preload></iframe>
+              <p style="font-size:18px; margin:4px 0;"><a href="demos/SubgradientAbs.html" target="_blank" rel="noopener">Open the demo in its own tab</a></p>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="theorem-box">
+                  <p><b>Theorem</b> (existence of subgradients)</p>
+                  <p> Let $f : \R^n \to \R$ be a convex function. Then at every point $x_0 \in \R^n$, there is at least one subgradient of $f$ at $x_0$. </p>
+              </div>
+              <p class="fragment"> The proof follows from the separating hyperplane theorem. </p>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> Recall: the <b>gradient</b> of $f : \R^n \to \R$ at $x$ is the vector of partial derivatives of $f$: </p>
+                  <p class="fs-26">
+                    \[
+                        \nabla f(x) = \begin{pmatrix} \frac{\partial f}{\partial x_1}(x) \\ \vdots \\ \frac{\partial f}{\partial x_n}(x) \end{pmatrix}.
+                    \]</p>
+                  <div class="fragment" data-fragment-index="0">
+                      <p class="fs-26"> Example: $f(x, y) = x^2 + y^2$. </p>
+                      <p class="fs-26">
+                        \[
+                            \nabla f(x, y) = \begin{pmatrix} 2x \\ 2y \end{pmatrix}, \qquad \nabla f(1, 1) = \begin{pmatrix} 2 \\ 2 \end{pmatrix}
+                        \]</p>
+                  </div>
+                </div>
+                <img src="images/gradient_example.svg" class="fig-sm fragment" data-fragment-index="0" alt="Circular level curves of f(x, y) = x squared plus y squared centred at the origin, with the level curve x squared plus y squared = 2 drawn thicker. At the point (1, 1) on that curve, an orange arrow shows the gradient (2, 2), pointing directly away from the origin, perpendicular to the level curve." />
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> For $f(x, y) = x^2 + y^2$, take $s = \nabla f(1, 1) = (2, 2)$: </p>
+                  <p class="fs-26">
+                    \[\begin{aligned}
+                    h(x, y) &= f(1, 1) + s^{\intercal}\left((x, y) - (1, 1)\right)\\
+                    &= 2 + 2(x - 1) + 2(y - 1)
+                    \end{aligned}\]</p>
+                  <p class="fs-26 fragment">
+                    \[\begin{aligned}
+                    f(x, y) - h(x, y) &= x^2 + y^2 - 2x - 2y + 2\\
+                    &= (x - 1)^2 + (y - 1)^2\\
+                    &\ge 0
+                    \end{aligned}\]</p>
+                  <p class="fs-26 fragment"> So the gradient $\nabla f(1, 1)$ is a <b>subgradient</b> of $f$ at $(1, 1)$. </p>
+                </div>
+                <img src="images/gradient_subgradient_3d.png" style="width:400px; max-width:none; height:auto;" alt="A three-dimensional picture of the bowl t = x squared plus y squared in blue, together with the green plane t = 2 + 2(x - 1) + 2(y - 1). The plane touches the bowl at the single point (1, 1, 2), marked in orange, and lies below the bowl everywhere else." />
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="theorem-box">
+                  <p><b>Theorem</b> (the gradient is a subgradient)</p>
+                  <p> Let $f : \R^n \to \R$ be a convex function that is differentiable at $x_0$. Then $\nabla f(x_0)$ is a subgradient of $f$ at $x_0$, with affine lower bound </p>
+                  <p>
+                    \[
+                        h(x) = f(x_0) + \nabla f(x_0)^{\intercal}(x - x_0).
+                    \]</p>
+                  <p> Equivalently, </p>
+                  <p>
+                    \[
+                        f(x) \ge f(x_0) + \nabla f(x_0)^{\intercal}(x - x_0) \quad \text{for all } x \in \R^n.
+                    \]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <p class="fs-26"> <b>Proof</b> Fix $x \in \R^n$ and let $\lambda \in (0, 1]$. Since $f$ is convex, </p>
+              <p class="fs-26">
+                    \[
+                        f(x_0 + \lambda(x - x_0)) = f((1 - \lambda)x_0 + \lambda x) \le (1 - \lambda) f(x_0) + \lambda f(x).
+                    \]</p>
+              <div class="fragment">
+                  <p class="fs-26"> Subtracting $f(x_0)$ from both sides and dividing by $\lambda > 0$, </p>
+                  <p class="fs-26">
+                        \[
+                            \frac{f(x_0 + \lambda(x - x_0)) - f(x_0)}{\lambda} \le f(x) - f(x_0).
+                        \]</p>
+              </div>
+              <div class="fragment">
+                  <p class="fs-26"> Since $f$ is differentiable at $x_0$, as $\lambda \to 0^+$ the left side converges to the directional derivative $\nabla f(x_0)^{\intercal}(x - x_0)$. So </p>
+                  <p class="fs-26">
+                        \[
+                            \nabla f(x_0)^{\intercal}(x - x_0) \le f(x) - f(x_0). \qquad \blacksquare
+                        \]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> Example: $f(x) = e^x$ at the point $x_0 = 0$. </p>
+                  <p class="fs-26 fragment">
+                    \[
+                        f'(x) = e^x, \qquad f'(0) = 1
+                    \]</p>
+                  <div class="fragment">
+                      <p class="fs-26"> $f$ is convex and differentiable, so $s = 1$ is a subgradient of $e^x$ at $x_0 = 0$: </p>
+                      <p class="fs-26">
+                        \[
+                            h(x) = f(0) + f'(0)(x - 0) = 1 + x
+                        \]</p>
+                  </div>
+                  <p class="fs-26 fragment">
+                    \[
+                        e^x \ge 1 + x \quad \text{for all } x \in \R
+                    \]</p>
+                </div>
+                <img src="images/exp_subgradient.svg" class="fig-sm" alt="The graph of f(x) = e to the x in blue, together with the green line h(x) = 1 + x. The line touches the graph at the point (0, 1), marked in orange, and lies below the graph everywhere else." />
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <p class="fs-26"> We can also prove $e^x \ge 1 + x$ directly. Let $g(x) = e^x - 1 - x$. </p>
+              <p class="fs-26 fragment">
+                    \[
+                        g'(x) = e^x - 1 \quad \begin{cases} &lt; 0 & \text{if } x &lt; 0 \\ = 0 & \text{if } x = 0 \\ > 0 & \text{if } x > 0 \end{cases}
+                    \]</p>
+              <div class="fragment">
+                  <p class="fs-26"> So $g$ is decreasing for $x &lt; 0$ and increasing for $x > 0$: its minimum is at $x = 0$. </p>
+                  <p class="fs-26">
+                        \[
+                            e^x - 1 - x = g(x) \ge g(0) = 0
+                        \]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <p class="fs-26"> At every point $x_0$, the function $e^x$ has exactly one subgradient, $s = e^{x_0}$: </p>
+                  <p class="fs-26">
+                    \[
+                        e^x \ge e^{x_0} + e^{x_0}(x - x_0).
+                    \]</p>
+                  <p class="fs-26 fragment"> The picture shows these affine lower bounds at $x_0 = -2, -1.5, -1, \dots, 1.5$. </p>
+                </div>
+                <img src="images/exp_subgradients_many.svg" style="width:480px; max-width:none; height:auto;" alt="The graph of f(x) = e to the x in blue, with eight orange points on it at x0 = -2, -1.5, -1, -0.5, 0, 0.5, 1 and 1.5. Through each point passes a green line with slope e to the x0, touching the graph there and lying below it everywhere else. The lines get steeper from left to right, and together they trace out the graph from below." />
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="theorem-box">
+                  <p><b>Theorem</b></p>
+                  <p> Let $f : \R^n \to \R$ and $x_0 \in \R^n$. If $0$ is a subgradient of $f$ at $x_0$, then $x_0$ is a minimizer of $f$: </p>
+                  <p>
+                    \[
+                        f(x) \ge f(x_0) \quad \text{for all } x \in \R^n.
+                    \]</p>
+              </div>
+              <p class="fragment"> <b>Proof</b> Since $s = 0$ is a subgradient of $f$ at $x_0$, the affine function $h(x) = f(x_0) + 0^{\intercal}(x - x_0)$ satisfies $h(x) \le f(x)$ for all $x \in \R^n$. </p>
+              <p class="fragment">
+                    \[
+                        f(x) \ge h(x) = f(x_0) + 0^{\intercal}(x - x_0) = f(x_0) \qquad \blacksquare
+                    \]</p>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col">
+                  <p> Example: </p>
+                  <p>
+                    \[
+                        f(x) = e^x + |x|.
+                    \]</p>
+                  <p class="fragment"> What is the minimum of this function? </p>
+                </div>
+                <img src="images/exp_plus_abs.svg" class="fig" alt="The graph of f(x) = e to the x plus the absolute value of x, in blue. The graph decreases for negative x, has a sharp corner on the vertical axis at height 1, and increases steeply for positive x." />
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <p> How do we compute a subgradient of a <b>sum</b> like this? </p>
+              <div class="theorem-box fragment">
+                  <p> If $s_1$ is a subgradient of $f_1$ at $x_0$ and $s_2$ is a subgradient of $f_2$ at $x_0$, then $s_1 + s_2$ is a subgradient of $f_1 + f_2$ at $x_0$. </p>
+              </div>
+              <div class="fragment">
+                  <p class="fs-26"> Add the two subgradient inequalities: </p>
+                  <p class="fs-26">
+                        \[\begin{aligned}
+                        f_1(x) &\ge f_1(x_0) + s_1^{\intercal}(x - x_0)\\
+                        f_2(x) &\ge f_2(x_0) + s_2^{\intercal}(x - x_0)\\
+                        f_1(x) + f_2(x) &\ge f_1(x_0) + f_2(x_0) + (s_1 + s_2)^{\intercal}(x - x_0)
+                        \end{aligned}\]</p>
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> For $f(x) = e^x + |x|$ at a point $x_0 \ne 0$, both $e^x$ and $|x|$ are differentiable, so we add their derivatives: </p>
+                  <p class="fs-26 fragment">
+                    \[
+                        x_0 > 0: \quad s = e^{x_0} + 1 > 0
+                    \]</p>
+                  <p class="fs-26 fragment">
+                    \[
+                        x_0 &lt; 0: \quad s = e^{x_0} - 1 &lt; 0
+                    \]</p>
+                  <p class="fs-26 fragment"> At a point $x_0 \ne 0$, $f$ is differentiable, so this is its only subgradient there. It is never $0$, so the only point where $0$ could be a subgradient is $x_0 = 0$. </p>
+                </div>
+                <img src="images/exp_plus_abs_subgradients.svg" class="fig-sm" alt="A plot of the subgradient of f(x) = e to the x plus |x| at each point x0 other than 0. For negative x0 it is the curve e to the x0 minus 1, which lies below the horizontal axis and rises to an open circle at height 0. For positive x0 it is the curve e to the x0 plus 1, which starts from an open circle at height 2 and lies above the axis." />
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> For $f(x) = e^x + |x|$ at $x_0 = 0$: </p>
+                  <ul class="fs-26">
+                      <li> $s_1 = 1$ is a subgradient of $e^x$ at $0$. </li>
+                      <li class="fragment"> $s_2 = -1$ is a subgradient of $|x|$ at $0$. </li>
+                  </ul>
+                  <p class="fs-26 fragment"> So $s_1 + s_2 = 0$ is a subgradient of $f$ at $0$, and $x_0 = 0$ is a minimizer of $f$. </p>
+                  <div class="fragment">
+                      <p class="fs-26"> The minimum is $f(0) = e^0 + |0| = 1$: </p>
+                      <p class="fs-26">
+                        \[
+                            e^x + |x| \ge (1 + x) + (-x) = 1.
+                        \]</p>
+                  </div>
+                </div>
+                <img src="images/exp_plus_abs_min.svg" class="fig-sm" alt="The graph of f(x) = e to the x plus the absolute value of x in blue, with the horizontal green line h(x) = 1 lying below it and touching it at the corner (0, 1), marked in orange as the minimizer x0 = 0." />
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <div class="flexbox around">
+                <div class="text-col-wide">
+                  <p class="fs-26"> Example: $f(x, y) = x^2 + xy + y^2 - 3x$, a smooth function of two variables. </p>
+                  <div class="fragment">
+                      <p class="fs-26">
+                        \[
+                            \nabla^2 f(x, y) = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}, \quad \text{eigenvalues } 1, 3 \ge 0
+                        \]</p>
+                      <p class="fs-26"> so $f$ is convex. </p>
+                  </div>
+                  <p class="fs-26 fragment">
+                    \[
+                        \nabla f(x, y) = \begin{pmatrix} 2x + y - 3 \\ x + 2y \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix} \iff (x, y) = (2, -1)
+                    \]</p>
+                  <p class="fs-26 fragment"> Since $f$ is convex and differentiable, $\nabla f(2, -1) = 0$ is a subgradient of $f$ at $(2, -1)$, so $(2, -1)$ is a minimizer. </p>
+                  <p class="fs-26 fragment">
+                    \[
+                        \min f = f(2, -1) = -3
+                    \]</p>
+                </div>
+                <img src="images/quadratic_two_variables.svg" class="fig-sm" alt="Level curves of f(x, y) = x squared plus xy plus y squared minus 3x: nested blue ellipses, tilted with their long axis running from upper left to lower right, all centred at the minimizer (2, -1), which is marked in orange." />
+              </div>
+          </section>
+          <section>
+              <h3>Solving Nonlinear Programs</h3>
+              <p> So far, calculus has told us how to solve nonlinear programs with <b>no constraints</b>. </p>
+              <p class="fragment"> In the next lecture, we will discuss how to use calculus to study nonlinear programs <b>with constraints</b>. </p>
+          </section>
+      </section>
+
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/6.0.1/plugin/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            history: true,
+            transition: 'linear',
+            mathjax2: {
+                config: 'TeX-AMS_HTML-full',
+                TeX: {
+                    Macros: {
+                        R: '\\mathbb{R}',
+                        Z: '\\mathbb{Z}',
+                        set: [ '\\left\\{#1 \\; ; \\; #2\\right\\}', 2 ],
+                        SO: '\\text{SO}',
+                        tr: '\\text{tr}',
+                        conv: '\\text{conv}',
+                    }
+                }
+            },
+            // There are three typesetters available
+            // RevealMath.MathJax2 (default)
+            // RevealMath.MathJax3
+            // RevealMath.KaTeX
+            //
+            // More info at https://revealjs.com/math/
+            plugins: [ RevealMath.MathJax2 ]
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 400" width="450" height="400" font-family="Georgia, serif">
+<defs><marker id="arr" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="12" refX="13" refY="6" orient="auto"><path d="M0,0 L16,6 L0,12 z" fill="#cb4b16"/></marker></defs>
+<line x1="20.0" y1="237.2" x2="423.4" y2="237.2" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="421.4" y="257.2" font-size="16" font-style="italic" fill="#073642" text-anchor="end">x</text>
+<line x1="162.8" y1="380.0" x2="162.8" y2="20.0" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="152.8" y="34.0" font-size="16" font-style="italic" fill="#073642" text-anchor="end">y</text>
+<text x="224.8" y="255.2" font-size="13" fill="#93a1a1" text-anchor="middle">1</text>
+<text x="154.8" y="179.7" font-size="13" fill="#93a1a1" text-anchor="end">1</text>
+<text x="286.9" y="255.2" font-size="13" fill="#93a1a1" text-anchor="middle">2</text>
+<text x="154.8" y="117.6" font-size="13" fill="#93a1a1" text-anchor="end">2</text>
+<text x="349.0" y="255.2" font-size="13" fill="#93a1a1" text-anchor="middle">3</text>
+<text x="154.8" y="55.5" font-size="13" fill="#93a1a1" text-anchor="end">3</text>
+<circle cx="162.8" cy="237.2" r="43.9" fill="none" stroke="#268bd2" stroke-width="1.5"/>
+<circle cx="162.8" cy="237.2" r="62.1" fill="none" stroke="#268bd2" stroke-width="1.5"/>
+<circle cx="162.8" cy="237.2" r="87.8" fill="none" stroke="#268bd2" stroke-width="2.6"/>
+<text x="92.7" y="317.3" font-size="14" fill="#268bd2" text-anchor="end">x&#178; + y&#178; = 2</text>
+<line x1="224.8" y1="175.2" x2="349.0" y2="51.0" stroke="#cb4b16" stroke-width="3" marker-end="url(#arr)"/>
+<circle cx="224.8" cy="175.2" r="5.5" fill="#cb4b16" stroke="#fff" stroke-width="1.5"/>
+<text x="234.8" y="191.2" font-size="14" fill="#cb4b16">(1, 1)</text>
+<text x="299.3" y="137.9" font-size="15" fill="#cb4b16">&#8711;f(1, 1) = (2, 2)</text>
+</svg>

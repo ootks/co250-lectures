@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" font-family="Georgia, serif">
+<line x1="30.0" y1="267.5" x2="450.0" y2="267.5" stroke="#93a1a1" stroke-width="1.5"/>
+<line x1="205.6" y1="336.0" x2="205.6" y2="24.0" stroke="#93a1a1" stroke-width="1.5"/>
+<line x1="52.9" y1="263.5" x2="52.9" y2="271.5" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="52.9" y="287.5" font-size="13" fill="#073642" text-anchor="middle">&#8722;2</text>
+<line x1="129.3" y1="263.5" x2="129.3" y2="271.5" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="129.3" y="287.5" font-size="13" fill="#073642" text-anchor="middle">&#8722;1</text>
+<line x1="282.0" y1="263.5" x2="282.0" y2="271.5" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="282.0" y="287.5" font-size="13" fill="#073642" text-anchor="middle">1</text>
+<line x1="358.4" y1="263.5" x2="358.4" y2="271.5" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="358.4" y="287.5" font-size="13" fill="#073642" text-anchor="middle">2</text>
+<line x1="434.7" y1="263.5" x2="434.7" y2="271.5" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="434.7" y="287.5" font-size="13" fill="#073642" text-anchor="middle">3</text>
+<line x1="201.6" y1="191.4" x2="209.6" y2="191.4" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="195.6" y="196.4" font-size="13" fill="#073642" text-anchor="end">1</text>
+<line x1="201.6" y1="115.3" x2="209.6" y2="115.3" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="195.6" y="120.3" font-size="13" fill="#073642" text-anchor="end">2</text>
+<line x1="201.6" y1="39.2" x2="209.6" y2="39.2" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="195.6" y="44.2" font-size="13" fill="#073642" text-anchor="end">3</text>
+<text x="448.0" y="259.5" font-size="15" font-style="italic" fill="#073642" text-anchor="end">x</text>
+<text x="215.6" y="36.0" font-size="15" font-style="italic" fill="#073642">t</text>
+<line x1="30.0" y1="92.5" x2="274.4" y2="336.0" stroke="#cb4b16" stroke-width="2" stroke-dasharray="6 5"/>
+<line x1="68.2" y1="336.0" x2="450.0" y2="145.8" stroke="#859900" stroke-width="2" stroke-dasharray="6 5"/>
+<line x1="285.8" y1="336.0" x2="442.4" y2="24.0" stroke="#6c71c4" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="79.6" y="187.6" font-size="15" font-style="italic" fill="#cb4b16" text-anchor="end">t = &#8722;x</text>
+<text x="125.5" y="322.3" font-size="15" font-style="italic" fill="#859900" text-anchor="start">t = &#189;x</text>
+<text x="329.3" y="309.4" font-size="15" font-style="italic" fill="#6c71c4" text-anchor="start">t = 2x &#8722; 3</text>
+<polyline points="30.0,92.5 205.6,267.5 358.4,191.4 442.4,24.0" fill="none" stroke="#268bd2" stroke-width="3.5" stroke-linejoin="round"/>
+<circle cx="205.6" cy="267.5" r="4.5" fill="#268bd2"/>
+<circle cx="358.4" cy="191.4" r="4.5" fill="#268bd2"/>
+<text x="282.0" y="172.4" font-size="17" font-style="italic" fill="#268bd2" text-anchor="middle">f</text>
+</svg>

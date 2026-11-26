@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Choose a slope c and see whether the line t = c x is a subgradient of |x| at x = 0">
+  <title>Subgradients of |x| at 0</title>
+  <!--
+    URL parameters:
+      embed=1     compact layout for use inside a slide
+      c=0.5       initial slope
+  -->
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 12px;
+      background: #fdf6e3;
+      color: #586e75;
+      font-family: Georgia, serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .wrap { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 10px; }
+    .title { text-align: center; margin: 0; font-size: 24px; }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 420px;
+      background: #fdf6e3;
+      border: 1px solid #93a1a1;
+      border-radius: 10px;
+      touch-action: none;
+      cursor: grab;
+    }
+    .bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 22px; font-size: 20px; }
+    .bar label { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .bar output { display: inline-block; min-width: 3.2em; font-variant-numeric: tabular-nums; }
+    input[type="range"] { width: 320px; accent-color: #268bd2; }
+    .readout { min-height: 1.4em; font-size: 22px; font-variant-numeric: tabular-nums; text-align: center; }
+    .readout .ok { color: #859900; }
+    .readout .bad { color: #dc322f; }
+    .hint { text-align: center; margin: 0; font-size: 15px; color: #93a1a1; }
+    body.embed { padding: 4px; gap: 6px; }
+    body.embed .wrap { gap: 6px; }
+    body.embed .title { font-size: 20px; }
+    body.embed canvas { height: 270px; }
+    body.embed .bar { font-size: 17px; gap: 6px 16px; }
+    body.embed .readout { font-size: 19px; }
+    body.embed .hint { display: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="title">f(x) = |x| &nbsp;and the line&nbsp; h(x) = c&#8201;x &nbsp;through (0, 0)</p>
+    <canvas id="plot" aria-label="Plot of the absolute value function together with the line of slope c through the origin"></canvas>
+    <div class="bar">
+      <label><span>c</span> <input id="c" type="range" min="-2" max="2" step="0.05"> <output id="cout"></output></label>
+    </div>
+    <div class="readout" id="readout">&nbsp;</div>
+    <p class="hint">Drag the slider, or drag the line on the plot, to change the slope c.</p>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+      var params = new URLSearchParams(location.search);
+      if (params.get('embed')) document.body.classList.add('embed');
+
+      var XLIM = [-3, 3], YLIM = [-1.6, 3.2];
+      var canvas = document.getElementById('plot');
+      var ctx = canvas.getContext('2d');
+      var cIn = document.getElementById('c'), cOut = document.getElementById('cout');
+      var readout = document.getElementById('readout');
+
+      var c0 = parseFloat(params.get('c'));
+      cIn.value = isFinite(c0) ? Math.max(-2, Math.min(2, c0)) : 0.5;
+
+      function fmt(x) {
+        var s = (Math.round(x * 100) / 100).toFixed(2).replace(/\.?0+$/, '');
+        return (s === '-0' ? '0' : s).replace('-', '−');
+      }
+      // c is a subgradient of |x| at 0 exactly when c x <= |x| for all x, i.e. -1 <= c <= 1
+      function isSubgradient(c) { return c >= -1 - 1e-9 && c <= 1 + 1e-9; }
+
+      var W = 0, H = 0, M = { l: 16, r: 16, t: 12, b: 12 };
+      function X(x) { return M.l + (x - XLIM[0]) / (XLIM[1] - XLIM[0]) * (W - M.l - M.r); }
+      function Y(y) { return H - M.b - (y - YLIM[0]) / (YLIM[1] - YLIM[0]) * (H - M.t - M.b); }
+      function Xinv(px) { return XLIM[0] + (px - M.l) / (W - M.l - M.r) * (XLIM[1] - XLIM[0]); }
+      function Yinv(py) { return YLIM[0] + (H - M.b - py) / (H - M.t - M.b) * (YLIM[1] - YLIM[0]); }
+
+      function draw() {
+        var c = parseFloat(cIn.value);
+        var ok = isSubgradient(c);
+        var dpr = window.devicePixelRatio || 1;
+        var rect = canvas.getBoundingClientRect();
+        W = rect.width; H = rect.height;
+        if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
+          canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        }
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+
+        // clip everything to the plotting window
+        ctx.save();
+        ctx.beginPath(); ctx.rect(X(XLIM[0]), Y(YLIM[1]), X(XLIM[1]) - X(XLIM[0]), Y(YLIM[0]) - Y(YLIM[1])); ctx.clip();
+
+        // the range of slopes that work: the region between t = -x and t = x below the graph
+        ctx.fillStyle = 'rgba(133, 153, 0, 0.10)';
+        ctx.beginPath();
+        ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(XLIM[1]), Y(XLIM[1])); ctx.lineTo(X(XLIM[1]), Y(-XLIM[1])); ctx.closePath(); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(XLIM[0]), Y(-XLIM[0])); ctx.lineTo(X(XLIM[0]), Y(XLIM[0])); ctx.closePath(); ctx.fill();
+
+        // where the line is above the graph (only when c is not a subgradient)
+        if (!ok) {
+          var xe = c > 0 ? XLIM[1] : XLIM[0];
+          ctx.fillStyle = 'rgba(220, 50, 47, 0.22)';
+          ctx.beginPath();
+          ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(xe), Y(Math.abs(xe))); ctx.lineTo(X(xe), Y(c * xe)); ctx.closePath(); ctx.fill();
+        }
+
+        // axes with integer ticks
+        ctx.strokeStyle = '#93a1a1'; ctx.fillStyle = '#93a1a1'; ctx.lineWidth = 1.5;
+        ctx.font = '14px Georgia, serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.beginPath(); ctx.moveTo(X(XLIM[0]), Y(0)); ctx.lineTo(X(XLIM[1]), Y(0));
+        ctx.moveTo(X(0), Y(YLIM[0])); ctx.lineTo(X(0), Y(YLIM[1])); ctx.stroke();
+        for (var t = Math.ceil(XLIM[0]); t <= XLIM[1]; t++) {
+          if (t === 0) continue;
+          ctx.beginPath(); ctx.moveTo(X(t), Y(0) - 4); ctx.lineTo(X(t), Y(0) + 4); ctx.stroke();
+          ctx.fillText(String(t).replace('-', '−'), X(t), Y(0) + 7);
+        }
+        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        for (var u = Math.ceil(YLIM[0]); u <= YLIM[1]; u++) {
+          if (u === 0) continue;
+          ctx.beginPath(); ctx.moveTo(X(0) - 4, Y(u)); ctx.lineTo(X(0) + 4, Y(u)); ctx.stroke();
+          ctx.fillText(String(u).replace('-', '−'), X(0) - 8, Y(u));
+        }
+
+        // f(x) = |x|
+        ctx.strokeStyle = '#268bd2'; ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(X(XLIM[0]), Y(-XLIM[0])); ctx.lineTo(X(0), Y(0)); ctx.lineTo(X(XLIM[1]), Y(XLIM[1]));
+        ctx.stroke();
+        ctx.fillStyle = '#268bd2'; ctx.font = 'italic 18px Georgia, serif';
+        ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+        ctx.fillText('f(x) = |x|', X(0) + 14, Y(2.75));
+
+        // the line h(x) = c x
+        var col = ok ? '#859900' : '#dc322f';
+        ctx.strokeStyle = col; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(X(XLIM[0]), Y(c * XLIM[0])); ctx.lineTo(X(XLIM[1]), Y(c * XLIM[1])); ctx.stroke();
+        // the point (0, 0) where the line meets the graph
+        ctx.fillStyle = '#cb4b16'; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(X(0), Y(0), 6.5, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+        ctx.restore();
+      }
+
+      function render() {
+        var c = parseFloat(cIn.value);
+        cOut.textContent = fmt(c);
+        if (isSubgradient(c)) {
+          readout.innerHTML = '<span class="ok">c = ' + fmt(c) + ': &nbsp; c&#8201;x &le; |x| for every x, so c is a subgradient of |x| at 0</span>';
+        } else {
+          readout.innerHTML = '<span class="bad">c = ' + fmt(c) + ': &nbsp; c&#8201;x &gt; |x| when x ' + (c > 0 ? '&gt;' : '&lt;') +
+                              ' 0, so c is not a subgradient of |x| at 0</span>';
+        }
+        draw();
+      }
+
+      // drag on the plot to rotate the line about the origin
+      var dragging = false;
+      function setFromPointer(e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = Xinv(e.clientX - rect.left), y = Yinv(e.clientY - rect.top);
+        if (Math.abs(x) < 0.15) return;
+        var c = Math.max(-2, Math.min(2, y / x));
+        cIn.value = Math.round(c / 0.05) * 0.05;
+        render();
+      }
+      canvas.addEventListener('pointerdown', function (e) { dragging = true; canvas.setPointerCapture(e.pointerId); setFromPointer(e); });
+      canvas.addEventListener('pointermove', function (e) { if (dragging) setFromPointer(e); });
+      canvas.addEventListener('pointerup', function () { dragging = false; });
+      canvas.addEventListener('pointercancel', function () { dragging = false; });
+      cIn.addEventListener('input', render);
+      window.addEventListener('resize', draw);
+
+      render();
+    })();
+  </script>
+</body>
+</html>

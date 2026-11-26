@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 470" width="400" height="470" font-family="Georgia, serif">
+<line x1="16.0" y1="317.8" x2="384.0" y2="317.8" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="380.0" y="337.8" font-size="16" font-style="italic" fill="#073642" text-anchor="end">&#952;&#8321;</text>
+<line x1="172.4" y1="455.8" x2="172.4" y2="14.2" stroke="#93a1a1" stroke-width="1.5"/>
+<text x="162.4" y="30.2" font-size="16" font-style="italic" fill="#073642" text-anchor="end">&#952;&#8322;</text>
+<polygon points="264.4,317.8 172.4,225.8 80.4,317.8 172.4,409.8" fill="rgba(38,139,210,0.12)" stroke="#268bd2" stroke-width="2.5"/>
+<text x="146.6" y="338.0" font-size="15" fill="#268bd2" text-anchor="middle">&#8214;&#952;&#8214;&#8321; &#8804; k</text>
+<ellipse cx="227.6" cy="115.4" rx="34.2" ry="55.3" fill="none" stroke="#6c71c4" stroke-width="1.6" transform="rotate(-148.28 227.6 115.4)"/>
+<ellipse cx="227.6" cy="115.4" rx="55.1" ry="89.2" fill="none" stroke="#6c71c4" stroke-width="1.6" transform="rotate(-148.28 227.6 115.4)"/>
+<ellipse cx="227.6" cy="115.4" rx="76.8" ry="124.2" fill="none" stroke="#6c71c4" stroke-width="2.6" transform="rotate(-148.28 227.6 115.4)"/>
+<ellipse cx="227.6" cy="115.4" rx="99.1" ry="160.4" fill="none" stroke="#6c71c4" stroke-width="1.6" transform="rotate(-148.28 227.6 115.4)"/>
+<circle cx="227.6" cy="115.4" r="4.5" fill="#6c71c4"/>
+<text x="237.6" y="120.4" font-size="14" fill="#6c71c4">least squares solution</text>
+<circle cx="172.4" cy="225.8" r="6" fill="#cb4b16" stroke="#fff" stroke-width="1.5"/>
+<text x="160.4" y="217.8" font-size="14" fill="#cb4b16" text-anchor="end">&#952;* = (0, k)</text>
+</svg>
